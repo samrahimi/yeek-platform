@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'Socicon';
-  src:  url('../fonts/socicon.eot%3Fa93r5t');
-  src:  url('../fonts/socicon.eot%3Fa93r5t') format('embedded-opentype'),
-    url('../fonts/socicon.ttf%3Fa93r5t') format('truetype'),
-    url('../fonts/socicon.woff%3Fa93r5t') format('woff'),
-    url('../fonts/socicon.svg%3Fa93r5t') format('svg');
+  src:  url('../fonts/socicon.eot');
+  src:  url('../fonts/socicon.eot') format('embedded-opentype'),
+    url('../fonts/socicon.ttf') format('truetype'),
+    url('../fonts/socicon.woff') format('woff'),
+    url('../fonts/socicon.svg') format('svg');
   font-weight: normal;
   font-style: normal;
 }
