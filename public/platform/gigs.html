@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <script type="text/html" template-engine="ejs">
+            <title><%=menuData.pageTitle%></title>
+            <!-- since we're going to wrap this up into a native app, disable zooming on mobile -->
+            <meta name='viewport'  content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+            <meta name="description" content="<%=menuData.pageDescription%>">
+        </script>
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,400i,500" rel="stylesheet">
+    <link href="assets/css/socicon.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="assets/css/entypo.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="assets/css/theme.css" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="assets/js/ejs.js"></script>
+    <script type="text/javascript" src="assets/js/ejs-controller.js?v10"></script>
+    <script>
+        $(document).ready(() => {
+            //Declarative import of HTML web controls using <ctrl> tag
+        window.model =  
+            {
+                categories: ["All","Trending", "Social Media", "Design", "Programming", "Marketing", "Writing", "Creative"], 
+                menuData: {
+                    topLevel:["Platform (Beta)", "Company", "Token", "Exchange"],
+                    pageTitle: "Yeek Gig Marketplace",
+                    pageDescription:"Browse the available gigs, pick the one that suits you, and make some quick coin."
+                }
+            }
+            renderDefaultEjsTemplate(model);
+            loadControls(model);
+            renderDefaultEjsTemplate(model);
+            loadControls(model);
+
+        })
+
+    </script>
+</head>
+
+<body>
+    <ctrl src="./controls/nav.html?888" id="mainNav" bind-to="menuData" doNotWrap="true"></ctrl>
+
+    <div class="main-container">
+            <ctrl src="./controls/tab_content.html" id="tabContentArea"></ctrl>
+
+            <!--end of container-->
+            <footer class="footer-short">
+            <div class="container">
+                <hr>
+                <nav class="row justify-content-between align-items-center">
+                    <div class="col-auto">
+                        <ul class="list-inline">
+                            <li class="list-inline-item">
+                                <a href="app-collection-table.html#">
+                                    <img alt="Image" src="assets/img/logo-gray.svg" />
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="app-collection-table.html#">Overview</a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="app-collection-table.html#">Documentation</a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="app-collection-table.html#">Changelog</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--end of col-->
+                    <div class="col-auto text-sm-right">
+                        <ul class="list-inline">
+                            <li class="list-inline-item">
+                                <a href="app-collection-table.html#">
+                                    <i class="socicon-twitter"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="app-collection-table.html#">
+                                    <i class="socicon-facebook"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--end of col-->
+                </nav>
+                <!--end of row-->
+                <div class="row">
+                    <div class="col">
+                        <small>&copy; 2018 Medium Rare All Rights Reserved</small>
+                    </div>
+                    <!--end of col-->
+                </div>
+                <!--end of row-->
+            </div>
+            <!--end of container-->
+        </footer>
+    </div>
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+    <script type="text/javascript" src="assets/js/jquery.smartWizard.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.0.10/flickity.pkgd.min.js"></script>
+    <script type="text/javascript" src="assets/js/scrollMonitor.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/12.1.5/js/smooth-scroll.polyfills.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/prism.min.js"></script>
+    <script type="text/javascript" src="assets/js/zoom.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="assets/js/theme.js"></script>
+
+</body>
