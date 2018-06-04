@@ -62,7 +62,7 @@ contract Administered {
 /* A liqudity pool that executes buy and sell orders for an ETH / Token Pair */
 /* The owner deploys it and then adds tokens / ethereum in the desired ratio */
 
-contract MarketMaker is Administered {
+contract Exchanger is Administered {
     bool public enabled = false;    //Owner can turn off and on
 
     //The token which is being bought and sold
@@ -88,35 +88,57 @@ contract MarketMaker is Administered {
         tokenContract = ITradeableAsset(_token);
         formulaContract = IYeekFormula(_formulaContract);
     }
+
+    //Events raised on completion of buy and sell orders. 
+    //The web client can use this info to provide users with their trading history for a given token
+    //and also to notify when a trade has completed.
+
+    event Buy(address indexed purchaser, uint256 amountInWei, uint256 amountInToken);
+    event Sell(address indexed seller, uint256 amountInToken, uint256 amountInWei);
+
+
+
     
     /**
-     @dev Deposit tokens to the reserve. Note: to deposit ether, send it to this contract with no call data
-     @param amount The amount of whatever ERC20 token is represented by tokenContract
+     @dev Deposit tokens to the reserve.
      */
     function depositTokens(uint amount) onlyOwner public {
         tokenContract.transferFrom(msg.sender, this, amount);
     }
         
     /**
-     @dev Deposit ether 
+     @dev Deposit ether to the reserve
      */
-     function depositEther() public payable returns(uint) {
-//return getQuotePrice(); 
+     function depositEther() onlyOwner public payable {
+        //return getQuotePrice(); 
      }
-     
 
     /**  
      @dev Withdraw tokens from the reserve
-     @param amount The amount in real tokens (decimals are taken care of for you)
      */
     function withdrawTokens(uint amount) onlyOwner public {
         tokenContract.transfer(msg.sender, amount);
     }
 
+    /**  
+     @dev Withdraw ether from the reserve
+     */
     function withdrawEther(uint amountInWei) onlyOwner public {
         msg.sender.transfer(amountInWei); //Transfers in wei
     }
 
+
+    /**  
+     @dev Withdraw ether from the reserve
+     */
+    function getReserveBalances() public view returns (uint256, uint256) {
+        return (tokenContract.balanceOf(this), address(this).balance);
+    }
+
+
+    /**
+     @dev Gets price based on a sample 1 ether BUY order
+     */
     function getQuotePrice() public view returns(uint) {
         uint tokensPerEther = 
         formulaContract.calculatePurchaseReturn(
@@ -130,30 +152,62 @@ contract MarketMaker is Administered {
     }
 
     /**
-     @dev Buy tokens with ether. 
+     @dev Get the BUY price based on the order size. Returned as the number of tokens that the amountInWei will buy.
      */
-    function buy() public payable {
-        uint amount = formulaContract.calculatePurchaseReturn(
+    function getPurchasePrice(uint256 amountInWei) public view returns(uint) {
+        return formulaContract.calculatePurchaseReturn(
             tokenContract.totalSupply(),
             address(this).balance,
             weight,
+            amountInWei 
+        ); 
+    }
+
+    /**
+     @dev Get the SELL price based on the order size. Returned as amount (in wei) that you'll get for your tokens.
+     */
+    function getSalePrice(uint256 tokensToSell) public view returns(uint) {
+        return formulaContract.calculateSaleReturn(
+            tokenContract.totalSupply(),
+            address(this).balance,
+            weight,
+            tokensToSell 
+        ); 
+    }
+
+
+    /**
+     @dev Buy tokens with ether. 
+     @param minPurchaseReturn The minimum number of tokens you will accept.
+     */
+    function buy(uint minPurchaseReturn) public payable {
+        uint amount = formulaContract.calculatePurchaseReturn(
+            tokenContract.totalSupply(),
+            address(this).balance - msg.value,
+            weight,
             msg.value);
+            
+        require (amount >= minPurchaseReturn);
         require (tokenContract.balanceOf(this) >= amount);
+        emit Buy(msg.sender, msg.value, amount);
         tokenContract.transfer(msg.sender, amount);
     }
     /**
      @dev Sell tokens for ether
+     @param quantity Number of tokens to sell
+     @param minSaleReturn Minimum amount of ether (in wei) you will accept for your tokens
      */
-     function sell(uint quantity) public {
+     function sell(uint quantity, uint minSaleReturn) public {
          uint amountInWei = formulaContract.calculateSaleReturn(
              tokenContract.totalSupply(),
              address(this).balance,
              weight,
              quantity
          );
+         require (amountInWei >= minSaleReturn);
          require (amountInWei <= address(this).balance);
          require (tokenContract.transferFrom(msg.sender, this, quantity));
-
+         emit Sell(msg.sender, quantity, amountInWei);
          msg.sender.transfer(amountInWei); //Always send ether last
      }
 }
