@@ -1,15 +1,8 @@
 pragma solidity ^0.4.18;
 import './utils.sol';
 
-/*
-    Bancor Formula interface
-*/
-interface IYeekFormula {
-    function calculatePurchaseReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _depositAmount) public view returns (uint256);
-    function calculateSaleReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _sellAmount) public view returns (uint256);
-}
-contract YeekFormula is IYeekFormula, Utils {
-    string public version = '0.3';
+contract YeekFormula is  Utils {
+    string public version = '0.1';
 
     uint256 private constant ONE = 1;
     uint32 private constant MAX_WEIGHT = 1000000;

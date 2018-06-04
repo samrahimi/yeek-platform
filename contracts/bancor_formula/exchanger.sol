@@ -1,15 +1,15 @@
-import './formula.sol'; //Calculates price based on order size, direction, supply, and exchanger balance
+interface IYeekFormula {
+    function calculatePurchaseReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _depositAmount) external view returns (uint256);
+    function calculateSaleReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _sellAmount) external view returns (uint256);
+}
 
 interface ITradeableAsset {
-    function totalSupply() external returns (uint256);
+    function totalSupply() external view returns (uint256);
     function approve(address spender, uint tokens) external returns (bool success);
     function transferFrom(address from, address to, uint tokens) external returns (bool success);
-    function decimals() external returns (uint256);
+    function decimals() external view returns (uint256);
     function transfer(address _to, uint256 _value) external;
-}
-interface IYeekFormula {
-    function calculatePurchaseReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _depositAmount) public view returns (uint256);
-    function calculateSaleReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _sellAmount) public view returns (uint256);
+    function balanceOf(address _address) external view returns (uint256);
 }
 
 /* A basic permissions hierarchy (Owner -> Admin -> Everyone else). One owner may appoint and remove any number of admins
@@ -69,27 +69,24 @@ contract MarketMaker is Administered {
     ITradeableAsset public tokenContract;
     //The contract that does the calculations to determine buy and sell pricing
     IYeekFormula public formulaContract;
-    //The market maker, who receives a cut of the orders
-    address public feeCollector;
     //The reserve pct of this exchanger, expressed in ppm
-    uint public weight;
+    uint32 public weight;
 
     /** 
         @dev Deploys an exchanger contract for a given token / Ether pairing
         @param _token An ERC20 token
-        @param _feeCollector The address getting the fees (not currently used)
         @param _weight The reserve fraction of this exchanger, in ppm
         @param _formulaContract The contract with the algorithms to calculate price
      */
 
     constructor(address _token, 
-                address _feeCollector, 
-                uint256 _weight,
+                uint32 _weight,
                 address _formulaContract) {
-        require (_weight > 0 && weight <= 1000000)
-        tokenContract = ITradeableAsset(token);
-        feeCollector = _feeCollector
-        formulaContract = _formulaContract
+        require (_weight > 0 && weight <= 1000000);
+        
+        weight = _weight;
+        tokenContract = ITradeableAsset(_token);
+        formulaContract = IYeekFormula(_formulaContract);
     }
     
     /**
@@ -99,6 +96,15 @@ contract MarketMaker is Administered {
     function depositTokens(uint amount) onlyOwner public {
         tokenContract.transferFrom(msg.sender, this, amount);
     }
+        
+    /**
+     @dev Deposit ether 
+     */
+     function depositEther() public payable returns(uint) {
+//return getQuotePrice(); 
+     }
+     
+
     /**  
      @dev Withdraw tokens from the reserve
      @param amount The amount in real tokens (decimals are taken care of for you)
@@ -106,38 +112,32 @@ contract MarketMaker is Administered {
     function withdrawTokens(uint amount) onlyOwner public {
         tokenContract.transfer(msg.sender, amount);
     }
-    /***
-     @dev Withdraw ether from the reserfve.
-     @param The amount in wei.
-     */
+
     function withdrawEther(uint amountInWei) onlyOwner public {
-        msg.sender.transfer(amountInWei) //Transfers in wei
+        msg.sender.transfer(amountInWei); //Transfers in wei
     }
-    /**
-      @dev Gets price in the form of tokens per ether (assuming a 1 ether buy order)
-      The decimals are taken care of for you
-    */
-    function getQuotePrice() public view {
-        let tokensPerEther =  
+
+    function getQuotePrice() public view returns(uint) {
+        uint tokensPerEther = 
         formulaContract.calculatePurchaseReturn(
             tokenContract.totalSupply(),
-            this.balance,
-            this.weight,
+            address(this).balance,
+            weight,
             1 ether 
-        ) / 10 ** tokenContract.decimals()
+        ); 
 
-        return tokensPerEther
+        return tokensPerEther;
     }
 
     /**
      @dev Buy tokens with ether. 
      */
     function buy() public payable {
-        let amount = formulaContract.calculatePurchaseReturn(
+        uint amount = formulaContract.calculatePurchaseReturn(
             tokenContract.totalSupply(),
-            this.balance,
-            this.weight,
-            1 ether);
+            address(this).balance,
+            weight,
+            msg.value);
         require (tokenContract.balanceOf(this) >= amount);
         tokenContract.transfer(msg.sender, amount);
     }
@@ -145,14 +145,14 @@ contract MarketMaker is Administered {
      @dev Sell tokens for ether
      */
      function sell(uint quantity) public {
-         let amountInWei = formulaContract.calculateSaleReturn(
+         uint amountInWei = formulaContract.calculateSaleReturn(
              tokenContract.totalSupply(),
-             this.balance,
-             this.weight,
+             address(this).balance,
+             weight,
              quantity
          );
-         require (amountInWei <= this.balance)
-         require (tokenContract.transferFrom(msg.sender, this, quantity))
+         require (amountInWei <= address(this).balance);
+         require (tokenContract.transferFrom(msg.sender, this, quantity));
 
          msg.sender.transfer(amountInWei); //Always send ether last
      }
