@@ -93,24 +93,28 @@ contract MarketMaker is Administered {
     }
     
     /**
-     @dev Deposit tokens to the reserve
-     @param amount The amount in real tokens (decimals are taken care of for you)
+     @dev Deposit tokens to the reserve. Note: to deposit ether, send it to this contract with no call data
+     @param amount The amount of whatever ERC20 token is represented by tokenContract
      */
     function depositTokens(uint amount) onlyOwner public {
-        tokenContract.transferFrom(msg.sender, this, amount * 10 ** tokenContract.decimals());
+        tokenContract.transferFrom(msg.sender, this, amount);
     }
     /**  
      @dev Withdraw tokens from the reserve
      @param amount The amount in real tokens (decimals are taken care of for you)
      */
     function withdrawTokens(uint amount) onlyOwner public {
-        tokenContract.transfer(msg.sender, amount  * 10 ** tokenContract.decimals());
+        tokenContract.transfer(msg.sender, amount);
     }
-    function withdrawEther(uint amountInEther) onlyOwner public {
-        msg.sender.transfer(amountInEther * 10 ** 18) //Transfers in wei
+    /***
+     @dev Withdraw ether from the reserfve.
+     @param The amount in wei.
+     */
+    function withdrawEther(uint amountInWei) onlyOwner public {
+        msg.sender.transfer(amountInWei) //Transfers in wei
     }
     /**
-      @dev Quotes price of token, in ether, based on a 1 ether spend
+      @dev Gets price in the form of tokens per ether (assuming a 1 ether buy order)
       The decimals are taken care of for you
     */
     function getQuotePrice() public view {
@@ -122,6 +126,34 @@ contract MarketMaker is Administered {
             1 ether 
         ) / 10 ** tokenContract.decimals()
 
-        return 1 / tokensPerEther;
+        return tokensPerEther
     }
+
+    /**
+     @dev Buy tokens with ether. 
+     */
+    function buy() public payable {
+        let amount = formulaContract.calculatePurchaseReturn(
+            tokenContract.totalSupply(),
+            this.balance,
+            this.weight,
+            1 ether);
+        require (tokenContract.balanceOf(this) >= amount);
+        tokenContract.transfer(msg.sender, amount);
+    }
+    /**
+     @dev Sell tokens for ether
+     */
+     function sell(uint quantity) public {
+         let amountInWei = formulaContract.calculateSaleReturn(
+             tokenContract.totalSupply(),
+             this.balance,
+             this.weight,
+             quantity
+         );
+         require (amountInWei <= this.balance)
+         require (tokenContract.transferFrom(msg.sender, this, quantity))
+
+         msg.sender.transfer(amountInWei); //Always send ether last
+     }
 }

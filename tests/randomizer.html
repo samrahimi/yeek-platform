@@ -1,0 +1,45 @@
+<html>
+<head>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+    <script>
+
+        $(document).ready(function () {
+            //clinet seed
+            var clientSeed = '51ffa4e674de8928300a02a67921aba1eb6b944fddcddf9041d5c6dab58b639b';
+
+            //server seed
+            var serverSeed = 'f0d7869e500520d9313de3853a6184118b59e8e5589e7e65ea2bda0a2733ea17';
+
+            //number of rolls
+            var nonce = 9623367652;
+
+
+            function roll(_clientSeed, _serverSeed, _nonce) {
+                var clientSeed_nonce = _clientSeed + '-' + _nonce;
+
+                var hash = CryptoJS.HmacSHA512(clientSeed_nonce, _serverSeed).toString(CryptoJS.enc.Hex);
+
+                var index = 0;
+                var subhash = hash.substring(index * 5, index * 5 + 5);
+                var rollnum = parseInt(subhash, 16);
+
+                while (rollnum >= Math.pow(10, 6)) {
+                    index++;
+                    rollnum = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+                    if (index * 5 + 5 > 128) {
+                        rollnum = 99.99;
+                        break;
+                    }
+                }
+                rollnum %= Math.pow(10, 4);
+                rollnum /= Math.pow(10, 2);
+                return rollnum;
+            }
+            console.log('roll number at nonce ' + nonce + ' is ' + roll(clientSeed, serverSeed, nonce));
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
