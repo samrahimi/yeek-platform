@@ -48,6 +48,7 @@
             </div>
             <!--end nav collapse-->
         </nav>
+        <% if (location.href.toLowerCase().indexOf('gig') > 0) {%>
         <div class="container">
             <ul class="nav bg-light nav-tabs mb-2" id="myTab" role="tablist">
                 <li class="nav-item">
@@ -65,6 +66,47 @@
 
             </ul>
         </div>
+        <%}
+        if (location.href.toLowerCase().indexOf('token') > 0) { %>
+            <div class="container">
+                <div class="row" style="font-size:0.8rem;background-color:#DDDDDD;padding:10px;">
+                    <div class="col-6-md col-12-sm">
+                        <h3><img src="assets/img/yeek_logo.png" width="64" /><span id="tokenName"></span></h3>
+                    </div>
+                    
+                    <div class="col" style="text-align:center;margin-top:25px">
+                                    
+                                    <b>Balance(<span class="symbol"></span>): </b>
+                                    <span id="tokenBalance">Loading...</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                    <b>Balance (ETH): </b>
+                                    <span id="etherBalance"></span>
+                    </div>
+                 </div>
+            
+                    <ul class="nav bg-light nav-tabs mb-2" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="true">Company Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="false">Available Gigs</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link active show" id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">Token Info</a>
+                        </li>    
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">Get Free Tokens!</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab5" data-toggle="tab" href="#tab5-content" role="tab" aria-selected="false">Trade Tokens (Live!)</a>
+                        </li>
+        
+                    </ul>
+                    
+                </div>    
+                
+            
+        <%} %>
     </div>
     <!--end of container-->
 </div>

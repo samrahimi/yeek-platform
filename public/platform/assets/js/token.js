@@ -41,49 +41,53 @@ let refreshDisplayData = () => {
     });
       
     /* Begin Load Airdropper Info */
-    dropper.tokensDispensed().then((amount) => {
-        tokenstats.dispensed = amount[0].toString(10);
-        $("#tokensDispensed").html(rawToDecimal(tokenstats.dispensed, 18));
-    })
 
-    dropper.tokensRemaining().then((amount) => {
-        tokenstats.remaining = amount[0].toString(10);
-        $("#tokensRemaining").html(rawToDecimal(tokenstats.remaining, 18));
-    })
+    if (dropperAddress != '0x0') {
+        dropper.tokensDispensed().then((amount) => {
+            tokenstats.dispensed = amount[0].toString(10);
+            $("#tokensDispensed").html(rawToDecimal(tokenstats.dispensed, 18));
+        })
 
-    dropper.numberOfTokensPerUser().then((amount) => {
-        tokenstats.airdropsize = amount[0].toString(10);
-        $("#airdropAmount").html(rawToDecimal(tokenstats.airdropsize, 18));
-    })
+        dropper.tokensRemaining().then((amount) => {
+            tokenstats.remaining = amount[0].toString(10);
+            $("#tokensRemaining").html(rawToDecimal(tokenstats.remaining, 18));
+        })
 
-    dropper.airdroppedUsers(myAddress).then((hasGottenAirdrop) => {
-        if (hasGottenAirdrop[0]) {
-            $("#eligibility").html("Already Received")
-            $("#withdrawAirdropTokens").attr("disabled", "disabled")
-        } else {
-            //If they just requested the airdrop, don't confuse them
-            if (!tokenstats.airdropPending) {
-                $("#eligibility").html("Hit Button For Tokens")
-                $("#withdrawAirdropTokens").removeAttr("disabled")
+        dropper.numberOfTokensPerUser().then((amount) => {
+            tokenstats.airdropsize = amount[0].toString(10);
+            $("#airdropAmount").html(rawToDecimal(tokenstats.airdropsize, 18));
+        })
+
+        dropper.airdroppedUsers(myAddress).then((hasGottenAirdrop) => {
+            if (hasGottenAirdrop[0]) {
+                $("#eligibility").html("Already Received")
+                $("#withdrawAirdropTokens").attr("disabled", "disabled")
+            } else {
+                //If they just requested the airdrop, don't confuse them
+                if (!tokenstats.airdropPending) {
+                    $("#eligibility").html("Hit Button For Tokens")
+                    $("#withdrawAirdropTokens").removeAttr("disabled")
+                }
             }
-        }
-    })
+        })
+    }
 
 }
 
 
   $(document).ready(() => {
-    
-    $("#withdrawAirdropTokens").on("click", () => {
-        console.log("main.js 557: Withdraw Button Clicked")
-        $("#eligibility").html("Please authorize the transaction in your wallet to continue...")
-        $("#withdrawAirdropTokens").attr("disabled", "disabled")
+    if (dropperAddress != '0x0') {
+        $("#withdrawAirdropTokens").on("click", () => {
+            console.log("main.js 557: Withdraw Button Clicked")
+            $("#eligibility").html("Please authorize the transaction in your wallet to continue...")
+            $("#withdrawAirdropTokens").attr("disabled", "disabled")
 
-        dropper.withdrawAirdropTokens({"from": myAddress}).then((tx) => {
-                $("#eligibility").html("Transaction Processing: <a href='https://etherscan.io/tx/"+ tx+"'>"+tx+"</a>");
-                tokenstats.airdropPending = true;
+            dropper.withdrawAirdropTokens({"from": myAddress}).then((tx) => {
+                    $("#eligibility").html("Transaction Processing: <a href='https://etherscan.io/tx/"+ tx+"'>"+tx+"</a>");
+                    tokenstats.airdropPending = true;
+            })
         })
-    })
+    }
 
 
     setTimeout(() => {

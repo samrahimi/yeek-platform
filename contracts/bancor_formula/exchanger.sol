@@ -97,7 +97,7 @@ contract Exchanger is Administered {
     event Sell(address indexed seller, uint256 amountInToken, uint256 amountInWei);
 
 
-
+    // The following methods are for the owner and admins to manage the Exchanger
     
     /**
      @dev Deposit tokens to the reserve.
@@ -127,9 +127,35 @@ contract Exchanger is Administered {
         msg.sender.transfer(amountInWei); //Transfers in wei
     }
 
+    /**
+     @dev Enable trading
+     */
+     function enable() onlyAdmin public {
+         enabled = true;
+     }
+
+     /**
+      @dev Disable trading
+     */
+     function disable() onlyAdmin public {
+         enabled = false;
+     }
+
+     /**
+      @dev Play central banker and set the fractional reserve ratio, from 1 to 1000000 ppm.
+      It is highly disrecommended to do this while trading is enabled! If you don't know what 
+      a fractional reserve is, please put this contract away and go work for your local government.
+     */
+     function setReserveWeight(uint ppm) onlyAdmin public {
+         require (ppm>0 && ppm<=1000000);
+         weight = ppm;
+     }
+
+    //These methods return information about the exchanger, and the buy / sell rates offered on the Token / ETH pairing.
+    //They can be called without gas from any client.
 
     /**  
-     @dev Withdraw ether from the reserve
+     @dev Audit the reserve balances, in the base token and in ether
      */
     function getReserveBalances() public view returns (uint256, uint256) {
         return (tokenContract.balanceOf(this), address(this).balance);
@@ -175,6 +201,21 @@ contract Exchanger is Administered {
         ); 
     }
 
+    //buy and sell execute live trades against the exchanger. For either method, 
+    //you must specify your minimum return (in total tokens or ether that you expect to receive for your trade)
+    //this protects the trader against slippage due to other orders that make it into earlier blocks after they 
+    //place their order. 
+    //
+    //With buy, send the amount of ether you want to spend on the token - you'll get it back immediately if minPurchaseReturn
+    //is not met or if this Exchanger is not in a condition to service your order (usually this happens when there is not a full 
+    //reserve of tokens to satisfy the stated weight)
+    //
+    //With sell, first approve the exchanger to spend the number of tokens you want to sell
+    //Then call sell with that number and your minSaleReturn. The token transfer will not happen 
+    //if the minSaleReturn is not met.
+    //
+    //Sales always go through, as long as there is any ether in the reserve... but those dumping massive quantities of tokens
+    //will naturally be given the shittest rates.
 
     /**
      @dev Buy tokens with ether. 

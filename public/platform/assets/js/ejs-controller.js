@@ -2,6 +2,20 @@ let loadedControls ={};
 let isDefined = function(v) {
     return (typeof v !== 'undefined')
 }
+// Read a page's GET URL variables and return them as an associative array.
+let queryString = function (key)
+{
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars[key];
+}
+
 /* Renders all regions in a document that are inside <script template-engine='ejs'>
  * Has the advantage of only parsing the relevant parts of the DOM, 
  * and rendering them in parallel! */

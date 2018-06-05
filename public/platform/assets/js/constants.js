@@ -1,7 +1,7 @@
 /* App-specific constants, contract ABIs, and utility methods */
 const maxDecimalPrecision = 3;
-const tokenAddress = '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
-const dropperAddress = '0xe77078cbbc4592e06849fd2fdddb4721de6e42c8';
+const tokenAddress = queryString("token_address") || '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
+const dropperAddress = queryString("airdrop_address") || '0xe77078cbbc4592e06849fd2fdddb4721de6e42c8';
 let dropper, token, eth, myAddress = null;
 var zeros = [
     '',
@@ -503,27 +503,12 @@ const tokenABI = [
 ];
 
 let rawToDecimal = function(bigNumStr, decimals) {
-    let exponent= bigNumStr.substring(0, bigNumStr.length - decimals);
-    let mantissa = bigNumStr.substring(bigNumStr.length - decimals, bigNumStr.length);
-    if (mantissa.length > maxDecimalPrecision)
-        mantissa = mantissa.substring(0,maxDecimalPrecision);
-    if (exponent == '')
-        exponent = "0"
-    return exponent+"."+mantissa;
-  }
-  
-  let decimalToRaw = function(num, decimals) {
-    let paddingLength = decimals
-    let nstr = num.toString();
-    if (nstr.indexOf('.') > -1) {
-      let mantissa = nstr.substring(nstr.indexOf('.'));
-      paddingLength -= mantissa.length;
-      nstr = nstr.replace('.', '');
-    }
-
-    for (var i=0; i<paddingLength; i++) 
-      nstr += "0";
-    return nstr;
-  }
-
-  
+    let bn = new web3.BigNumber(bigNumStr);
+    let exp = eval("1e"+decimals);
+    return bn.div(exp).toString();
+}
+let decimalToRaw = function(num, decimals) {
+    let bn = new web3.BigNumber(num);
+    let exp = eval("1e"+decimals);
+    return bn.mul(exp).toFixed();
+}
