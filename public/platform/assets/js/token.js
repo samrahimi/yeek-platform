@@ -3,25 +3,25 @@ let tokenstats = {airdropPending: false}
 let refreshDisplayData = () => {
     
 
-    token = eth.contract(tokenABI).at(tokenAddress);
-    dropper = eth.contract(dropperABI).at(dropperAddress);
+    token = eth.contract(tokenABI).at(window.model.tokenAddress);
+    dropper = eth.contract(dropperABI).at(window.model.dropperAddress);
 
     /* Begin load token info */
     token.totalSupply().then((totalSupply) => {
         tokenstats.totalSupply = totalSupply[0].toString(10);
-        $("#totalSupply").html(rawToDecimal(tokenstats.totalSupply, 18));
+        $(".totalSupply").html(rawToDecimal(tokenstats.totalSupply, 18));
     // result <BN ...>  4500000
     })
 
     token.symbol().then((sym) => {
         tokenstats.symbol = sym[0];
         $(".symbol").html(tokenstats.symbol);
-        $("#etherscanUrl").attr("href", "https://etherscan.io/token/"+tokenAddress);
+        $(".etherscanUrl").attr("href", "https://etherscan.io/token/"+window.model.tokenAddress);
     })
 
     token.name().then((sym) => {
         tokenstats.name = sym[0];
-        $("#tokenName").html(tokenstats.name);
+        $(".tokenName").html(tokenstats.name);
     })
     token.decimals().then((val) => {
         tokenstats.decimals = val[0].toString(10);
@@ -42,7 +42,7 @@ let refreshDisplayData = () => {
       
     /* Begin Load Airdropper Info */
 
-    if (dropperAddress != '0x0') {
+    if (window.model.dropperAddress != '0x0') {
         dropper.tokensDispensed().then((amount) => {
             tokenstats.dispensed = amount[0].toString(10);
             $("#tokensDispensed").html(rawToDecimal(tokenstats.dispensed, 18));
@@ -74,21 +74,9 @@ let refreshDisplayData = () => {
 
 }
 
-
-  $(document).ready(() => {
-    if (dropperAddress != '0x0') {
-        $("#withdrawAirdropTokens").on("click", () => {
-            console.log("main.js 557: Withdraw Button Clicked")
-            $("#eligibility").html("Please authorize the transaction in your wallet to continue...")
-            $("#withdrawAirdropTokens").attr("disabled", "disabled")
-
-            dropper.withdrawAirdropTokens({"from": myAddress}).then((tx) => {
-                    $("#eligibility").html("Transaction Processing: <a href='https://etherscan.io/tx/"+ tx+"'>"+tx+"</a>");
-                    tokenstats.airdropPending = true;
-            })
-        })
-    }
-
+//Init function / entry point. Call from main document ready method 
+//after data has been pulled from db and is available on window.model
+let bindTokenData = () => {
 
     setTimeout(() => {
         if (typeof web3 == 'undefined') {
@@ -99,12 +87,26 @@ let refreshDisplayData = () => {
         myAddress = window.web3.eth.defaultAccount;
         eth = new Eth(window.web3.currentProvider);
 
+        if (window.model.dropperAddress != '0x0') {
+            $("#withdrawAirdropTokens").on("click", () => {
+                console.log("main.js 557: Withdraw Button Clicked")
+                $("#eligibility").html("Please authorize the transaction in your wallet to continue...")
+                $("#withdrawAirdropTokens").attr("disabled", "disabled")
+    
+                dropper.withdrawAirdropTokens({"from": myAddress}).then((tx) => {
+                        $("#eligibility").html("Transaction Processing: <a href='https://etherscan.io/tx/"+ tx+"'>"+tx+"</a>");
+                        tokenstats.airdropPending = true;
+                })
+            })
+        }
+    
+    
 
         console.log("Account: "+myAddress);
-        $("#ethAddress").html(myAddress.substring(0,10)+"...");
+        $(".ethAddress").html(myAddress.substring(0,10)+"...");
 
         refreshDisplayData();
         //Poll the blockchain, refresh the display
-        setInterval(refreshDisplayData, 5000)
-    }, 2000)
-})
+        setInterval(refreshDisplayData, 10000)
+    }, 1000)
+}

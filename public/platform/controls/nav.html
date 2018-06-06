@@ -49,65 +49,135 @@
             <!--end nav collapse-->
         </nav>
         <% if (location.href.toLowerCase().indexOf('gig') > 0) {%>
-        <div class="container">
-            <ul class="nav bg-light nav-tabs mb-2" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="true">Find A Gig</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="false">Post Gig</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">My Gigs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">Arbitrate</a>
-                </li>
-
-            </ul>
-        </div>
-        <%}
-        if (location.href.toLowerCase().indexOf('token') > 0) { %>
             <div class="container">
-                <div class="row" style="font-size:0.8rem;background-color:#DDDDDD;padding:10px;">
-                    <div class="col-6-md col-12-sm">
-                        <h3><img src="assets/img/yeek_logo.png" width="64" /><span id="tokenName"></span></h3>
-                    </div>
-                    
-                    <div class="col" style="text-align:center;margin-top:25px">
-                                    
-                                    <b>Balance(<span class="symbol"></span>): </b>
-                                    <span id="tokenBalance">Loading...</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <ul class="nav bg-light nav-tabs mb-2" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="true">Find A Gig</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="false">Post Gig</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">My Gigs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">Arbitrate</a>
+                    </li>
 
-                                    <b>Balance (ETH): </b>
-                                    <span id="etherBalance"></span>
+                </ul>
+            </div>
+            <%}
+        if (location.href.toLowerCase().indexOf('token') > 0) { %>
+                <!-- Header - Token Detail Pages -->
+                <div class="bg-primary text-white">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col p-2" style="text-align:center">
+
+                    Balance (<span class="symbol"></span>): <span id="tokenBalance">Loading...</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Balance (ETH): <span id="etherBalance"></span>
+
+
+                            </div>
+                            <!--end of col-->
+                        </div>
+                        <!--end of row-->
                     </div>
-                 </div>
-            
-                    <ul class="nav bg-light nav-tabs mb-2" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="true">Company Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="false">Available Gigs</a>
-                        </li>
-                        <li class="nav-item">
-                                <a class="nav-link active show" id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">Token Info</a>
-                        </li>    
-                        <li class="nav-item">
-                            <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">Get Free Tokens!</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="tab5" data-toggle="tab" href="#tab5-content" role="tab" aria-selected="false">Trade Tokens (Live!)</a>
-                        </li>
-        
-                    </ul>
-                    
-                </div>    
-                
-            
-        <%} %>
+                    <!--end of container-->
+                </div>
+
+                <section class="bg-white" style="padding-bottom:2rem">
+                    <div class="container">
+
+                                <div class="row justify-content-center">
+                                    <div class="col-12 col-md-8">
+                                        <div class="media">
+                                            <img alt="Token Symbol" src="<%=tokenData.logo_url%>" class="mr-md-5 avatar avatar-xlg" />
+                                            <div class="media-body">
+                                                <div class="mb-3">
+                                                    <h1 class="h2 mb-2" id="tokenName"></h1>
+                                                    <span class="text-muted">
+                                                        <i class="icon-location"></i>
+                                                        <span class="symbol"></span>
+                                                        <br />
+                                                        <!--
+                                                        <i class="icon-location"></i>
+                                                        <span class="totalSupply"></span> total supply
+                                                        <br />
+                                                        -->
+                                                        <i class="icon-location"></i>
+                                                        <a class="etherscanUrl">
+                                                            <%=tokenAddress.substring(0,20)%>
+                                                        </a>
+                                                        <br />
+                                                        <i class="icon-location"></i>
+                                                        <span class="tokenPrice text-positive">0.000156</span>
+                                                    </span>
+                                                </div>
+                                                <p>
+                                                </p>
+                                                <div>
+                                                    <button class="btn btn-outline-primary" data-toggle="button">
+                                                        <i class="icon-add-user"></i> Follow</button>
+                                                    <button class="btn btn-outline-primary">
+                                                        <i class="icon-mail"></i>
+                                                    </button>
+                                                    <div class="dropdown d-inline-block">
+                                                        <button class="btn btn-outline-primary dropdown-toggle dropdown-toggle-no-arrow" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                            <i class="icon-dots-three-horizontal"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
+                                                            <a class="dropdown-item" href="app-profile-creator.html#">Add to group</a>
+                                                            <a class="dropdown-item" href="app-profile-creator.html#">Share Profile</a>
+                                                            <div class="dropdown-divider"></div>
+                                                            <a class="dropdown-item" href="app-profile-creator.html#">Block</a>
+                                                            <a class="dropdown-item" href="app-profile-creator.html#">Report</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end of col-->
+                                </div>
+                                <!--end of row-->
+                            </div>
+                            <!--end of container-->
+                </section>
+                <!-- Subnav Tabs - Token profile, token exchange, airdorpper, ... -->
+                <section class="flush-with-above space-0">
+                    <div class="bg-white">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col mb-1">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item">
+                                                    <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="true">Profile</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="false">Trade</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">Gigs</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">Airdrop!</a>
+                                                </li>
+                                    </ul>
+                                </div>
+                                <!--end of col-->
+                            </div>
+                            <!--end of row-->
+                        </div>
+                        <!--end of container-->
+                    </div>
+                </section>
+
+
+
+
+                <%} %>
+                    </div>
+                    <!--end of container-->
+                    </div>
     </div>
-    <!--end of container-->
-</div>
-</div>

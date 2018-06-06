@@ -1,7 +1,5 @@
 /* App-specific constants, contract ABIs, and utility methods */
 const maxDecimalPrecision = 3;
-const tokenAddress = queryString("token_address") || '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
-const dropperAddress = queryString("airdrop_address") || '0xe77078cbbc4592e06849fd2fdddb4721de6e42c8';
 let dropper, token, eth, myAddress = null;
 var zeros = [
     '',

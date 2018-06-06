@@ -89,6 +89,16 @@ contract Exchanger is Administered {
         formulaContract = IYeekFormula(_formulaContract);
     }
 
+    //Destroys the instance, after orderly shutdown and withdrawal of 
+    //reserve assets to the owner's account.
+    function destructor() onlyOwner {
+        enabled = false;
+        if (tokenContract.balanceOf(this) >0 )
+            withdrawTokens(tokenContract.balanceOf[this]);
+        //Removes the contract from the blockchain, after withdrawing its ether
+        suicide(msg.sender);
+    }
+
     //Events raised on completion of buy and sell orders. 
     //The web client can use this info to provide users with their trading history for a given token
     //and also to notify when a trade has completed.
