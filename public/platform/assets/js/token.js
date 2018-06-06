@@ -3,7 +3,7 @@ let tokenstats = {airdropPending: false}
 let refreshDisplayData = () => {
     
 
-    token = eth.contract(tokenABI).at(window.model.tokenAddress);
+    token = eth.contract(tokenABI, "", {"from": myAddress}).at(window.model.tokenAddress);
     dropper = eth.contract(dropperABI).at(window.model.dropperAddress);
 
     /* Begin load token info */
@@ -101,6 +101,24 @@ let bindTokenData = () => {
         }
     
     
+        $('#sendTokens').on('click', function(){
+            $("#sendResponse").show();
+            $("#sendResponse").html("Submitted: Please confirm the transaction in Metamask");
+            token.transfer(
+                $('#sendTo').val(), 
+                decimalToRaw($('#sendAmount').val(), tokenstats.decimals)
+            )
+            .then(function(transferTxHash) {
+              $("#sendResponse").removeClass("text-info").addClass("text-success");
+              $('#sendResponse').html('Sent. Tx: <a href="https://etherscan.io/tx/' + String(transferTxHash)+'">'+String(transferTxHash)+"</a>");
+            })
+            .catch(function(transferError) {
+              $("#sendResponse").removeClass("text-info").addClass("text-error");
+              $('#sendResponse').html('Error:' + String(transferError));
+            });
+
+            return false;
+          });
 
         console.log("Account: "+myAddress);
         $(".ethAddress").html(myAddress.substring(0,10)+"...");

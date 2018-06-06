@@ -26,16 +26,16 @@
     <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-functions.js"></script>
 
     <script>
-    // Initialize Firebase
-    var config = {
-        apiKey: "AIzaSyCUhpR-X9vCd5Vy7vmJpjKCn9dn_RviNpo",
-        authDomain: "yeek-platform.firebaseapp.com",
-        databaseURL: "https://yeek-platform.firebaseio.com",
-        projectId: "yeek-platform",
-        storageBucket: "yeek-platform.appspot.com",
-        messagingSenderId: "662027695848"
-    };
-    firebase.initializeApp(config);
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyCUhpR-X9vCd5Vy7vmJpjKCn9dn_RviNpo",
+            authDomain: "yeek-platform.firebaseapp.com",
+            databaseURL: "https://yeek-platform.firebaseio.com",
+            projectId: "yeek-platform",
+            storageBucket: "yeek-platform.appspot.com",
+            messagingSenderId: "662027695848"
+        };
+        firebase.initializeApp(config);
     </script>
 
 
@@ -46,135 +46,130 @@
 
     <script type="text/javascript" src="assets/js/constants.js"></script>
     <script type="text/javascript" src="assets/js/token.js"></script>
-
+    <style>
+            .video_container {
+                position: relative;
+                width: 100%;
+                height: 0;
+                padding-bottom: 56.25%;
+            }
+    
+            .video {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    
 
 </head>
 
 <body>
-        <script>
-                window.db = firebase.firestore();
-        
-                let firestoreHelper = {
-                    getDocument(collectionName, id) {
-                        var docRef = db.collection("cities").doc("SF");
-        
-                        docRef.get().then(function(doc) {
-                            if (doc.exists) {
-                                console.log("Document data:", doc.data());
-                            } else {
-                                // doc.data() will be undefined in this case
-                                console.log("No such document!");
-                            }
-                        }).catch(function(error) {
-                            console.log("Error getting document:", error);
-                        });
-                    }
-                }
-                $(document).ready(() => {  
-                    const tokenAddress = queryString("token_address") || '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
-                    db.collection("listed_tokens").doc(tokenAddress).get().then ((doc) => {
-                        //Declarative import of HTML web controls using <ctrl> tag
-                            window.tokenData = doc.data();
-        
-                            window.model =  
-                            {
-                                tokenAddress: tokenAddress,
-                                dropperAddress: tokenData.airdropper_address,
-                                exchangerAddress: tokenData.exchanger_address,
-                                menuData: {
-                                    topLevel:["Platform (Beta)", "Company", "Token", "Exchange"],
-                                    pageTitle: "Yeek Exchange",
-                                    pageDescription:"Trade tokens issued by members of the Yeek Community.",
-                                    tokenAddress: tokenAddress,
-                                    dropperAddress: doc.airdropper_contract,
-                                    exchangerAddress: doc.exchanger_contract
-                                }
-                            }
-                            renderDefaultEjsTemplate(model);
-                            loadControls(model);
-                            
-                            bindTokenData();
-                    })
-                })
-        
-            </script>
-          
-    
-    
-          <script type="text/html" template-engine="ejs">
+    <script>
+        window.db = firebase.firestore();
 
-          <div class="nav-container">
-                <div>
-                    <nav class="navbar navbar-expand-lg navbar-fixed-top bg-dark navbar-dark">
-                        <div class="container">
-                            <a class="navbar-brand" href="index.html">
-                                <img alt="Yeek Logo" src="assets/img/logo.png" />
-                            </a>
-                            <span style="font-size:1.5rem" class="d-lg-none">
-                                <%=menuData.pageTitle%>
-                            </span>
-                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                                aria-label="Toggle navigation">
-                                <i class="icon-menu h4"></i>
-                            </button>
-                            <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                                <!-- The control's datasource is organized by menu item type. The topLevel[] items are the main menu items -->
-                                <ul class="navbar-nav">
-                                    <% for (var i=0; i<menuData.topLevel.length; i++) {%>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#">
-                                                <%=menuData.topLevel[i]%>
-                                            </a>
-                                        </li>
-                                        <% } %>
+        let firestoreHelper = {
+            getDocument(collectionName, id) {
+                var docRef = db.collection("cities").doc("SF");
+
+                docRef.get().then(function (doc) {
+                    if (doc.exists) {
+                        console.log("Document data:", doc.data());
+                    } else {
+                        // doc.data() will be undefined in this case
+                        console.log("No such document!");
+                    }
+                }).catch(function (error) {
+                    console.log("Error getting document:", error);
+                });
+            }
+        }
+        $(document).ready(() => {
+            const tokenAddress = queryString("token_address") || '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
+            db.collection("listed_tokens").doc(tokenAddress).get().then((doc) => {
+                //Declarative import of HTML web controls using <ctrl> tag
+                window.tokenData = doc.data();
+
+                window.model =
+                    {
+                        tokenAddress: tokenAddress,
+                        dropperAddress: tokenData.airdropper_address,
+                        exchangerAddress: tokenData.exchanger_address,
+                        menuData: {
+                            topLevel: ["Platform (Beta)", "Company", "Token", "Exchange"],
+                            pageTitle: "Yeek Exchange",
+                            pageDescription: "Trade tokens issued by members of the Yeek Community.",
+                            tokenAddress: tokenAddress,
+                            dropperAddress: doc.airdropper_contract,
+                            exchangerAddress: doc.exchanger_contract
+                        }
+                    }
+                renderDefaultEjsTemplate(model);
+                loadControls(model);
+
+                bindTokenData();
+            })
+        })
+
+    </script>
+
+
+
+    <script type="text/html" template-engine="ejs">
+                    <div class="sticky-top">
+                        <!-- Main Nav -->
+                        <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                            <div class="container">
+                                <a class="navbar-brand" href="index.html">
+                                    <img alt="Yeek Logo" src="assets/img/logo.png" />
+                                </a>
+                                <span style="font-size:1.5rem" class="d-lg-none">
+                                    <%=menuData.pageTitle%>
+                                </span>
+                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                                    aria-label="Toggle navigation">
+                                    <i class="icon-menu h4"></i>
+                                </button>
+                                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                                    <!-- The control's datasource is organized by menu item type. The topLevel[] items are the main menu items -->
+                                    <ul class="navbar-nav">
+                                        <% for (var i=0; i<menuData.topLevel.length; i++) {%>
                                             <li class="nav-item">
-                                                <a class="nav-link d-lg-none" href="#">My Profile</a>
+                                                <a class="nav-link" href="#">
+                                                    <%=menuData.topLevel[i]%>
+                                                </a>
                                             </li>
-                                </ul>
-            
-                                <ul class="navbar-nav d-lg-block d-none">
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle dropdown-toggle-no-arrow p-lg-0" href="http://example.com" id="dropdown01-5" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            <img alt="Image" src="assets/img/avatar-male-3.jpg" class="avatar avatar-xs">
-                                            <span class="badge badge-danger">8</span>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right" aria-labelledby="dropdown01-5">
-                                            <a class="dropdown-item" href="components-bootstrap.html#">My Gigs
+                                            <% } %>
+                                                <li class="nav-item">
+                                                    <a class="nav-link d-lg-none" href="#">My Profile</a>
+                                                </li>
+                                    </ul>
+                
+                                    <ul class="navbar-nav d-lg-block d-none">
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle dropdown-toggle-no-arrow p-lg-0" href="http://example.com" id="dropdown01-5" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                <img alt="Image" src="assets/img/avatar-male-3.jpg" class="avatar avatar-xs">
                                                 <span class="badge badge-danger">8</span>
                                             </a>
-                                            <a class="dropdown-item" href="components-bootstrap.html#">My Arbitrations</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="components-bootstrap.html#">Profile</a>
-                                        </div>
-                                    </li>
-                                </ul>
+                                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right" aria-labelledby="dropdown01-5">
+                                                <a class="dropdown-item" href="components-bootstrap.html#">My Gigs
+                                                    <span class="badge badge-danger">8</span>
+                                                </a>
+                                                <a class="dropdown-item" href="components-bootstrap.html#">My Arbitrations</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" href="components-bootstrap.html#">Profile</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                        <!--end nav collapse-->
-                    </nav>
-                    <% if (location.href.toLowerCase().indexOf('gig') > 0) {%>
-                        <div class="container">
-                            <ul class="nav bg-light nav-tabs mb-2" id="myTab" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="true">Find A Gig</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="false">Post Gig</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">My Gigs</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">Arbitrate</a>
-                                </li>
-            
-                            </ul>
-                        </div>
-                        <%}
-                    if (location.href.toLowerCase().indexOf('token') > 0) { %>
-                            <!-- Header - Token Detail Pages -->
-                            <div class="bg-primary text-white">
+                            <!--end nav collapse-->
+                        </nav>
+                        <!-- User Balance - Eth and Current Token -->
+                        <div class="bg-primary text-white">
                                 <div class="container">
                                     <div class="row justify-content-center">
                                         <div class="col p-2" style="text-align:center">
@@ -188,142 +183,60 @@
                                     <!--end of row-->
                                 </div>
                                 <!--end of container-->
-                            </div>
-            
-                            <section class="bg-white" style="padding-bottom:2rem">
-                                <div class="container">
-            
-                                            <div class="row justify-content-center">
-                                                <div class="col-12 col-md-8">
-                                                    <div class="media">
-                                                        <img alt="Token Symbol" src="<%=tokenData.logo_url%>" class="mr-md-5 avatar avatar-xlg" />
-                                                        <div class="media-body">
-                                                            <div class="mb-3">
-                                                                <h1 class="h2 mb-2 tokenName"></h1>
-                                                                <span class="text-muted">
-                                                                    <i class="icon-location"></i>
-                                                                    <span class="symbol"></span>
-                                                                    <br />
-                                                                    <!--
-                                                                    <i class="icon-location"></i>
-                                                                    <span class="totalSupply"></span> total supply
-                                                                    <br />
-                                                                    -->
-                                                                    <i class="icon-location"></i>
-                                                                    <a class="etherscanUrl">
-                                                                        <%=menuData.tokenAddress.substring(0,20)%>
-                                                                    </a>
-                                                                    <br />
-                                                                    <i class="icon-location"></i>
-                                                                    <span class="tokenPrice text-positive">0.000156</span>
-                                                                </span>
-                                                            </div>
-                                                            <p>
-                                                            </p>
-                                                            <div>
-                                                                <form class="form-inline">
-                                                                            <div class="form-group mb-2">
-                                                                              <label for="sendTo" class="sr-only">Send To:</label>
-                                                                              <input type="number" class="form-control-plaintext" id="sendTo" placeholder="Ethereum Address">
-                                                                            </div>
-                                                                            <button type="submit" class="btn btn-primary mb-2">Send <span class="symbol"></span></button>
-                                                                    </form>    
-                                                                    
-                                                                <!--
-                                                                <button class="btn btn-outline-primary" data-toggle="button">
-                                                                    <i class="icon-add-user"></i> Follow</button>
-                                                                <button class="btn btn-outline-primary">
-                                                                    <i class="icon-mail"></i>
-                                                                </button>
-                                                                <div class="dropdown d-inline-block">
-                                                                    <button class="btn btn-outline-primary dropdown-toggle dropdown-toggle-no-arrow" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                                                        aria-haspopup="true" aria-expanded="false">
-                                                                        <i class="icon-dots-three-horizontal"></i>
-                                                                    </button>
-                                                                    <div class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton">
-                                                                        <a class="dropdown-item" href="app-profile-creator.html#">Add to group</a>
-                                                                        <a class="dropdown-item" href="app-profile-creator.html#">Share Profile</a>
-                                                                        <div class="dropdown-divider"></div>
-                                                                        <a class="dropdown-item" href="app-profile-creator.html#">Block</a>
-                                                                        <a class="dropdown-item" href="app-profile-creator.html#">Report</a>
-                                                                    </div>
-                                                                </div>
-                                                                -->
-                                                            </div>
+                        </div>
+                    </div>
+
+          
+                        <!-- Subnav Tabs - Token profile, token exchange, airdorpper, ... -->
+                        <section class="flush-with-above space-0 fixed-bottom">
+                                            <div class="bg-white">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col mb-1">
+                                                            <ul class="nav nav-tabs justify-content-between" id="myTab" role="tablist">
+                                                                    <li class="nav-item">
+                                                                            <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="true">
+                                                                                <i class="icon-info"></i> 
+                                                                                Profile</a>
+                                                                        </li>
+                                                                        <li class="nav-item">
+                                                                            <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="false">
+                                                                                <i class="icon-swap"></i> 
+                                                                                Trade</a>
+                                                                        </li>
+                                                                        <li class="nav-item">
+                                                                            <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">
+                                                                                <i class="icon-tools"></i> 
+                                                                                Gigs</a>
+                                                                        </li>
+                                                                        <li class="nav-item">
+                                                                            <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">
+                                                                                <i class="icon-thunder-cloud"></i> 
+                                                                                Airdrop!</a>
+                                                                        </li>
+                                                            </ul>
                                                         </div>
+                                                        <!--end of col-->
                                                     </div>
+                                                    <!--end of row-->
                                                 </div>
-                                                <!--end of col-->
+                                                <!--end of container-->
                                             </div>
-                                            <!--end of row-->
-                                        </div>
-                                        <!--end of container-->
-                            </section>
-                            <!-- Subnav Tabs - Token profile, token exchange, airdorpper, ... -->
-                            <section class="flush-with-above space-0">
-                                <div class="bg-white">
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col mb-1">
-                                                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                        <li class="nav-item">
-                                                                <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="true">Profile</a>
-                                                            </li>
-                                                            <li class="nav-item">
-                                                                <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="false">Trade</a>
-                                                            </li>
-                                                            <li class="nav-item">
-                                                                <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">Gigs</a>
-                                                            </li>
-                                                            <li class="nav-item">
-                                                                <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">Airdrop!</a>
-                                                            </li>
-                                                </ul>
-                                            </div>
-                                            <!--end of col-->
-                                        </div>
-                                        <!--end of row-->
-                                    </div>
-                                    <!--end of container-->
-                                </div>
-                            </section>
+                                        </section>
+                        
             
-            
-            
-            
-                            <%} %>
-                                </div>
-                                <!--end of container-->
-                                </div>
-                </div>
     
    
             </script>
-                <!--
+    <!--
     <ctrl src="./controls/nav.html?999" id="mainNav" bind-to="menuData" doNotWrap="true"></ctrl>
     -->
 
 
-    <style>
-    .video_container {
-        position: relative;
-        width: 100%;
-        height: 0;
-        padding-bottom: 56.25%;
-    }
-    .video {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    }
-    </style>
-    <div class="container">
-            <div class="tab-content" id="myTabContent">
-                    <!-- Browse gigs and featured companies-->
-                    <div class="tab-pane fade show active" id="tab1-content" role="tabpanel">
-                        <!--
+        <div class="tab-content" id="myTabContent">
+            <!-- Browse gigs and featured companies-->
+            <div class="tab-pane fade show active" id="tab1-content" role="tabpanel">
+                <!--
                         <div class="row">
                             <div class="col-6-md col-sm">
                                     <div class="video_container"><iframe src="//www.youtube.com/embed/yCOY82UdFrw" frameborder="0" allowfullscreen class="video"></iframe></div>
@@ -336,8 +249,72 @@
                             </div>
                         </div>
                         -->
-                        <script type="text/html" template-engine="ejs">
+                <script type="text/html" template-engine="ejs">
+                        <!-- Token header -->    
+                        <section class="bg-white" style="padding-bottom:1rem">
+                                <div class="container">
+            
+                                            <div class="row justify-content-center">
+    
+                                                <div class="col-12 col-md-8">
+                                                    <div class="media">
+                                                        <img alt="Token Symbol" src="<%=tokenData.logo_url%>" class="mr-md-5 avatar avatar-xlg" />
+                                                        <div class="media-body">
+                                                            <div class="mb-3">
+                                                                <h1 class="h2 mb-2 tokenName"></h1>
+                                                                <span class="text-muted">
+                                                                    <i class="icon-info"></i>
+                                                                    <span class="symbol"></span>
+                                                                    <br />
+                                                                    <!--
+                                                                    <i class="icon-location"></i>
+                                                                    <span class="totalSupply"></span> total supply
+                                                                    <br />
+                                                                    -->
+                                                                    <i class="icon-link"></i>
+                                                                    <a class="etherscanUrl">
+                                                                        <%=menuData.tokenAddress.substring(0,20)%>
+                                                                    </a>
+                                                                    <br />
+                                                                    <i class="icon-line-graph"></i>
+                                                                    <span class="tokenPrice text-positive">0.000156 ETH (<span class="text-primary">3.28%</span>)</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+    
+    
+                                                </div>
+                                                <!--end of col-->
+                                            </div>
+                                            <!--end of row-->
+                                        </div>
+                                        <!--end of container-->
 
+                                                                <!-- Token sender widget -->
+                        <div class="container mt-2">
+                                <h2>Send Tokens</h2>
+                                <form>
+                                    <div class="form-row mt-2 mb-2 justify-content-center">
+
+                                        <div class="col-5">
+                                            <input type="text" id="sendTo" class="form-control" placeholder="Address">
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" id="sendAmount" class="form-control" placeholder="Amount">
+                                        </div>
+                                        <div class="col-3">
+                                                <button style="width:100%" type="button" id="sendTokens" class="btn btn-primary">Send</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <span class="text-info" style="display:none" id="sendResponse"></span>
+                        </div>
+
+                        </section>
+                    
+                        <!-- Company profile sections -->
+                        <div class="container mt-2">
                         <div class="row">
                             <div class="col">
                                 <h2><%=tokenData.company_info.name%></h2>
@@ -347,30 +324,23 @@
                                         <i class="icon-location"></i>
                                         <%=tokenData.company_info.city%>, <%=tokenData.company_info.country%>
                                 </span><br />
-                                <h2>Send <%=tokenData.trading_symbol%></h2>
-                                <form class="form-inline">
-                                        <div class="form-group mb-2">
-                                          <label for="sendTo" class="sr-only">Send To:</label>
-                                          <input type="number" class="form-control-plaintext" id="sendTo" placeholder="Recipient's Ethereum Address">
-                                        </div>
-                                        <button type="submit" class="btn btn-primary mb-2">Transfer</button>
-                                </form>    
                             </div>
                         </div>
-                    </script>                        
+                        </div>
+                    </script>
 
-                    </div>
-                    <!-- Post Gig-->
-                    <div class="tab-pane fade" id="tab2-content" role="tabpanel">
-                        TODO
-                    </div>
-                    <!-- My Gigs -->
-                    <div class="tab-pane fade" id="tab3-content" role="tabpanel">
-                        TODO
-                    </div>
-                    <!-- Airdrop Tab -->
-                    <div class="tab-pane fade" id="tab4-content" role="tabpanel">
-                        <script type="text/html" template-engine="ejs">
+            </div>
+            <!-- Post Gig-->
+            <div class="tab-pane fade" id="tab2-content" role="tabpanel">
+                TODO
+            </div>
+            <!-- My Gigs -->
+            <div class="tab-pane fade" id="tab3-content" role="tabpanel">
+                TODO
+            </div>
+            <!-- Airdrop Tab -->
+            <div class="tab-pane fade" id="tab4-content" role="tabpanel">
+                <script type="text/html" template-engine="ejs">
                             <% if (window.model.dropperAddress != '0x0') { %>
 
                                 <h2>Airdrop!</h2>
@@ -410,10 +380,9 @@
                                     <p>Sorry, the airdrop has ended.</p>
                                 <%}%>
                                 </script>
-                    </div>
             </div>
-      </div>            
-    </div>
+        </div>
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
     <script type="text/javascript" src="assets/js/jquery.smartWizard.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.0.10/flickity.pkgd.min.js"></script>
@@ -425,4 +394,5 @@
     <script type="text/javascript" src="assets/js/theme.js"></script>
 
 </body>
+
 </html>
