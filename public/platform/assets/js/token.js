@@ -1,10 +1,20 @@
 let tokenstats = {airdropPending: false}
-
+let pricing = {buy:0, sell:0}
+let exchangeUI = {
+    direction: "buy",
+    maxSlippage: .05
+}
 let refreshDisplayData = () => {
     
 
     token = eth.contract(tokenABI, "", {"from": myAddress}).at(window.model.tokenAddress);
     dropper = eth.contract(dropperABI).at(window.model.dropperAddress);
+    exchanger = eth.contract(exchangerABI, "", {"from": myAddress}).at(window.model.exchangerAddress)
+
+    //Quote price is halfway btwn bid and ask
+    let quotePrice = getQuotePriceForToken();
+
+    $(".quote_price").html(quotePrice >0 ? quotePrice.toString().substring(0,10): "...");
 
     /* Begin load token info */
     token.totalSupply().then((totalSupply) => {
@@ -74,6 +84,56 @@ let refreshDisplayData = () => {
 
 }
 
+//Returns the mean buy and sell prices and async fetches updated values.
+let getQuotePriceForToken = () => {
+    if (window.model.exchangerAddress != '0x0') {
+        //Get the buy price based on an 0.1 eth order
+        exchanger.getPurchasePrice(decimalToRaw(0.1, 18)).then((totalTokens) => {
+            let actualTokens = rawToDecimal(totalTokens[0].toString(10), 18);
+            pricing.buy = 0.1/actualTokens; //If 1 eth gets you n tokens, each token is worth 1/n eth. 
+            
+        })
+
+        //Get the sale price based on 100 tokens sold.
+        exchanger.getSalePrice(decimalToRaw(100, 18)).then((amountInWei) => {
+            let ether = rawToDecimal(amountInWei[0].toString(10), 18);
+            pricing.sell = ether / 100;
+        })
+
+    }
+
+    return (pricing.buy+pricing.sell) / 2
+}
+
+//Quotes a buy for the specific amount of eth
+//Returns the total amount of tokens that eth can buy, not the price per tokens
+async function convertToTokens(ethAmount) {
+    var rawTokens = await exchanger.getPurchasePrice(decimalToRaw(ethAmount, 18));
+    let actualTokens = rawToDecimal(rawTokens[0].toString(10), 18);
+    return actualTokens;
+}
+
+async function convertToEther(tokenAmount) {
+    var amountInWei = await exchanger.getSalePrice(decimalToRaw(tokenAmount, 18));
+    let amountInWei = rawToDecimal(amountInWei[0].toString(10), 18);
+    return amountInWei;
+}
+
+$("#convertFrom").on('change', () => {
+    try {
+        let func= exchangeUI.direction == "buy" ? convertToTokens : convertToEther
+        func($("#convertFrom").val()).then((amount) => {
+            $("#convertTo").val(amount);
+            let unitPrice = exchangeUI.direction == "buy" ? $("#convertFrom").val() / amount :
+                            amount / $("#convertFrom").val()
+            let btnString = (exchangeUI.direction == "buy" ? "Buy @ "+unitPrice.substring(0, 8): "Sell @ "+unitPrice.substring(0, 8))
+            $("#tradeBtn").html(btnString)
+        })
+    } catch(x)
+    {
+        console.log("Realtime converter: invalid number entry or blockchain connection error")
+    }
+})
 //Init function / entry point. Call from main document ready method 
 //after data has been pulled from db and is available on window.model
 let bindTokenData = () => {

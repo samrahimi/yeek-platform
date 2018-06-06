@@ -143,8 +143,9 @@ contract Exchanger is Administered {
 
      /**
       @dev Play central banker and set the fractional reserve ratio, from 1 to 1000000 ppm.
-      It is highly disrecommended to do this while trading is enabled! If you don't know what 
-      a fractional reserve is, please put this contract away and go work for your local government.
+      It is highly disrecommended to do this while trading is enabled! Obviously this should 
+      only be done in combination with a matching deposit or withdrawal of ether, 
+      and I'll enforce it at a later point.
      */
      function setReserveWeight(uint ppm) onlyAdmin public {
          require (ppm>0 && ppm<=1000000);
