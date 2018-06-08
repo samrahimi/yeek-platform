@@ -1,9 +1,22 @@
 let tokenstats = {airdropPending: false}
-let pricing = {buy:0, sell:0}
+let pricing = {buy:0, sell:0, quote:0}
 let exchangeUI = {
     direction: "buy",
     maxSlippage: .05
 }
+
+let bindContractFieldToElement = (methodCall, postProcessingFunction, el) => {
+    if (typeof web3 == 'undefined') {
+        el.html('...');
+        return;
+    }
+
+    eval(methodCall).then((RESULT) => {
+        let finalResult = eval(postProcessingFunction);
+        el.html(finalResult)
+    })
+}
+
 let refreshDisplayData = () => {
     
 
@@ -11,32 +24,14 @@ let refreshDisplayData = () => {
     dropper = eth.contract(dropperABI).at(window.model.dropperAddress);
     exchanger = eth.contract(exchangerABI, "", {"from": myAddress}).at(window.model.exchangerAddress)
 
-    //Quote price is halfway btwn bid and ask
-    let quotePrice = getQuotePriceForToken();
+    //Gets the previous quote and fetches the next one - the UI is bound to the updated value inside getQuotePriceForToken
+    pricing.quote = getQuotePriceForToken();
+    
+    //Gets weight, balances from the exchanger and calculates market cap.
+    updateReserveBalances()
 
-    $(".quote_price").html(quotePrice >0 ? quotePrice.toString().substring(0,10): "...");
-
-    /* Begin load token info */
-    token.totalSupply().then((totalSupply) => {
-        tokenstats.totalSupply = totalSupply[0].toString(10);
-        $(".totalSupply").html(rawToDecimal(tokenstats.totalSupply, 18));
-    // result <BN ...>  4500000
-    })
-
-    token.symbol().then((sym) => {
-        tokenstats.symbol = sym[0];
-        $(".symbol").html(tokenstats.symbol);
-        $(".etherscanUrl").attr("href", "https://etherscan.io/token/"+window.model.tokenAddress);
-    })
-
-    token.name().then((sym) => {
-        tokenstats.name = sym[0];
-        $(".tokenName").html(tokenstats.name);
-    })
-    token.decimals().then((val) => {
-        tokenstats.decimals = val[0].toString(10);
-        $("#decimals").html(tokenstats.decimals);
-    })
+    //Gets basic info about the token
+    updateTokenInfo();
 
     /* Begin Load User Balances */
     token.balanceOf(myAddress).then((balance) => {
@@ -53,53 +48,80 @@ let refreshDisplayData = () => {
     /* Begin Load Airdropper Info */
 
     if (window.model.dropperAddress != '0x0') {
-        dropper.tokensDispensed().then((amount) => {
-            tokenstats.dispensed = amount[0].toString(10);
-            $("#tokensDispensed").html(rawToDecimal(tokenstats.dispensed, 18));
-        })
-
-        dropper.tokensRemaining().then((amount) => {
-            tokenstats.remaining = amount[0].toString(10);
-            $("#tokensRemaining").html(rawToDecimal(tokenstats.remaining, 18));
-        })
-
-        dropper.numberOfTokensPerUser().then((amount) => {
-            tokenstats.airdropsize = amount[0].toString(10);
-            $("#airdropAmount").html(rawToDecimal(tokenstats.airdropsize, 18));
-        })
-
-        dropper.airdroppedUsers(myAddress).then((hasGottenAirdrop) => {
-            if (hasGottenAirdrop[0]) {
-                $("#eligibility").html("Already Received")
-                $("#withdrawAirdropTokens").attr("disabled", "disabled")
-            } else {
-                //If they just requested the airdrop, don't confuse them
-                if (!tokenstats.airdropPending) {
-                    $("#eligibility").html("Hit Button For Tokens")
-                    $("#withdrawAirdropTokens").removeAttr("disabled")
-                }
-            }
-        })
+        updateDropperUI();
     }
+
+}
+
+let updateTokenInfo = () => {
+        /* Begin load token info */
+        token.totalSupply().then((totalSupply) => {
+            tokenstats.totalSupply = totalSupply[0].toString(10);
+            $(".totalSupply").html(rawToDecimal(tokenstats.totalSupply, 18));
+        // result <BN ...>  4500000
+        })
+    
+        token.name().then((sym) => {
+            tokenstats.name = sym[0];
+            $(".tokenName").html(tokenstats.name);
+        })
+        token.decimals().then((val) => {
+            tokenstats.decimals = val[0].toString(10);
+            $("#decimals").html(tokenstats.decimals);
+        })
+    
+}
+
+//Gets status of the airdrop, if an airdropper contract is present
+let updateDropperUI = () => {
+            
+    dropper.tokensDispensed().then((amount) => {
+        tokenstats.dispensed = amount[0].toString(10);
+        $("#tokensDispensed").html(rawToDecimal(tokenstats.dispensed, 18));
+    })
+
+    dropper.tokensRemaining().then((amount) => {
+        tokenstats.remaining = amount[0].toString(10);
+        $("#tokensRemaining").html(rawToDecimal(tokenstats.remaining, 18));
+    })
+
+    dropper.numberOfTokensPerUser().then((amount) => {
+        tokenstats.airdropsize = amount[0].toString(10);
+        $("#airdropAmount").html(rawToDecimal(tokenstats.airdropsize, 18));
+    })
+
+    dropper.airdroppedUsers(myAddress).then((hasGottenAirdrop) => {
+        if (hasGottenAirdrop[0]) {
+            $("#eligibility").html("Already Received")
+            $("#withdrawAirdropTokens").attr("disabled", "disabled")
+        } else {
+            //If they just requested the airdrop, don't confuse them
+            if (!tokenstats.airdropPending) {
+                $("#eligibility").html("Hit Button For Tokens")
+                $("#withdrawAirdropTokens").removeAttr("disabled")
+            }
+        }
+    })
 
 }
 
 //Returns the mean buy and sell prices and async fetches updated values.
 let getQuotePriceForToken = () => {
     if (window.model.exchangerAddress != '0x0') {
-        //Get the buy price based on an 0.1 eth order
+        //Get the buy price based on an 0.00001 eth order
         exchanger.getPurchasePrice(decimalToRaw(0.1, 18)).then((totalTokens) => {
             let actualTokens = rawToDecimal(totalTokens[0].toString(10), 18);
             pricing.buy = 0.1/actualTokens; //If 1 eth gets you n tokens, each token is worth 1/n eth. 
             
-        })
+                //Get the sale price based on selling n tokens back
+                exchanger.getSalePrice(decimalToRaw(actualTokens, 18)).then((amountInWei) => {
+                    let ether = rawToDecimal(amountInWei[0].toString(10), 18);
+                    pricing.sell = ether / actualTokens;
 
-        //Get the sale price based on 100 tokens sold.
-        exchanger.getSalePrice(decimalToRaw(100, 18)).then((amountInWei) => {
-            let ether = rawToDecimal(amountInWei[0].toString(10), 18);
-            pricing.sell = ether / 100;
+                    let newQuotePrice = (pricing.buy+pricing.sell) / 2
+                    $(".quote_price").html(newQuotePrice.toString().substring(0,10));    
+                })
         })
-
     }
 
     return (pricing.buy+pricing.sell) / 2
@@ -115,25 +137,27 @@ async function convertToTokens(ethAmount) {
 
 async function convertToEther(tokenAmount) {
     var amountInWei = await exchanger.getSalePrice(decimalToRaw(tokenAmount, 18));
-    let amountInWei = rawToDecimal(amountInWei[0].toString(10), 18);
-    return amountInWei;
+    let amountInEther= rawToDecimal(amountInWei[0].toString(10), 18);
+    return amountInEther;
 }
 
-$("#convertFrom").on('change', () => {
-    try {
-        let func= exchangeUI.direction == "buy" ? convertToTokens : convertToEther
-        func($("#convertFrom").val()).then((amount) => {
-            $("#convertTo").val(amount);
-            let unitPrice = exchangeUI.direction == "buy" ? $("#convertFrom").val() / amount :
-                            amount / $("#convertFrom").val()
-            let btnString = (exchangeUI.direction == "buy" ? "Buy @ "+unitPrice.substring(0, 8): "Sell @ "+unitPrice.substring(0, 8))
-            $("#tradeBtn").html(btnString)
+async function updateReserveBalances() {
+    exchanger.getReserveBalances().then(x => {
+        exchangeUI.reserve_balance_tokens = rawToDecimal(x[0].toString(10), 18)
+        exchangeUI.reserve_balance_ether = rawToDecimal(x[1].toString(10), 18)
+        exchanger.weight().then(rawWeight => {
+            exchangeUI.reserve_weight = rawWeight[0].toString(10);
+
+            //Market cap: reserve balance in ether / reserve weight as a fraction
+            exchangeUI.market_cap = exchangeUI.reserve_balance_ether / (exchangeUI.reserve_weight / 1000000);
+            $(".reserve_weight").html((exchangeUI.reserve_weight / 1000000) * 100); //PPM to pct conversion
+            $(".reserve_balance").html(exchangeUI.reserve_balance_ether);
+            $(".market_cap").html(exchangeUI.market_cap.toString().substring(0,10));
         })
-    } catch(x)
-    {
-        console.log("Realtime converter: invalid number entry or blockchain connection error")
-    }
-})
+    })
+
+}
+
 //Init function / entry point. Call from main document ready method 
 //after data has been pulled from db and is available on window.model
 let bindTokenData = () => {
@@ -180,11 +204,42 @@ let bindTokenData = () => {
             return false;
           });
 
+
+
         console.log("Account: "+myAddress);
         $(".ethAddress").html(myAddress.substring(0,10)+"...");
 
         refreshDisplayData();
         //Poll the blockchain, refresh the display
-        setInterval(refreshDisplayData, 10000)
+        setInterval(refreshDisplayData, 5000)
     }, 1000)
 }
+
+/* CALL THIS TO PLACE A BUY ORDER WITH ANY EXCHANGER */
+async function buy(amountInEther) {
+    $(".alert").hide();
+    $(".alert-warning").show();
+
+    //todo validation of input
+    let valueInWei = decimalToRaw(amountInEther, 18)
+    let minPurchaseReturn = valueInWei * (1 - exchangeUI.maxSlippage);
+    
+    console.log(`Value:${valueInWei}, Limit:${minPurchaseReturn}`);
+
+    exchanger.buy(minPurchaseReturn,{
+        "from": myAddress,
+        "value": valueInWei
+    }).then((tx) => {
+        $(".alert").hide();
+        $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/"+ tx+"'>"+tx+"</a>");
+        $(".alert-success").show();
+    }).catch((err) => {
+        $(".alert").hide();
+        $(".alert-error").show();
+        console.log(String(transferError))
+    })
+
+}
+async function sell(amountInTokens) {
+}
+

@@ -2,6 +2,12 @@
 <html lang="en">
 
 <head>
+        <style>
+                .asset-info, .asset-info span {
+                    font-size:0.875rem !important;
+                }
+            </style>
+            
     <meta charset="utf-8">
     <script type="text/html" template-engine="ejs">
             <title><%=menuData.pageTitle%></title>
@@ -46,6 +52,7 @@
 
     <script type="text/javascript" src="assets/js/constants.js"></script>
     <script type="text/javascript" src="assets/js/token.js"></script>
+
     <style>
         .video_container {
             position: relative;
@@ -70,22 +77,6 @@
     <script>
         window.db = firebase.firestore();
 
-        let firestoreHelper = {
-            getDocument(collectionName, id) {
-                var docRef = db.collection("cities").doc("SF");
-
-                docRef.get().then(function (doc) {
-                    if (doc.exists) {
-                        console.log("Document data:", doc.data());
-                    } else {
-                        // doc.data() will be undefined in this case
-                        console.log("No such document!");
-                    }
-                }).catch(function (error) {
-                    console.log("Error getting document:", error);
-                });
-            }
-        }
         $(document).ready(() => {
             const tokenAddress = queryString("token_address") || '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
             const formulaAddress = "0x2dfafadf1dedaa5707126fd65ef7032a2c455b78"; //ROPSTEN!!!
@@ -111,6 +102,14 @@
                 loadControls(model);
 
                 bindTokenData();
+
+                window.disqus_config = function () {
+                        this.page.url = "https://yeek-platform.firebaseapp.com/platform/token.html?token="+queryString("token"); // Replace PAGE_URL with your page's canonical URL variable
+                        this.page.identifier = queryString("token");  // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                        this.page.title = tokenData.company_info.name;
+                };
+
+                DISQUS();
             })
         })
 
@@ -176,20 +175,10 @@
                                     <div class="row justify-content-center">
                                         <div class="col p-2" style="text-align:center">
             
-                                Balance (<span class="symbol"></span>): <span id="tokenBalance">Loading...</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Balance (ETH): <span id="etherBalance"></span>
+                                Balance (<%=tokenData.symbol%>): <span id="tokenBalance">Loading...</span>&nbsp;&nbsp;&nbsp;&nbsp; Balance (ETH): <span id="etherBalance"></span>
             
             
                                         </div>
-                                        <!--end of co                                                <span class="text-muted">
-                                                    <i class="icon-info"></i>
-                                                    <span class="symbol"></span>
-                                                    <br />
-                                                    <i class="icon-location"></i>
-                                                    <span class="totalSupply"></span> total supply
-                                                    <br />
-                                                    <i class="icon-link"></i>
-                                                    <a class="etherscanUrl">
-l-->
                                     </div>
                                     <!--end of row-->
                                 </div>
@@ -260,14 +249,18 @@ l-->
                                                                         </li>
                                                                         <li class="nav-item">
                                                                             <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">
-                                                                                <i class="icon-tools"></i> 
-                                                                                Gigs</a>
+                                                                                <i class="icon-users"></i> 
+                                                                                Community</a>
                                                                         </li>
+                                                                        <% if (window.model.dropperAddress != '0x0') { %>
+
                                                                         <li class="nav-item">
                                                                             <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">
                                                                                 <i class="icon-thunder-cloud"></i> 
                                                                                 Airdrop!</a>
                                                                         </li>
+
+                                                                        <%}%>
                                                             </ul>
                                                         </div>
                                                         <!--end of col-->
@@ -284,16 +277,136 @@ l-->
     <ctrl src="./controls/nav.html?999" id="mainNav" bind-to="menuData" doNotWrap="true"></ctrl>
     -->
 
-    <script type="text/html" template-engine="ejs">
 
     <div class="tab-content" id="myTabContent">
-        <!-- Browse gigs and featured companies-->
-        <div class="tab-pane fade " id="tab2-content" role="tabpanel">
+        <!-- Exchange!-->
+        <script type="text/html" template-engine="ejs">
+            <div class="tab-pane fade show active" id="tab1-content" role="tabpanel">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                    <div class="card">
+                                            <h5 class="card-header">Asset Details</h5>
+                                            <div class="card-body">
+                                              <h6>Token</h6>
+        
+                                              <p class="card-text asset-info">
+                                                    <span class="text-success">
+                                                            Price: <span class="quote_price">Loading...</span> ETH</span><br />
+                                                    Symbol: <%=tokenData.symbol%><br />
+                                                    Market Cap: <span class="market_cap">Loading...</span> ETH<br />
+                                                    Supply: <span class="totalSupply">...</span><br />                                      
+                                                    Contract:
+                                                    <a class="etherscanUrl" href="https://etherscan.io/token/<%=menuData.tokenAddress%>"><%=menuData.tokenAddress.substring(0,15)%></a><br />
+                                            </p>       
+                                                    <hr />
+        
+                                            <h6>Exchanger</h6>
+                                            <p class="card-text asset-info">
+                                                    Weight: <span class="reserve_weight">Loading...</span> % <br />
+                                                    Reserve: <span class="reserve_balance">Loading...</span> ETH <br />
+                                                    Volume (24h): <span class="volume">...</span><br />
+                                                    Contract: <a href="https://etherscan.io/<%=tokenData.exchanger_address%>"><%=tokenData.exchanger_address.substring(0,15)%></a>
+        
+            
+                                                </p>
+                                            </div>
+                                    </div> 
+                                    
+                                    <div class="card">
+                                            <h5 class="card-header">Send Tokens</h2>
+                                            <div class="card-body">
+                                            <form>
+                                                <div class="form-row mt-2 mb-2 justify-content-center">
+                            
+                                                    <div class="col-5">
+                                                        <input type="text" id="sendTo" class="form-control" placeholder="Address">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <input type="text" id="sendAmount" class="form-control" placeholder="Amount">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <button style="width:100%" type="button" id="sendTokens" class="btn btn-primary">Send</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <span class="text-info" style="display:none" id="sendResponse"></span>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card">
+                                        <h5 class="card-header">Trade <%=tokenData.symbol%></h2>
+                                         <div class="card-body">
+        
+                                    <form autocomplete="off">
+                                            <input autocomplete="false" name="hidden" type="text" style="display:none;">
+        
+                                            <div class="form-row mt-2 mb-2 justify-content-center">
+        
+                                                <!-- The from currency. Default ETH-->
+                                                <div class="col-md-3 col-12">
+                                                    <div class="input-group">
+                                                      
+                                                    <input type="text" id="convertFrom" class="form-control" placeholder="ETH">
+                                                            </div>
+                                                </div>
+        
+                                                    <!-- Switches the from currency between ETH and the token. When the token is the from currency, it's considered a SELL order -->
+                                                     <div class="col-md-1 col-12 mt-1" style="text-align:center">
+                                                        <a id="swapBuySell" href="#"><i style="font-size:1.5rem;" class="icon-swap"></i></a>
+                                                    </div>
+                                                
+                                                <!-- The target currency. Defaults to the token. Updates itself when user types in the from currency box -->
+                                                <div class="col-md-3 col-12 mb-1">
+                                                        <div class="input-group">
+                                                    <input type="text" id="convertTo" disabled="disabled" class="form-control" placeholder="<%=tokenData.symbol%>">
+                                                            </div>
+                                                </div>
+                                                <div class="col-md-5 col-12">
+                                                        <button style="width:100%" disabled="disabled" type="button" id="tradeBtn" class="btn btn-primary">Buy</button>
+                                                </div>
+                                            </div>
+                                            <div class="alert alert-warning" role="transaction_pending" style="display:none">
+                                                Transaction Created - Please approve in Metamask.
+                                            </div>
+                                            <div class="alert alert-success" role="transaction_complete" style="display:none">
+                                                Sent to Blockchain, TxID: <a id="txid"></a> 
+                                            </div>
+    
+                                                  
+                                        </form>
+        
+                                        <hr />
+        
+                                        <h5>Important Trading Notes</h5>
+                                        <ul>
+                                            <li>Your order will be executed as close as possible to the price quoted above. Up to 5% slippage may occur during periods of high volatility</li>
+                                            <li>When buying tokens with Ether, you will be asked to approve one transaction, to send the ether to the Exchanger. When selling tokens, you will be asked to approve 2 separate transactions - if you do not approve them both, the transaction will fail</li>
+                                            <li>All orders on this system are "Fill or Kill". If your order cannot be executed due to slippage, your ether / tokens will be immediately returned to you</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <span class="text-info" style="display:none" id="tradeResponse"></span>
+                            </div>
+                        </div>
+                                       
+        
+        
+               
+        
+                    </div>
+        
+                </div>
+            
+            <div class="tab-pane fade " id="tab2-content" role="tabpanel">
+
             <!--
                         <div class="row">
                             <div class="col-6-md col-sm">
                                     <div class="video_container"><iframe src="//www.youtube.com/embed/yCOY82UdFrw" frameborder="0" allowfullscreen class="video"></iframe></div>
-                            </div>
+              <!-- Exchange Token / Ether -->
+              <script type="text/html" template-engine="ejs">                           </div>
                             <div class="col-6-md col-sm">
                                     <h2>About The Token</h2>
                                     <p>The Yeek Token (YEEK) is issued by The Yeek Foundation, and is an ERC20 utility token which can be used as a currency and means of exchange within the YEEK Community. </p>
@@ -307,151 +420,86 @@ l-->
                         <div class="container mt-2">
                         <div class="row">
                             <div class="col">
-                                <h2><%=tokenData.company_info.name%></h2>
-                                <%-tokenData.company_info.elevator_pitch%>
+                                <%-tokenData.company_info.profile_html || tokenData.company_info.elevator_pitch%>
                                 <br />
                             </div>
                         </div>
                         </div>
 
         </div>
-        <!-- Gigs in this token-->
+        </script>
+
+        <!-- Discussion forum-->
         <div class="tab-pane fade" id="tab3-content" role="tabpanel">
-            TODO
-        </div>
-        <!-- Exchange Token / Ether -->
-        <div class="tab-pane fade show active" id="tab1-content" role="tabpanel">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                            <div class="card">
-                                    <h5 class="card-header">Token Info</h5>
-                                    <div class="card-body">
-                                      <p class="card-text">
-                                            <span class="text-success">Price: <span class="quote_price">Loading...</span></span><br />
-
-                                            Symbol:
-                                            <span class="symbol"></span><br />
-
-                                            Tracker:
-                                            <a class="etherscanUrl"><%=menuData.tokenAddress.substring(0,15)%></a><br />
-                                            
-                                            Volume: <span class="volume">00000</span><br />
-
-                                            Supply: <span class="totalSupply"></span>                                      
-                                        </p>
-                                    </div>
-                            </div> 
-                            
-                            <div class="card">
-                                    <h5 class="card-header">Send Tokens</h2>
-                                    <div class="card-body">
-                                    <form>
-                                        <div class="form-row mt-2 mb-2 justify-content-center">
+                <div id="disqus_thread"></div>
+            </div>
+                <script>
                     
-                                            <div class="col-5">
-                                                <input type="text" id="sendTo" class="form-control" placeholder="Address">
-                                            </div>
-                                            <div class="col-4">
-                                                <input type="text" id="sendAmount" class="form-control" placeholder="Amount">
-                                            </div>
-                                            <div class="col-3">
-                                                <button style="width:100%" type="button" id="sendTokens" class="btn btn-primary">Send</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <span class="text-info" style="display:none" id="sendResponse"></span>
-                                </div>
-                            </div>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card">
-                                <h5 class="card-header">Trade <%=tokenData.symbol%></h2>
-                                 <div class="card-body">
+                    /**
+                     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+                     */
+              
+                    let DISQUS = function() {  // DON'T EDIT BELOW THIS LINE
 
-                            <form>
-                                    <div class="form-row mt-2 mb-2 justify-content-center">
-
-                                        <div class="col-4">
-                                            <input type="text" id="convertFrom" class="form-control" placeholder="ETH">
-                                        </div>
-                                        <div class="col-1">
-                                                <i class="icon-swap"></i><br />
-                                            </div>
-
-                                        <div class="col-4">
-                                            <input type="text" id="convertTo" class="form-control" placeholder="<%=tokenData.symbol%>">
-                                        </div>
-                                        <div class="col-3">
-                                                <button style="width:100%" disabled="disabled" type="button" id="sendTokens" class="btn btn-primary">Trade</button>
-                                        </div>
-                                    </div>
-                                </form>
-
-                                <hr />
-
-                                <h5>Important Trading Notes</h5>
-                                <ul>
-                                    <li>Your order will be executed as close as possible to the price quoted above. Up to 5% slippage may occur during periods of high volatility</li>
-                                    <li>When buying tokens with Ether, you will be asked to approve one transaction, to send the ether to the Exchanger. When selling tokens, you will be asked to approve 2 separate transactions - if you do not approve them both, the transaction will fail</li>
-                                    <li>All orders on this system are "Fill or Kill". If your order cannot be executed due to slippage, your ether / tokens will be immediately returned to you</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <span class="text-info" style="display:none" id="tradeResponse"></span>
-                    </div>
-                </div>
-                               
-
-
-       
-
-            </div>
-
+                        var d = document, s = d.createElement('script');
+                        
+                        s.src = 'https://yeek-platform.disqus.com/embed.js';
+                        
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    }
+                </script>
         </div>
-        <!-- Airdrop Tab -->
-        <% if (window.model.dropperAddress != '0x0') { %>
-            <div class="tab-pane fade" id="tab4-content" role="tabpanel">
-                <div class="container">
-                                <h2>Airdrop!</h2>
-        
-                                            <div class="row">
-                                                <div class="col">
-                                                    <label>Dispensed</label>
-                                                    <p> 
-                                                        <span id="tokensDispensed"></span>
-                                                        <span class="symbol"></span>
-                                                    </p>
-                                                </div>
-                                                <div class="col">
-                                                        <label>Available</label>
-                                                        <p> 
-                                                            <span id="tokensRemaining"></span>
-                                                            <span class="symbol"></span>
-                                                        </p>
-                                                 </div>
-                                        
-                                                 <div class="col">
-                                                        <label>Airdrop Amt.</label>
-                                                        <p> 
-                                                            <span id="airdropAmount"></span>
-                                                            <span class="symbol"></span>
-                                                        </p>
-                                                 </div>
-                                            </div>
-                                            <div class="row pt-2">
-                                                <div class="col">
-                                                    <p>Your Airdrop Status: <span id="eligibility">Please wait...</span></p>
-                                                    <button id="withdrawAirdropTokens" style="width:100%;">Get My Tokens</button>
-                                                </div>
-                                            </div>
-        
 
-                </div>
-            </div>
-        <%}%>
+             <!-- Exchange Token / Ether -->
+             <script type="text/html" template-engine="ejs">
+
+                <!-- Airdrop Tab -->
+                <% if (window.model.dropperAddress != '0x0') { %>
+                    <div class="tab-pane fade" id="tab4-content" role="tabpanel">
+                        <div class="container">
+                                        <h2>Airdrop!</h2>
+                
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label>Dispensed</label>
+                                                            <p> 
+                                                                <span id="tokensDispensed"></span>
+                                                                <span class="symbol"></span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col">
+                                                                <label>Available</label>
+                                                                <p> 
+                                                                    <span id="tokensRemaining"></span>
+                                                                    <span class="symbol"></span>
+                                                                </p>
+                                                         </div>
+                                                
+                                                         <div class="col">
+                                                                <label>Airdrop Amt.</label>
+                                                                <p> 
+                                                                    <span id="airdropAmount"></span>
+                                                                    <span class="symbol"></span>
+                                                                </p>
+                                                         </div>
+                                                    </div>
+                                                    <div class="row pt-2">
+                                                        <div class="col">
+                                                            <p>Your Airdrop Status: <span id="eligibility">Please wait...</span></p>
+                                                            <button id="withdrawAirdropTokens" style="width:100%;">Get My Tokens</button>
+                                                        </div>
+                                                    </div>
+                
+        
+                        </div>
+                    </div>
+                <%}%>
+                </script>
+           
     </div>
-    </script>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
     <script type="text/javascript" src="assets/js/jquery.smartWizard.min.js"></script>
@@ -462,6 +510,81 @@ l-->
     <script type="text/javascript" src="assets/js/zoom.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="assets/js/theme.js"></script>
+    
+<script>
+async function waitForTxToBeMined (txHash) {
+  let txReceipt
+  while (!txReceipt) {
+    try {
+      txReceipt = await eth.getTransactionReceipt(txHash)
+    } catch (err) {
+      console.log("Error token-512... "+err.toString())
+    }
+  }
+  return txReceipt;
+}
+
+
+
+    $(document).ready(() => {
+        $(document).on("click", "#tradeBtn", () => {
+            if (exchangeUI.direction == "buy") {
+                buy(parseFloat($("#convertFrom").val()));
+            } else {
+                sell(parseFloat($("#convertFrom").val()));
+            }
+        });
+
+        $(document).on("click", "#swapBuySell", () => {
+            let amt = $("#convertTo").val();
+
+            if (exchangeUI.direction == "buy") {
+                exchangeUI.direction = "sell";
+                $("#convertFrom, #convertTo").val('');
+                $("#convertFrom").attr("placeholder", tokenData.symbol)
+                $("#convertTo").attr("placeholder", "ETH")
+            } else {
+                exchangeUI.direction = "buy";
+                $("#convertFrom, #convertTo").val('');
+                $("#convertTo").attr("placeholder", tokenData.symbol)
+                $("#convertFrom").attr("placeholder", "ETH")
+            }
+
+            $("#convertFrom").val(amt); //Swap the values;
+            $("#convertFrom").change(); //Trigger the onchange event;
+
+            return false;
+        })
+
+        $(document).on('keyup change',"#convertFrom",  () => {
+        try {
+            let v = parseFloat($("#convertFrom").val())
+            if (v <= 0) {
+                $("#convertTo").val("0");
+                return;
+            }
+
+            let func= exchangeUI.direction == "buy" ? convertToTokens : convertToEther
+            func(v).then((amount) => {
+                $("#convertTo").val(amount.toString().substring(0,10));
+                let unitPrice = exchangeUI.direction == "buy" ? v/ amount :
+                                amount / v
+                let btnString = (exchangeUI.direction == "buy" ? "Buy @ "+unitPrice.toString().substring(0, 8): 
+                "Sell @ "+unitPrice.toString().substring(0, 8))
+                $("#tradeBtn").html(btnString)
+                $("#tradeBtn").removeAttr("disabled");
+            })
+        } catch(x)
+        {
+            $("#convertTo").val("Error");
+            console.log("Realtime converter: invalid number entry or blockchain connection error")
+            $("#tradeBtn").attr("disabled");
+        }
+
+    })
+})
+
+</script>
 
 </body>
 

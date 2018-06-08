@@ -228,7 +228,7 @@ contract Exchanger is Administered {
             address(this).balance - msg.value,
             weight,
             msg.value);
-            
+        require (enabled)    
         require (amount >= minPurchaseReturn);
         require (tokenContract.balanceOf(this) >= amount);
         emit Buy(msg.sender, msg.value, amount);
@@ -246,6 +246,7 @@ contract Exchanger is Administered {
              weight,
              quantity
          );
+         require (enabled)
          require (amountInWei >= minSaleReturn);
          require (amountInWei <= address(this).balance);
          require (tokenContract.transferFrom(msg.sender, this, quantity));
