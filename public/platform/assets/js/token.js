@@ -241,5 +241,19 @@ async function buy(amountInEther) {
 
 }
 async function sell(amountInTokens) {
+    console.log("sell");
+    let rawTokens = decimalToRaw(amountInTokens, 18)
+    let minSaleReturn = rawTokens * (1 - exchangeUI.maxSlippage);
+
+    $(".alert").hide();
+    $(".alert-warning").show();
+
+    token.approve(window.model.exchangerAddress, rawTokens).then((tx) => {
+        exchanger.sell(rawTokens, minSaleReturn).then((tx) => {
+            $(".alert").hide();
+            $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/"+ tx+"'>"+tx+"</a>");
+            $(".alert-success").show();     
+        })
+    })
 }
 
