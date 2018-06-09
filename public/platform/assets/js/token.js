@@ -151,7 +151,8 @@ async function updateReserveBalances() {
             //Market cap: reserve balance in ether / reserve weight as a fraction
             exchangeUI.market_cap = exchangeUI.reserve_balance_ether / (exchangeUI.reserve_weight / 1000000);
             $(".reserve_weight").html((exchangeUI.reserve_weight / 1000000) * 100); //PPM to pct conversion
-            $(".reserve_balance").html(exchangeUI.reserve_balance_ether);
+            $(".reserve_balance").html(exchangeUI.reserve_balance_ether.substring(0,10));
+            $(".reserve_balance_tokens").html(exchangeUI.reserve_balance_tokens.substring(0,10));
             $(".market_cap").html(exchangeUI.market_cap.toString().substring(0,10));
         })
     })
@@ -163,12 +164,25 @@ async function updateReserveBalances() {
 let bindTokenData = () => {
 
     setTimeout(() => {
+        //There are 2 kinds of errors that are likely on initial loading
+        //We notify users with appropriate instructional guidance... 
+        //and do not attempt to continue loading data from the blockchain
+
+        //This means the user does not have Metamask / Trust installed and is accessing from an ordinary browser
         if (typeof web3 == 'undefined') {
-            $("#needMetamask").show();
+            $("#wallet_warning").modal('show');
             return;
         }
 
         myAddress = window.web3.eth.defaultAccount;
+
+        //This one usually means the user is not logged in to Metamask...
+        //if the user IS logged in, it means that metamask has crashed - a simple reload usually fixes the problem.
+        if (typeof myAddress == 'undefined') {
+            $("#wallet_login_warning").modal('show');
+            return;
+        }
+
         eth = new Eth(window.web3.currentProvider);
 
         if (window.model.dropperAddress != '0x0') {

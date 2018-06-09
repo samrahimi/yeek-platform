@@ -175,8 +175,12 @@
                                     <div class="row justify-content-center">
                                         <div class="col p-2" style="text-align:center">
             
-                                Balance (<%=tokenData.symbol%>): <span id="tokenBalance">Loading...</span>&nbsp;&nbsp;&nbsp;&nbsp; Balance (ETH): <span id="etherBalance"></span>
-            
+                                Balance (<%=tokenData.symbol%>): <span id="tokenBalance">...</span>
+                                        </div>
+                                
+                                        <div class="col p-2" style="text-align:center">
+                                            Balance (ETH): <span id="etherBalance">...</span>
+                                        
             
                                         </div>
                                     </div>
@@ -235,7 +239,7 @@
                                                 <div class="container">
                                                     <div class="row">
                                                         <div class="col mb-1">
-                                                            <ul class="nav nav-tabs justify-content-between" id="myTab" role="tablist">
+                                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                                     <li class="nav-item">
                                                                             <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="false">
                                                                                 <i class="icon-swap"></i> 
@@ -273,14 +277,13 @@
     
    
             </script>
-    <!--
-    <ctrl src="./controls/nav.html?999" id="mainNav" bind-to="menuData" doNotWrap="true"></ctrl>
-    -->
+
+    <ctrl src="./controls/modals.html" id="walletWarnings" doNotWrap="true"></ctrl>
 
 
     <div class="tab-content" id="myTabContent">
-        <!-- Exchange!-->
         <script type="text/html" template-engine="ejs">
+            <!-- Exchange-->
             <div class="tab-pane fade show active" id="tab1-content" role="tabpanel">
                     <div class="container">
                         <div class="row">
@@ -304,8 +307,9 @@
                                             <h6>Exchanger</h6>
                                             <p class="card-text asset-info">
                                                     Weight: <span class="reserve_weight">Loading...</span> % <br />
-                                                    Reserve: <span class="reserve_balance">Loading...</span> ETH <br />
-                                                    Volume (24h): <span class="volume">...</span><br />
+                                                    Reserve (ETH): <span class="reserve_balance">Loading...</span> ETH <br />
+                                                    Reserve (<%=tokenData.symbol%>): <span class="reserve_balance_tokens">Loading...</span> <%=tokenData.symbol%><br />
+                                                    Volume (24h): <span class="volume">Coming Soon</span><br />
                                                     Contract: <a href="https://etherscan.io/<%=tokenData.exchanger_address%>"><%=tokenData.exchanger_address.substring(0,15)%></a>
         
             
@@ -364,7 +368,7 @@
                                                             </div>
                                                 </div>
                                                 <div class="col-md-5 col-12">
-                                                        <button style="width:100%" disabled="disabled" type="button" id="tradeBtn" class="btn btn-primary">Buy</button>
+                                                        <button style="width:100%" disabled="disabled" type="button" id="tradeBtn" class="btn btn-success">Buy</button>
                                                 </div>
                                             </div>
                                             <div class="alert alert-warning" role="transaction_pending" style="display:none">
@@ -401,21 +405,6 @@
             
             <div class="tab-pane fade " id="tab2-content" role="tabpanel">
 
-            <!--
-                        <div class="row">
-                            <div class="col-6-md col-sm">
-                                    <div class="video_container"><iframe src="//www.youtube.com/embed/yCOY82UdFrw" frameborder="0" allowfullscreen class="video"></iframe></div>
-              <!-- Exchange Token / Ether -->
-              <script type="text/html" template-engine="ejs">                           </div>
-                            <div class="col-6-md col-sm">
-                                    <h2>About The Token</h2>
-                                    <p>The Yeek Token (YEEK) is issued by The Yeek Foundation, and is an ERC20 utility token which can be used as a currency and means of exchange within the YEEK Community. </p>
-                                    <p>Please visit <a href="https://yeek.market">https://yeek.market</a> for ICO details</p>
-
-                            </div>
-                        </div>
-                        -->
-
                         <!-- Company profile sections -->
                         <div class="container mt-2">
                         <div class="row">
@@ -425,8 +414,7 @@
                             </div>
                         </div>
                         </div>
-
-        </div>
+            </div>
         </script>
 
         <!-- Discussion forum-->
@@ -453,52 +441,50 @@
                 </script>
         </div>
 
-             <!-- Exchange Token / Ether -->
-             <script type="text/html" template-engine="ejs">
-
-                <!-- Airdrop Tab -->
-                <% if (window.model.dropperAddress != '0x0') { %>
-                    <div class="tab-pane fade" id="tab4-content" role="tabpanel">
-                        <div class="container">
-                                        <h2>Airdrop!</h2>
-                
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label>Dispensed</label>
-                                                            <p> 
-                                                                <span id="tokensDispensed"></span>
-                                                                <span class="symbol"></span>
-                                                            </p>
-                                                        </div>
-                                                        <div class="col">
-                                                                <label>Available</label>
-                                                                <p> 
-                                                                    <span id="tokensRemaining"></span>
-                                                                    <span class="symbol"></span>
-                                                                </p>
-                                                         </div>
-                                                
-                                                         <div class="col">
-                                                                <label>Airdrop Amt.</label>
-                                                                <p> 
-                                                                    <span id="airdropAmount"></span>
-                                                                    <span class="symbol"></span>
-                                                                </p>
-                                                         </div>
-                                                    </div>
-                                                    <div class="row pt-2">
-                                                        <div class="col">
-                                                            <p>Your Airdrop Status: <span id="eligibility">Please wait...</span></p>
-                                                            <button id="withdrawAirdropTokens" style="width:100%;">Get My Tokens</button>
-                                                        </div>
-                                                    </div>
-                
+        <script type="text/html" template-engine="ejs">
+        <!-- Airdrop Tab -->
+        <% if (window.model.dropperAddress != '0x0') { %>
+            <div class="tab-pane fade" id="tab4-content" role="tabpanel">
+                <div class="container">
+                                <h2>Airdrop!</h2>
         
-                        </div>
-                    </div>
-                <%}%>
-                </script>
-           
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label>Dispensed</label>
+                                                    <p> 
+                                                        <span id="tokensDispensed"></span>
+                                                        <span class="symbol"></span>
+                                                    </p>
+                                                </div>
+                                                <div class="col">
+                                                        <label>Available</label>
+                                                        <p> 
+                                                            <span id="tokensRemaining"></span>
+                                                            <span class="symbol"></span>
+                                                        </p>
+                                                    </div>
+                                        
+                                                    <div class="col">
+                                                        <label>Airdrop Amt.</label>
+                                                        <p> 
+                                                            <span id="airdropAmount"></span>
+                                                            <span class="symbol"></span>
+                                                        </p>
+                                                    </div>
+                                            </div>
+                                            <div class="row pt-2">
+                                                <div class="col">
+                                                    <p>Your Airdrop Status: <span id="eligibility">Please wait...</span></p>
+                                                    <button id="withdrawAirdropTokens" style="width:100%;">Get My Tokens</button>
+                                                </div>
+                                            </div>
+        
+
+                </div>
+            </div>
+        <%}%>
+        </script>
+    
     </div>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
@@ -543,11 +529,17 @@ async function waitForTxToBeMined (txHash) {
                 $("#convertFrom, #convertTo").val('');
                 $("#convertFrom").attr("placeholder", tokenData.symbol)
                 $("#convertTo").attr("placeholder", "ETH")
+                $("#tradeBtn").html("Sell")
+                $("#tradeBtn").removeClass("btn-success").addClass("btn-warning")
+
             } else {
                 exchangeUI.direction = "buy";
                 $("#convertFrom, #convertTo").val('');
                 $("#convertTo").attr("placeholder", tokenData.symbol)
                 $("#convertFrom").attr("placeholder", "ETH")
+                $("#tradeBtn").html("Buy")
+                $("#tradeBtn").addClass("btn-success").removeClass("btn-warning")
+
             }
 
             $("#convertFrom").val(amt); //Swap the values;
@@ -557,8 +549,14 @@ async function waitForTxToBeMined (txHash) {
         })
 
         $(document).on('keyup change',"#convertFrom",  () => {
+        
+        //Don't try to convert a non number
+        if (isNaN($("#convertFrom").val()) || $("#convertFrom").val() == "")
+            return;
+
         try {
             let v = parseFloat($("#convertFrom").val())
+                
             if (v <= 0) {
                 $("#convertTo").val("0");
                 return;
