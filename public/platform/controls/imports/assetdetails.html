@@ -1,0 +1,28 @@
+<div class="card">
+        <h5 class="card-header">Asset Details</h5>
+        <div class="card-body">
+          <h6>Token</h6>
+
+          <p class="card-text asset-info">
+                <span class="text-success">
+                        Price: <span class="quote_price">Loading...</span> ETH</span><br />
+                Symbol: <%=tokenData.symbol%><br />
+                Market Cap: <span class="market_cap">Loading...</span> ETH<br />
+                Supply: <span class="totalSupply">...</span><br />                                      
+                Contract:
+                <a class="etherscanUrl" href="https://etherscan.io/token/<%=menuData.tokenAddress%>"><%=menuData.tokenAddress.substring(0,15)%></a><br />
+        </p>       
+                <hr />
+
+        <h6>Exchanger</h6>
+        <p class="card-text asset-info">
+                Weight: <span class="reserve_weight">Loading...</span> % <br />
+                Reserve (ETH): <span class="reserve_balance">Loading...</span> ETH <br />
+                Reserve (<%=tokenData.symbol%>): <span class="reserve_balance_tokens">Loading...</span> <%=tokenData.symbol%><br />
+                Volume (24h): <span class="volume">Coming Soon</span><br />
+                Contract: <a href="https://etherscan.io/<%=tokenData.exchanger_address%>"><%=tokenData.exchanger_address.substring(0,15)%></a>
+
+
+            </p>
+        </div>
+</div> 

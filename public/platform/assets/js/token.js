@@ -2,7 +2,8 @@ let tokenstats = {airdropPending: false}
 let pricing = {buy:0, sell:0, quote:0}
 let exchangeUI = {
     direction: "buy",
-    maxSlippage: .05
+    maxSlippage: .05,
+    readonly: false
 }
 
 let bindContractFieldToElement = (methodCall, postProcessingFunction, el) => {
@@ -18,12 +19,22 @@ let bindContractFieldToElement = (methodCall, postProcessingFunction, el) => {
 }
 
 let refreshDisplayData = () => {
-    
+    //Connect to the smart contracts. We only need to do this once.
+    if (token == null) {
+        if (!exchangeUI.readonly)
+        {
+        token = eth.contract(tokenABI, "", {"from": myAddress}).at(window.model.tokenAddress);
+        dropper = eth.contract(dropperABI, "", {"from": myAddress}).at(window.model.dropperAddress);
+        exchanger = eth.contract(exchangerABI, "", {"from": myAddress}).at(window.model.exchangerAddress)
+        }
+        else {
+            token = eth.contract(tokenABI).at(window.model.tokenAddress);
+            dropper = eth.contract(dropperABI).at(window.model.dropperAddress);
+            exchanger = eth.contract(exchangerABI).at(window.model.exchangerAddress)     
 
-    token = eth.contract(tokenABI, "", {"from": myAddress}).at(window.model.tokenAddress);
-    dropper = eth.contract(dropperABI).at(window.model.dropperAddress);
-    exchanger = eth.contract(exchangerABI, "", {"from": myAddress}).at(window.model.exchangerAddress)
-
+            disableTradingUI();
+        }
+    }
     //Gets the previous quote and fetches the next one - the UI is bound to the updated value inside getQuotePriceForToken
     pricing.quote = getQuotePriceForToken();
     
@@ -34,6 +45,24 @@ let refreshDisplayData = () => {
     updateTokenInfo();
 
     /* Begin Load User Balances */
+    if (!exchangeUI.readonly) 
+        updateUserBalances()
+    else 
+        $("#userBalances").hide();
+    
+    /* Begin Load Airdropper Info */
+
+    if (window.model.dropperAddress != '0x0') {
+        updateDropperUI();
+    }
+
+}
+
+let disableTradingUI = () => {
+    $(".tradingUI button").attr("disabled", "disabled");
+}
+
+let updateUserBalances = () => {
     token.balanceOf(myAddress).then((balance) => {
         tokenstats.balance = balance[0].toString(10);
         $("#tokenBalance").html(rawToDecimal(tokenstats.balance, 18));
@@ -44,13 +73,6 @@ let refreshDisplayData = () => {
         tokenstats.etherBalance = value.toString(10);
         $("#etherBalance").html(tokenstats.etherBalance);
     });
-      
-    /* Begin Load Airdropper Info */
-
-    if (window.model.dropperAddress != '0x0') {
-        updateDropperUI();
-    }
-
 }
 
 let updateTokenInfo = () => {
@@ -164,27 +186,32 @@ async function updateReserveBalances() {
 let bindTokenData = () => {
 
     setTimeout(() => {
-        //There are 2 kinds of errors that are likely on initial loading
-        //We notify users with appropriate instructional guidance... 
-        //and do not attempt to continue loading data from the blockchain
 
-        //This means the user does not have Metamask / Trust installed and is accessing from an ordinary browser
+        //If web3 doesn't exist, it means the user is missing a necessary browser-plugin wallet
+        //or is using a mobile browser without web3 support. We explain it to them, put the 
+        //app in read only mode, and continue.
         if (typeof web3 == 'undefined') {
             $("#wallet_warning").modal('show');
-            return;
+            exchangeUI.readonly = true;
         }
+        else
+            myAddress = window.web3.eth.defaultAccount;
 
-        myAddress = window.web3.eth.defaultAccount;
-
-        //This one usually means the user is not logged in to Metamask...
-        //if the user IS logged in, it means that metamask has crashed - a simple reload usually fixes the problem.
-        if (typeof myAddress == 'undefined') {
+        //Even if web3 is defined, the user may not be logged in
+        //In either case, we go into read only mode, and connect to our fallback Ethereum node
+        //which will do everything except sending tokens and executing trades
+        if (typeof myAddress == 'undefined' || myAddress == null) {
             $("#wallet_login_warning").modal('show');
-            return;
+            exchangeUI.readonly= true;
+            myAddress = "0x0"
+            window.web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/MEDIUMTUTORIAL"))
         }
 
+        
+        //ethjs is a convenience library that wraps a lot of the more clunky web3 features
         eth = new Eth(window.web3.currentProvider);
 
+        //set up the airdropper UI events if the token owner is doing an airdrop
         if (window.model.dropperAddress != '0x0') {
             $("#withdrawAirdropTokens").on("click", () => {
                 console.log("main.js 557: Withdraw Button Clicked")
@@ -257,7 +284,8 @@ async function buy(amountInEther) {
 async function sell(amountInTokens) {
     console.log("sell");
     let rawTokens = decimalToRaw(amountInTokens, 18)
-    let minSaleReturn = rawTokens * (1 - exchangeUI.maxSlippage);
+    //let minSaleReturn = rawTokens * (1 - exchangeUI.maxSlippage);
+    let minSaleReturn=0
 
     $(".alert").hide();
     $(".alert-warning").show();
