@@ -79,7 +79,7 @@
 
         $(document).ready(() => {
             const tokenAddress = queryString("token_address") || '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
-            const formulaAddress = "0x2dfafadf1dedaa5707126fd65ef7032a2c455b78"; //ROPSTEN!!!
+            const formulaAddress = "0x3ae6abeb18dfa61f85faff25aef28c8cd6ddbe6b"; //MAINNET!
             db.collection("listed_tokens").doc(tokenAddress).get().then((doc) => {
                 //Declarative import of HTML web controls using <ctrl> tag
                 window.tokenData = doc.data();
@@ -90,7 +90,7 @@
                         dropperAddress: tokenData.airdropper_address,
                         exchangerAddress: tokenData.exchanger_address,
                         menuData: {
-                            topLevel: ["Platform (Beta)", "Company", "Token", "Exchange"],
+                            topLevel: ["Exchange (Alpha)", "How It Works"],
                             pageTitle: "Yeek Exchange",
                             pageDescription: "Trade tokens issued by members of the Yeek Community.",
                             tokenAddress: tokenAddress,

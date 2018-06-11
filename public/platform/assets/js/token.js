@@ -204,7 +204,7 @@ let bindTokenData = () => {
             $("#wallet_login_warning").modal('show');
             exchangeUI.readonly= true;
             myAddress = "0x0"
-            window.web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/MEDIUMTUTORIAL"))
+            window.web3 = new Web3(new Web3.providers.HttpProvider("https://infura.io/MEDIUMTUTORIAL"))
         }
 
         
