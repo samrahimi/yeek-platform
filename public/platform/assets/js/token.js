@@ -1,5 +1,5 @@
-let tokenstats = {airdropPending: false}
-let pricing = {buy:0, sell:0, quote:0}
+let tokenstats = { airdropPending: false }
+let pricing = { buy: 0, sell: 0, quote: 0 }
 let exchangeUI = {
     direction: "buy",
     maxSlippage: .05,
@@ -21,23 +21,22 @@ let bindContractFieldToElement = (methodCall, postProcessingFunction, el) => {
 let refreshDisplayData = () => {
     //Connect to the smart contracts. We only need to do this once.
     if (token == null) {
-        if (!exchangeUI.readonly)
-        {
-        token = eth.contract(tokenABI, "", {"from": myAddress}).at(window.model.tokenAddress);
-        dropper = eth.contract(dropperABI, "", {"from": myAddress}).at(window.model.dropperAddress);
-        exchanger = eth.contract(exchangerABI, "", {"from": myAddress}).at(window.model.exchangerAddress)
+        if (!exchangeUI.readonly) {
+            token = eth.contract(tokenABI, "", { "from": myAddress }).at(window.model.tokenAddress);
+            dropper = eth.contract(dropperABI, "", { "from": myAddress }).at(window.model.dropperAddress);
+            exchanger = eth.contract(exchangerABI, "", { "from": myAddress }).at(window.model.exchangerAddress)
         }
         else {
             token = eth.contract(tokenABI).at(window.model.tokenAddress);
             dropper = eth.contract(dropperABI).at(window.model.dropperAddress);
-            exchanger = eth.contract(exchangerABI).at(window.model.exchangerAddress)     
+            exchanger = eth.contract(exchangerABI).at(window.model.exchangerAddress)
 
             disableTradingUI();
         }
     }
     //Gets the previous quote and fetches the next one - the UI is bound to the updated value inside getQuotePriceForToken
     pricing.quote = getQuotePriceForToken();
-    
+
     //Gets weight, balances from the exchanger and calculates market cap.
     updateReserveBalances()
 
@@ -45,11 +44,11 @@ let refreshDisplayData = () => {
     updateTokenInfo();
 
     /* Begin Load User Balances */
-    if (!exchangeUI.readonly) 
+    if (!exchangeUI.readonly)
         updateUserBalances()
-    else 
+    else
         $("#userBalances").hide();
-    
+
     /* Begin Load Airdropper Info */
 
     if (window.model.dropperAddress != '0x0') {
@@ -76,27 +75,27 @@ let updateUserBalances = () => {
 }
 
 let updateTokenInfo = () => {
-        /* Begin load token info */
-        token.totalSupply().then((totalSupply) => {
-            tokenstats.totalSupply = totalSupply[0].toString(10);
-            $(".totalSupply").html(rawToDecimal(tokenstats.totalSupply, 18));
+    /* Begin load token info */
+    token.totalSupply().then((totalSupply) => {
+        tokenstats.totalSupply = totalSupply[0].toString(10);
+        $(".totalSupply").html(rawToDecimal(tokenstats.totalSupply, 18));
         // result <BN ...>  4500000
-        })
-    
-        token.name().then((sym) => {
-            tokenstats.name = sym[0];
-            $(".tokenName").html(tokenstats.name);
-        })
-        token.decimals().then((val) => {
-            tokenstats.decimals = val[0].toString(10);
-            $("#decimals").html(tokenstats.decimals);
-        })
-    
+    })
+
+    token.name().then((sym) => {
+        tokenstats.name = sym[0];
+        $(".tokenName").html(tokenstats.name);
+    })
+    token.decimals().then((val) => {
+        tokenstats.decimals = val[0].toString(10);
+        $("#decimals").html(tokenstats.decimals);
+    })
+
 }
 
 //Gets status of the airdrop, if an airdropper contract is present
 let updateDropperUI = () => {
-            
+
     dropper.tokensDispensed().then((amount) => {
         tokenstats.dispensed = amount[0].toString(10);
         $("#tokensDispensed").html(rawToDecimal(tokenstats.dispensed, 18));
@@ -133,20 +132,20 @@ let getQuotePriceForToken = () => {
         //Get the buy price based on an 0.00001 eth order
         exchanger.getPurchasePrice(decimalToRaw(0.1, 18)).then((totalTokens) => {
             let actualTokens = rawToDecimal(totalTokens[0].toString(10), 18);
-            pricing.buy = 0.1/actualTokens; //If 1 eth gets you n tokens, each token is worth 1/n eth. 
-            
-                //Get the sale price based on selling n tokens back
-                exchanger.getSalePrice(decimalToRaw(actualTokens, 18)).then((amountInWei) => {
-                    let ether = rawToDecimal(amountInWei[0].toString(10), 18);
-                    pricing.sell = ether / actualTokens;
+            pricing.buy = 0.1 / actualTokens; //If 1 eth gets you n tokens, each token is worth 1/n eth. 
 
-                    let newQuotePrice = (pricing.buy+pricing.sell) / 2
-                    $(".quote_price").html(newQuotePrice.toString().substring(0,10));    
-                })
+            //Get the sale price based on selling n tokens back
+            exchanger.getSalePrice(decimalToRaw(actualTokens, 18)).then((amountInWei) => {
+                let ether = rawToDecimal(amountInWei[0].toString(10), 18);
+                pricing.sell = ether / actualTokens;
+
+                let newQuotePrice = (pricing.buy + pricing.sell) / 2
+                $(".quote_price").html(newQuotePrice.toString().substring(0, 10));
+            })
         })
     }
 
-    return (pricing.buy+pricing.sell) / 2
+    return (pricing.buy + pricing.sell) / 2
 }
 
 //Quotes a buy for the specific amount of eth
@@ -159,7 +158,7 @@ async function convertToTokens(ethAmount) {
 
 async function convertToEther(tokenAmount) {
     var amountInWei = await exchanger.getSalePrice(decimalToRaw(tokenAmount, 18));
-    let amountInEther= rawToDecimal(amountInWei[0].toString(10), 18);
+    let amountInEther = rawToDecimal(amountInWei[0].toString(10), 18);
     return amountInEther;
 }
 
@@ -173,9 +172,9 @@ async function updateReserveBalances() {
             //Market cap: reserve balance in ether / reserve weight as a fraction
             exchangeUI.market_cap = exchangeUI.reserve_balance_ether / (exchangeUI.reserve_weight / 1000000);
             $(".reserve_weight").html((exchangeUI.reserve_weight / 1000000) * 100); //PPM to pct conversion
-            $(".reserve_balance").html(exchangeUI.reserve_balance_ether.substring(0,10));
-            $(".reserve_balance_tokens").html(exchangeUI.reserve_balance_tokens.substring(0,10));
-            $(".market_cap").html(exchangeUI.market_cap.toString().substring(0,10));
+            $(".reserve_balance").html(exchangeUI.reserve_balance_ether.substring(0, 10));
+            $(".reserve_balance_tokens").html(exchangeUI.reserve_balance_tokens.substring(0, 10));
+            $(".market_cap").html(exchangeUI.market_cap.toString().substring(0, 10));
         })
     })
 
@@ -202,12 +201,12 @@ let bindTokenData = () => {
         //which will do everything except sending tokens and executing trades
         if (typeof myAddress == 'undefined' || myAddress == null) {
             $("#wallet_login_warning").modal('show');
-            exchangeUI.readonly= true;
+            exchangeUI.readonly = true;
             myAddress = "0x0"
             window.web3 = new Web3(new Web3.providers.HttpProvider("https://infura.io/MEDIUMTUTORIAL"))
         }
 
-        
+
         //ethjs is a convenience library that wraps a lot of the more clunky web3 features
         eth = new Eth(window.web3.currentProvider);
 
@@ -217,38 +216,107 @@ let bindTokenData = () => {
                 console.log("main.js 557: Withdraw Button Clicked")
                 $("#eligibility").html("Please authorize the transaction in your wallet to continue...")
                 $("#withdrawAirdropTokens").attr("disabled", "disabled")
-    
-                dropper.withdrawAirdropTokens({"from": myAddress}).then((tx) => {
-                        $("#eligibility").html("Transaction Processing: <a href='https://etherscan.io/tx/"+ tx+"'>"+tx+"</a>");
-                        tokenstats.airdropPending = true;
+
+                dropper.withdrawAirdropTokens({ "from": myAddress }).then((tx) => {
+                    $("#eligibility").html("Transaction Processing: <a href='https://etherscan.io/tx/" + tx + "'>" + tx + "</a>");
+                    tokenstats.airdropPending = true;
                 })
             })
         }
-    
-    
-        $('#sendTokens').on('click', function(){
+
+
+        $('#sendTokens').on('click', function () {
             $("#sendResponse").show();
             $("#sendResponse").html("Submitted: Please confirm the transaction in Metamask");
             token.transfer(
-                $('#sendTo').val(), 
+                $('#sendTo').val(),
                 decimalToRaw($('#sendAmount').val(), tokenstats.decimals)
             )
-            .then(function(transferTxHash) {
-              $("#sendResponse").removeClass("text-info").addClass("text-success");
-              $('#sendResponse').html('Sent. Tx: <a href="https://etherscan.io/tx/' + String(transferTxHash)+'">'+String(transferTxHash)+"</a>");
-            })
-            .catch(function(transferError) {
-              $("#sendResponse").removeClass("text-info").addClass("text-error");
-              $('#sendResponse').html('Error:' + String(transferError));
-            });
+                .then(function (transferTxHash) {
+                    $("#sendResponse").removeClass("text-info").addClass("text-success");
+                    $('#sendResponse').html('Sent. Tx: <a href="https://etherscan.io/tx/' + String(transferTxHash) + '">' + String(transferTxHash) + "</a>");
+                })
+                .catch(function (transferError) {
+                    $("#sendResponse").removeClass("text-info").addClass("text-error");
+                    $('#sendResponse').html('Error:' + String(transferError));
+                });
 
             return false;
-          });
+        });
+
+        $(document).on("click", "#tradeBtn", () => {
+            if (exchangeUI.direction == "buy") {
+                buy(parseFloat($("#convertFrom").val()));
+            } else {
+                sell(parseFloat($("#convertFrom").val()));
+            }
+        });
+
+        $(document).on("click", "#swapBuySell", () => {
+            let amt = $("#convertTo").val();
+
+            if (exchangeUI.direction == "buy") {
+                exchangeUI.direction = "sell";
+                $("#convertFrom, #convertTo").val('');
+                $("#convertFrom").attr("placeholder", tokenData.symbol)
+                $("#convertTo").attr("placeholder", "ETH")
+                $("#tradeBtn").html("Sell")
+                $("#tradeBtn").removeClass("btn-success").addClass("btn-warning")
+
+            } else {
+                exchangeUI.direction = "buy";
+                $("#convertFrom, #convertTo").val('');
+                $("#convertTo").attr("placeholder", tokenData.symbol)
+                $("#convertFrom").attr("placeholder", "ETH")
+                $("#tradeBtn").html("Buy")
+                $("#tradeBtn").addClass("btn-success").removeClass("btn-warning")
+
+            }
+
+            $("#convertFrom").val(amt); //Swap the values;
+            $("#convertFrom").change(); //Trigger the onchange event;
+
+            return false;
+        })
+
+        $(document).on('keyup change', "#convertFrom", () => {
+
+            //Don't try to convert a non number
+            if (isNaN($("#convertFrom").val()) || $("#convertFrom").val() == "")
+                return;
+
+            try {
+                let v = parseFloat($("#convertFrom").val())
+
+                if (v <= 0) {
+                    $("#convertTo").val("0");
+                    return;
+                }
+
+                let func = exchangeUI.direction == "buy" ? convertToTokens : convertToEther
+                func(v).then((amount) => {
+                    $("#convertTo").val(amount.toString().substring(0, 10));
+                    let unitPrice = exchangeUI.direction == "buy" ? v / amount :
+                        amount / v
+                    let btnString = (exchangeUI.direction == "buy" ? "Buy @ " + unitPrice.toString().substring(0, 8) :
+                        "Sell @ " + unitPrice.toString().substring(0, 8))
+                    $("#tradeBtn").html(btnString)
+                    if (!exchangeUI.readonly)
+                        $("#tradeBtn").removeAttr("disabled");
+                })
+            } catch (x) {
+                $("#convertTo").val("Error");
+                console.log("Realtime converter: invalid number entry or blockchain connection error")
+                $("#tradeBtn").attr("disabled");
+            }
+
+        })
 
 
 
-        console.log("Account: "+myAddress);
-        $(".ethAddress").html(myAddress.substring(0,10)+"...");
+
+        console.log("Account: " + myAddress);
+        $(".ethAddress").html(myAddress.substring(0, 10) + "...");
 
         refreshDisplayData();
         //Poll the blockchain, refresh the display
@@ -264,15 +332,15 @@ async function buy(amountInEther) {
     //todo validation of input
     let valueInWei = decimalToRaw(amountInEther, 18)
     let minPurchaseReturn = valueInWei * (1 - exchangeUI.maxSlippage);
-    
+
     console.log(`Value:${valueInWei}, Limit:${minPurchaseReturn}`);
 
-    exchanger.buy(minPurchaseReturn,{
+    exchanger.buy(minPurchaseReturn, {
         "from": myAddress,
         "value": valueInWei
     }).then((tx) => {
         $(".alert").hide();
-        $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/"+ tx+"'>"+tx+"</a>");
+        $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/" + tx + "'>" + tx + "</a>");
         $(".alert-success").show();
     }).catch((err) => {
         $(".alert").hide();
@@ -285,7 +353,7 @@ async function sell(amountInTokens) {
     console.log("sell");
     let rawTokens = decimalToRaw(amountInTokens, 18)
     //let minSaleReturn = rawTokens * (1 - exchangeUI.maxSlippage);
-    let minSaleReturn=0
+    let minSaleReturn = 0
 
     $(".alert").hide();
     $(".alert-warning").show();
@@ -293,8 +361,8 @@ async function sell(amountInTokens) {
     token.approve(window.model.exchangerAddress, rawTokens).then((tx) => {
         exchanger.sell(rawTokens, minSaleReturn).then((tx) => {
             $(".alert").hide();
-            $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/"+ tx+"'>"+tx+"</a>");
-            $(".alert-success").show();     
+            $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/" + tx + "'>" + tx + "</a>");
+            $(".alert-success").show();
         })
     })
 }
