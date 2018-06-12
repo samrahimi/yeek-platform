@@ -1,3 +1,4 @@
+pragma solidity ^0.4.18;
 interface IYeekFormula {
     function calculatePurchaseReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _depositAmount) external view returns (uint256);
     function calculateSaleReturn(uint256 _supply, uint256 _connectorBalance, uint32 _connectorWeight, uint256 _sellAmount) external view returns (uint256);
@@ -149,7 +150,7 @@ contract Exchanger is Administered {
      */
      function setReserveWeight(uint ppm) onlyAdmin public {
          require (ppm>0 && ppm<=1000000);
-         weight = ppm;
+         weight = uint32(ppm);
      }
 
     //These methods return information about the exchanger, and the buy / sell rates offered on the Token / ETH pairing.
@@ -228,7 +229,7 @@ contract Exchanger is Administered {
             address(this).balance - msg.value,
             weight,
             msg.value);
-        require (enabled)    
+        require (enabled); // ADDED SEMICOLON    
         require (amount >= minPurchaseReturn);
         require (tokenContract.balanceOf(this) >= amount);
         emit Buy(msg.sender, msg.value, amount);
@@ -246,7 +247,7 @@ contract Exchanger is Administered {
              weight,
              quantity
          );
-         require (enabled)
+         require (enabled); // ADDED SEMICOLON
          require (amountInWei >= minSaleReturn);
          require (amountInWei <= address(this).balance);
          require (tokenContract.transferFrom(msg.sender, this, quantity));
