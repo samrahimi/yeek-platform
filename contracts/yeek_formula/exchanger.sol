@@ -170,7 +170,7 @@ contract Exchanger is Administered {
     function getQuotePrice() public view returns(uint) {
         uint tokensPerEther = 
         formulaContract.calculatePurchaseReturn(
-            tokenContract.totalSupply(),
+            tokenContract.totalSupply() - tokenContract.balanceOf(this),
             address(this).balance,
             weight,
             1 ether 
@@ -183,12 +183,16 @@ contract Exchanger is Administered {
      @dev Get the BUY price based on the order size. Returned as the number of tokens that the amountInWei will buy.
      */
     function getPurchasePrice(uint256 amountInWei) public view returns(uint) {
-        return formulaContract.calculatePurchaseReturn(
-            tokenContract.totalSupply(),
+        uint256 purchaseReturn = formulaContract.calculatePurchaseReturn(
+            tokenContract.totalSupply() - tokenContract.balanceOf(this),
             address(this).balance,
             weight,
             amountInWei 
         ); 
+
+        if (purchaseReturn > tokenContract.balanceOf(this)){
+            return tokenContract.balanceOf(this);
+        }
     }
 
     /**
@@ -196,7 +200,7 @@ contract Exchanger is Administered {
      */
     function getSalePrice(uint256 tokensToSell) public view returns(uint) {
         return formulaContract.calculateSaleReturn(
-            tokenContract.totalSupply(),
+            tokenContract.totalSupply() - tokenContract.balanceOf(this),
             address(this).balance,
             weight,
             tokensToSell 
