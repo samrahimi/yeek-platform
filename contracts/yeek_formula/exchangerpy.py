@@ -175,6 +175,7 @@ def BancorFormula():
 '''
 def calculatePurchaseReturn(_supply, _connectorBalance, _connectorWeight, _depositAmount):
     # validate input
+    
     assert(_supply > 0 and _connectorBalance > 0 and _connectorWeight > 0 and _connectorWeight <= MAX_WEIGHT);
 
     # special case for 0 deposit amount
@@ -451,16 +452,17 @@ def safeMul(x,y):
 
 if __name__ == '__main__':
     # note: calculate
-    connectorTokenBalance = int(0.05 * 50000)
+    connectorTokenBalance = 25000
     supply = 500000 # total supply of token
     connectorBalance = 200 # total eth balance
     weight = 50000
     returns = []
     for i in range(1, 5000):
+        
         if connectorTokenBalance < 0:
             break
+            
         a = calculatePurchaseReturn(supply - connectorTokenBalance, connectorBalance, weight, i)
-        
         b = i / (connectorTokenBalance + a)
         returns.append(b)
         connectorTokenBalance -= a
