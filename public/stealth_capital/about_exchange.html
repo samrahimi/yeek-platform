@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <script type="text/html" template-engine="ejs">
+            <title><%=menuData.pageTitle%></title>
+            <!-- since we're going to wrap this up into a native app, disable zooming on mobile -->
+            <meta name='viewport'  content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+            <meta name="description" content="<%=menuData.pageDescription%>">
+        </script>
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,400i,500" rel="stylesheet">
+    <link href="assets/css/socicon.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="assets/css/entypo.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="assets/css/theme.css" rel="stylesheet" type="text/css" media="all" />
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Firebase App is always required and must be first -->
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
+
+    <!-- Add additional services you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-messaging.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-functions.js"></script>
+
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ethjs@0.3.4/dist/ethjs.min.js"></script>
+    <script type="text/javascript" src="assets/js/ejs.js"></script>
+    <script type="text/javascript" src="assets/js/ejs-controller.js?v10"></script>
+
+    <style>
+        .video_container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%;
+        }
+
+        .video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <script>
+        $(document).ready(() => {
+            const formulaAddress = "0x2dfafadf1dedaa5707126fd65ef7032a2c455b78"; //ROPSTEN!!!
+            window.model =
+                    {
+                        menuData: {
+                            topLevel: ["Exchange (Alpha)", "How It Works"],
+                            pageTitle: "Yeek Exchange - About",
+                            pageDescription: "Learn about the hottest up and coming crypto exchange that's going to change everything!.",
+                        }
+                    }
+
+            renderDefaultEjsTemplate(model);
+
+            /*
+            db.collection("listed_tokens").doc(tokenAddress).get().then((doc) => {
+                //Declarative import of HTML web controls using <ctrl> tag
+                window.tokenData = doc.data();
+
+                window.model =
+                    {
+                        tokenAddress: tokenAddress,
+                        dropperAddress: tokenData.airdropper_address,
+                        exchangerAddress: tokenData.exchanger_address,
+                        menuData: {
+                            topLevel: ["Platform (Beta)", "Company", "Token", "Exchange"],
+                            pageTitle: "Yeek Exchange",
+                            pageDescription: "Trade tokens issued by members of the Yeek Community.",
+                            tokenAddress: tokenAddress,
+                            dropperAddress: doc.airdropper_contract,
+                            exchangerAddress: doc.exchanger_contract
+                        }
+                    }
+                renderDefaultEjsTemplate(model);
+                loadControls(model);
+
+                bindTokenData();
+            })*/
+        })
+
+    </script>
+
+
+
+    <script type="text/html" template-engine="ejs">
+                    <div class="sticky-top">
+                        <!-- Main Nav -->
+                        <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                            <div class="container">
+                                <a class="navbar-brand" href="index.html">
+                                    <img alt="Yeek Logo" src="assets/img/logo.png" />
+                                </a>
+                                <span style="font-size:1.5rem" class="d-lg-none">
+                                    <%=menuData.pageTitle%>
+                                </span>
+                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                                    aria-label="Toggle navigation">
+                                    <i class="icon-menu h4"></i>
+                                </button>
+                                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                                    <!-- The control's datasource is organized by menu item type. The topLevel[] items are the main menu items -->
+                                    <ul class="navbar-nav">
+                                        <% for (var i=0; i<menuData.topLevel.length; i++) {%>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="#">
+                                                    <%=menuData.topLevel[i]%>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                                    </ul>
+                
+                                </div>
+                            </div>
+                            <!--end nav collapse-->
+                        </nav>
+                        <!-- User Balance - Eth Only -->
+                    </div>
+
+                            
+    
+   
+            </script>
+    <!--
+    <ctrl src="./controls/nav.html?999" id="mainNav" bind-to="menuData" doNotWrap="true"></ctrl>
+    -->
+
+    <div class="container">
+        <br />
+        <h1>About The Exchange</h1>
+        <p>
+           The Yeek Exchange was launched with 2 goals: to make trading easy and satisfying to crypto investors of all levels, and to 
+           provide a liquid market for small and medium-cap tokens, including those that have not conducted a traditional Token Launch / ICO 
+           and/or are not currently trading on other exchanges. 
+        </p>
+        <p>
+            That said, we believe our liqudity model is ideal for trading all types of tokens (and other cryptoassets, as long as they implement 
+            a simplified version of the ERC20 standard). A traditional full-limit order book, the foundation of most commodities exchanges, works 
+            great for popular assets that are frequently traded, where multiple market makers consistently participate in trading, 
+            and in a centralized environment which guarantees lightning-fast order execution (and it's corollary, an order settlement process that can take days or weeks).
+            <br /><br />
+            HOWEVER. A quick look around at the <em>decentralized</em> exchanges that utilize the order book model proves disappointing: liquidity is 
+            extremely poor for all but the most common assets, causing pricing to reflect the whims of 1 or 2 traders rather than the sentiments of the market as a whole.  
+            For somewhat busier (but still not fully liquid) markets the delay between when an order is placed and when it is executed on the Blockchain causes other hassles: 
+            matching orders will have often been filled by the time your order makes it to the miners to be executed, leaving the trader with an order that is fully or 
+            partially "resting on the book" (and which costs money to cancel - with any decentralized app, users pay transaction fees to write data to the Blockchain, 
+            so such an app's design should aim to avoid putting users in the position of paying fees for anything except a trade executed to the user's specifications).
+            <br /><br />
+            This further worsens liquidity, as traders in an illiquid market with high transaction fees will be motivated to place "fill or kill" orders, causing would-be 
+            market makers to end up acting as takers instead. And only the most foolish of investors would dare to place a "market order" on such an exchange - for 
+            a popular asset that is frequently traded (the sort of asset for which market orders might make sense), the order book at the time of execution may look 
+            entirely different from when the order was placed.
+            <br /><br />
+            Because of the above problems, the most popular and successful cryptocurrency exchanges today are centralized - despite all the problems that come 
+            with that: user funds are stored by the exchange and vulnerable to theft, markets can be manipulated by the exchange owners with no record of what 
+            was done, and the need to comply with government regulations (wherever the exchange is hosted) means that such exchanges are forced to perform 
+            identity verification, question the source of trading funds, turn over customer data to law enforcement, and do all sorts of things that are 
+            contrary to the spirit of decentralized computing - while traders can make money on these centralized crypto exchanges, and the exchanges themselves 
+            certainly make money through arbitrarily set transaction fees, in no way does this model further the socio-economic potential of cryptocurrency and 
+            decentralized computing. And part of this potential is the ability for small organizations to publicly issue their own currencies, utility tokens, or 
+            securitized assets - something which has been partially realized through the "ICO" (token crowdsale) phenomenon, but that is only a partial solution, 
+            for it doesn't guarantee liquidity post-crowdsale, and is over-reliant on marketing hype.
+        </p>
+        <p>
+            We set out to create an exchange that is fully decentralized, with low fees, guaranteed liquidity for all assets, 
+            conducive to listing micro-cap assets, supportive of market-driven price discovery, and completely transparent. Uncorruptible, if you will.
+            <br /><br />
+            For reasons described above, we have done away with the "order book" which matches buyers and sellers. Instead, every order on our system involves the trading party 
+            (who is possibly human, possibly robotic, and acting as either buyer or seller) trading against the liquidity reserve for that asset, 
+            which acts as counterparty to all orders. The reserves use a market intelligence algorithm to dynamically price assets based on supply vs 
+            demand - an algorithm that favors retail investors and penalizes market manipulation such as "pumping" or "dumping" of an asset.
+            <br /><br />
+            With an order book, nothing is stopping an insider ("market maker") from dumping 50% of total market cap onto an exchange and asking whatever price he thinks 
+            will be acceptable to counterparties - with the Yeek Formula, all orders are "fill or kill", with pricing determined dynamically and transparently: 
+            a "dump" of 50% of a token's market cap onto an Exchanger set at 10% reserve ratio will be quoted at ~80% discount from the unit price - and once  
+            executed will cause the new unit price to drop by this amount. The reserve ratios for small and micro cap assets are commonly as low as 2% - 
+            in this case, a sell order for 50% of the tokens in circulation will quote at a ~98% discount (in others words, it will pay 2 cents on the dollar when 
+            compared to the unit price).
+        </p>
+        <h2>How Trading Works</h2>
+        <p>
+            Just like a market order on an order book exchange, the price at which an order is executed becomes less favorable as the order size increases - but here 
+            that price increase is predictable and transparent - and when the market is not busy, orders will be executed at the same price they were quoted. Thus, 
+            most of the "slippage" that traders encounter on traditional exchanges due to their order size vs liquidity depth is eliminated. The slippage that can still occur 
+            if caused by the 30 - 60 seconds it takes for an order to reach the Blockchain - the base price may change if other pending orders are executed 
+            during that window. Traders have the option of handling slippage in 3 different ways: 
+            
+            <ul>
+                <li>Fill-or-kill: if the quoted price is invalid at execution time, the order will be cancelled</li>
+                <li>Limit Orders: the trader specifies maximum % slippage from the quote price that he will accept. If slippage is less than this, order is filled at the market price (at time of execution), otherwise it is cancelled</li>
+                <li>Market Orders: are always filled at the market price when executed. The trader assumes risk of slippage.</li>
+            </ul>
+
+            
+        </p>
+        <p>
+        <h2>Decentralization</h2>
+
+            Traders may trade directly against a reserve by interacting with the smart contract manually, by writing code that performs automated 
+            trades, or by using the Yeek Exchange web application, which acts as a bridge betweeen the trader's wallet, the asset, the Exchanger, and 
+            the pricing formula. Everything to do with pricing and trading is 100% decentralized - the browser reads and writes 
+            data on the blockchain via the user's Ethereum wallet, without the use of a web server or a database. We do have a small database in the cloud, 
+            linked up to a few simple cloud functions for processing data. The centralized DB is used to store nonessential data (company profiles, discussion threads, token logos, etc) -  
+            and also to store <em>historical</em> exchange data. This allows us to provide user friendly features like 
+            price charts, 24h volume, etc - it would be inefficient to generate these directly from the blockchain, which contains a list of every individual 
+            order ever placed for a given asset. Note that our centralized services merely read data from the blockchain regarding 
+            trades that have already settled and aggregate it into a convenient format - they do not write to the blockchain and are not involved in any 
+            aspect of quoting current prices, placing orders, or executing trades.<br /><br />
+
+            To prove that the exchange is decentralized, we switched off the cloud functions, database, and webpage hosting, and the exchange still worked perfectly - 
+            pricing and reserve liquidity data was displayed, orders were quoted in real time, and we executed several trades, with full functionality.
+             We couldn't see price charts and volume data, but we still had access to a historical list of all trades - enough for us to make our own 
+             hand-drawn price charts if the reason for the server outage was something serious, and to calculate daily / weekly trading volumes with a 
+             pen and paper. <br /><br />
+             
+            Technically, an exchange is decentralized if orders can be placed by interacting with smart contracts, regardless of what other functionality may be dependent on 
+            centralized server and database infrastructure. But in practical terms, most people have no idea how to read data from a smart contract nor involve 
+            its functionality, and will accept the accuracy of data presented in the UI without verifying it against the Blockchain - and therefore most users will not 
+            benefit from decentralization unless the most critical user-facing features are decentralized on the front end as well (imagine that an authoritarian government 
+            decides to try and shut down the Yeek Exchange - the way we've built it, they can seize all our cloud services and it won't do much harm - users will be able to continue trading 
+            with no loss of functionality, only marketing materials (company profiles) and visual charts will be missing. On the other hand, if our UI was server based and such an attack occurred, 
+            98% of our users would be utterly incapable of operating the platform without a web server - they wouldn't be able to trade, nor could they view market data.)<br /><br />
+
+            We can do better, however: even though the front end webapp is just static HTML / JS, it must be accessed by downloading it from somewhere, or by obtaining an offline copy 
+            from someone else. Most users are not going to bother downloading the code and getting it to run locally - they probably won't know how, or won't think of it. 
+            This places them in the same awkward situation if centralized authorities shut down whatever cloud storage system is hosting the content (especially if they also seize the domain that 
+            points to the storage location, preventing folks from accessing it if it's redeployed to a different IP). The solution is to 
+            use a peer-to-peer, decentralized system for both hosting the content - and for resolving it's location. While they both have some growing up to do, 
+            IPFS and Swarm protocols have the functionality to handle our basic needs (serving of HTML, JS, and image files), and sizeable global communities that make 
+            them impossible to shut down (just like Bitcoin or Ethereum). Swarm, in particular, is developed by a division of the Ethereum organization and plays 
+            nicely with it - we plan to migrate content to Swarm in 2 phases: (1) Host all HTML pages and related website assets from Swarm, and (2) Make Swarm our database, by storing data in 
+            JSON files inside of Swarm buckets (or something like that - it's going to take some work to manage concurrency but it's doable).<br /><br />
+
+            With those 2 items complete, the Yeek Exchange will be the world's first truly decentralized exchange - hell, it'll be the world's first truly decentralized 
+            APPLICATION (except for a few pointless demos hosted on IPFS and Swarm).
+
+        </p>
+
+        <h2>The Yeek Platform - Gig Economy, meet Exchange</h2>
+        <p>Most Blockchain startups would be very proud to have an exchange that functions as well as ours does now, and call it a day - this being after 
+            raising $10mil+ and spending all of it to get to the same point we got to for $500. That's right, no missing zeroes.
+        </p>
+        <p>The Yeek vision far greater than that - because we are here to change the way society operates, and revolutionizing the trading of commodities isn't 
+            much good if most of them don't have any intrinsic value or social utility. Our gig marketplace solution to the broken "reputation" models of current 
+            gig platforms is discussed in detail in our white paper, but equally important is that we allow companies to post gigs that are paid in ANY cryptocurrency token, 
+            so long as it's compatible with our technology (the gig marketplace allows gigs to be paid in any token that trades on our exchange - and our exchange 
+            accepts every token submitted for listing, regardless of market cap, company size, or our opinion of the project). 
+        </p>
+        <p>Technical details aside, it doesn't mean much if a company can pay it's workers in some brand new token - why would a worker accept some brand new currency that no one 
+            has ever heard of, that's not on CoinMarketCap, etc... and why would they accept a slightly more seasoned token that's traded on a few exchanges but has 
+            little to no real world <em>liquidity</em>??? The Yeek Platform closes the loop, because workers know that they will be able to sell whatever tokens 
+            that they get paid by hopping over to the Exchange - instantly, without waiting for a matching order. 
+        </p>
+        <p>
+            That's the obvious tie-in: listing the tokens on our exchange gives them full liquidity, and therefore makes them a viable means of exchange on our gig marketplace 
+            (and on any other market where they are used). But the flipside is equally cool: an early stage startup's token often struggles due to it's lack of intrinsic value - 
+            for utility tokens, they are of limited "utility" until there is a place to spend them, which usually means that the associated product must first launch before such 
+            tokens are of intrinsic (rather than speculative) value. Our gig marketplace changes all that - because workers will be willing to accept payment in 
+            lesser known crypto tokens (thanks to the guaranteed liquidity provided by the exchange), this gives the tokens their own intrinsic value: what was formerly 
+            a utility token for some yet-to-be-built software product has now become a viable means of exchange that transcends it's original purpose. <br /><br />
+            
+            As the scope and popularity of the marketplace increases, it is likely that we will see the ongoing circulation of tokens between various participants in the market: 
+            I pay you 100 Yeek to do some graphic design for the Yeek Platform - but then you pay Jim 25 Yeek in exchange for yard work.<br /><br />
+            
+            The result: small-cap tokens develop intrinsic value as they circulate within the economy, stabilizing their price, and benefitting the issuer as well as investors who hold the token.<br /><br />
+
+            Finally (and we'll leave this discussion for another day) - imagine how much more interesting this gets when we expand beyond ERC20 tokens and start supporting atomic swaps cross-chain...
+        </p>
+    </div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+    <script type="text/javascript" src="assets/js/jquery.smartWizard.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.0.10/flickity.pkgd.min.js"></script>
+    <script type="text/javascript" src="assets/js/scrollMonitor.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/12.1.5/js/smooth-scroll.polyfills.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/prism.min.js"></script>
+    <script type="text/javascript" src="assets/js/zoom.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="assets/js/theme.js"></script>
+
+</body>
+
+</html>
