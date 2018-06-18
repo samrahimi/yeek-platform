@@ -1,0 +1,160 @@
+<div class="sticky-top">
+        <!-- Main Nav -->
+        <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img alt="Yeek Logo" src="assets/img/logo.png" />
+                </a>
+                <span style="font-size:1.5rem" class="d-lg-none">
+                    <%=menuData.pageTitle%>
+                </span>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <i class="icon-menu h4"></i>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <!-- The control's datasource is organized by menu item type. The topLevel[] items are the main menu items -->
+                    <ul class="navbar-nav">
+                        <% for (var i=0; i<menuData.topLevel.length; i++) {%>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <%=menuData.topLevel[i]%>
+                                </a>
+                            </li>
+                            <% } %>
+                                <li class="nav-item">
+                                    <a class="nav-link d-lg-none" href="#">My Profile</a>
+                                </li>
+                    </ul>
+
+                    <ul class="navbar-nav d-lg-block d-none">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle dropdown-toggle-no-arrow p-lg-0" href="http://example.com" id="dropdown01-5" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                <img alt="Image" src="assets/img/avatar-male-3.jpg" class="avatar avatar-xs">
+                                <span class="badge badge-danger">8</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right" aria-labelledby="dropdown01-5">
+                                <a class="dropdown-item" href="components-bootstrap.html#">                                <span style="font-size:1.5rem" class="d-lg-none">
+                                        My Gigs
+                                    <span class="badge badge-danger">8</span>
+                                </a>
+                                <a class="dropdown-item" href="components-bootstrap.html#">My Arbitrations</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="components-bootstrap.html#">Profile</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--end nav collapse-->
+        </nav>
+        <!-- User Balance - Eth and Current Token -->
+        <% if (location.href.toLowerCase().indexOf("token.html")>0) { %>
+        <div class="bg-primary text-white">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col p-2" style="text-align:center">
+
+                Balance (<%=tokenData.symbol%>): <span id="tokenBalance">Loading...</span>
+                
+                
+
+                        </div>
+                        <div class="col p-2" style="text-align:center">
+                                Balance (ETH): <span id="etherBalance"></span>
+                        </div>
+                    </div>
+                    <!--end of row-->
+                </div>
+                <!--end of container-->
+        </div>
+        <%}%>
+    </div>
+    <% if (location.href.toLowerCase().indexOf("token.html")>0) { %>
+        <!-- Token Profile - Should refactor -->
+         <div class="container bg-white pt-3 pb-3">
+            <div class="row justify-content-center">
+
+                <div class="col-12 col-md-8">
+                    <div class="media" style="margin-bottom:0">
+                        <img alt="Token Symbol" src="<%=tokenData.logo_url%>" class="mr-md-5 avatar avatar-xlg" />
+                        <div class="media-body">
+                            <div class="mb-3">
+                                <h1 class="h2 mb-2 tokenName"></h1>
+                                <div class="text-success" style="font-weight:bold">
+                                    <i class="icon-line-graph"></i>
+                                    <span class="tokenPrice"><span class="quote_price"></span> ETH</span>
+                                </div>
+
+                            </div>
+                            <p><%-tokenData.company_info.elevator_pitch%></p>
+                            <div>
+                                    <button class="btn btn-outline-primary" data-toggle="button"><i class="icon-add-user"></i> Follow</button>
+                                    <button class="btn btn-outline-primary"><i class="socicon-facebook"></i>
+                                    </button>
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-outline-primary dropdown-toggle dropdown-toggle-no-arrow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="icon-dots-three-horizontal"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 36px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                            <a class="dropdown-item" href="app-profile-creator.html#">Add to group</a>
+                                            <a class="dropdown-item" href="app-profile-creator.html#">Share Profile</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="app-profile-creator.html#">Block</a>
+                                            <a class="dropdown-item" href="app-profile-creator.html#">Report</a>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+                <!--end of col-->
+            </div>
+            <!--end of row-->
+        </div>
+        <!--end of container-->
+
+        <!-- Subnav Tabs - Should refactor -->
+        <div class="container">
+            <div class="row">
+                <div class="col mb-1">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                    <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="false">
+                                        <i class="icon-swap"></i> 
+                                        Trade</a>
+                                </li>
+
+                            <li class="nav-item">
+                                    <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="true">
+                                        <i class="icon-info"></i> 
+                                        Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">
+                                        <i class="icon-users"></i> 
+                                        Community</a>
+                                </li>
+                                <% if (window.model.dropperAddress != '0x0') { %>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">
+                                        <i class="icon-thunder-cloud"></i> 
+                                        Airdrop!</a>
+                                </li>
+
+                                <%}%>
+                    </ul>
+                </div>
+                <!--end of col-->
+            </div>
+            <!--end of row-->
+        </div>
+         <!--end of container-->
+    <%}%>
+        

@@ -67,9 +67,10 @@ let updateUserBalances = () => {
         $("#tokenBalance").html(rawToDecimal(tokenstats.balance, 18));
     })
 
-    eth.getBalance(myAddress, (err, balance) => {
-        var value = web3.fromWei(balance, 'ether');
-        tokenstats.etherBalance = value.toString(10);
+    web3.eth.getBalance(myAddress, (err, balance) => {
+        let wei = balance.toString(10);
+        tokenstats.etherBalance = rawToDecimal(wei,18);
+        //tokenstats.etherBalance = value.toString(10);
         $("#etherBalance").html(tokenstats.etherBalance);
     });
 }
@@ -140,7 +141,7 @@ let getQuotePriceForToken = () => {
                 pricing.sell = ether / actualTokens;
 
                 let newQuotePrice = (pricing.buy + pricing.sell) / 2
-                $(".quote_price").html(newQuotePrice.toString().substring(0, 10));
+                $(".quote_price").html(newQuotePrice.toFixed(5));
             })
         })
     }
@@ -172,9 +173,9 @@ async function updateReserveBalances() {
             //Market cap: reserve balance in ether / reserve weight as a fraction
             exchangeUI.market_cap = exchangeUI.reserve_balance_ether / (exchangeUI.reserve_weight / 1000000);
             $(".reserve_weight").html((exchangeUI.reserve_weight / 1000000) * 100); //PPM to pct conversion
-            $(".reserve_balance").html(exchangeUI.reserve_balance_ether.substring(0, 10));
-            $(".reserve_balance_tokens").html(exchangeUI.reserve_balance_tokens.substring(0, 10));
-            $(".market_cap").html(exchangeUI.market_cap.toString().substring(0, 10));
+            $(".reserve_balance").html(exchangeUI.reserve_balance_ether);
+            $(".reserve_balance_tokens").html(exchangeUI.reserve_balance_tokens);
+            $(".market_cap").html(exchangeUI.market_cap.toFixed(3));
         })
     })
 

@@ -2,9 +2,19 @@
 <html lang="en">
 
 <head>
-        <style>
+            <style>
                 .asset-info, .asset-info span {
                     font-size:0.875rem !important;
+                }
+
+                .brand-color-primary {
+                    color:#3e703a !important;
+                }
+                .brand-color-light {
+                    color: #8bc34a !important;
+                }
+                .brand-color-dark {
+                    color: #2f5811;
                 }
             </style>
             
@@ -53,83 +63,23 @@
     <script type="text/javascript" src="assets/js/constants.js"></script>
     <script type="text/javascript" src="assets/js/token.js"></script>
 
-    <style>
-        .video_container {
-            position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 56.25%;
-        }
-
-        .video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-    </style>
 
 
 </head>
 
 <body>
     <script src="data/token_list.js"></script>
-    <script>
-        window.db = firebase.firestore();
-
-        $(document).ready(() => {
-            const tokenAddress = queryString("token_address") || '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
-            const formulaAddress = "0x3ae6abeb18dfa61f85faff25aef28c8cd6ddbe6b"; //MAINNET!
-            //db.collection("listed_tokens").doc(tokenAddress).get().then((doc) => {
-                //Declarative import of HTML web controls using <ctrl> tag
-                //window.tokenData = doc.data();
-                window.tokenData = window.token_list.filter(x => x.contract_address == tokenAddress)[0] //from data/token_list.js
-                console.log("found listing for token "+tokenAddress);
-
-                window.model =
-                    {
-                        tokenAddress: tokenAddress,
-                        dropperAddress: tokenData.airdropper_address,
-                        exchangerAddress: tokenData.exchanger_address,
-                        menuData: {
-                            topLevel: ["Exchange (Alpha)", "How It Works"],
-                            pageTitle: "Yeek Exchange",
-                            pageDescription: "Trade tokens issued by members of the Yeek Community.",
-                            tokenAddress: tokenAddress,
-                            dropperAddress: tokenData.airdropper_contract,
-                            exchangerAddress: tokenData.exchanger_contract
-                        }
-                    }
-                renderDefaultEjsTemplate(model);
-                loadControls(model);
-
-                bindTokenData();
-                window.disqus_config = function () {
-                        this.page.url = "https://yeek-platform.firebaseapp.com/platform/token/"+tokenData.symbol
-                        this.page.identifier = tokenData.symbol // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-                        this.page.title = tokenData.company_info.name;
-                };
-
-                DISQUS();
-            //})
-        })
-
-    </script>
-
+    <script src="assets/js/app.js"></script>
 
 
     <script type="text/html" template-engine="ejs">
                     <div class="sticky-top">
                         <!-- Main Nav -->
-                        <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+                        <nav class="navbar navbar-collapse navbar-dark" style="background-color:#3e703a">
                             <div class="container">
                                 <a class="navbar-brand" href="index.html">
-                                    <img alt="Yeek Logo" src="assets/img/logo.png" />
+                                    <img alt="Stealth Capital Logo" src="assets/img/stealth_logo_full.png" width="200"/>
                                 </a>
-                                <span style="font-size:1.5rem" class="d-lg-none">
-                                    <%=menuData.pageTitle%>
-                                </span>
                                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                                     aria-label="Toggle navigation">
                                     <i class="icon-menu h4"></i>
@@ -144,50 +94,29 @@
                                                 </a>
                                             </li>
                                             <% } %>
-                                                <!--
-                                                <li class="nav-item">
-                                                    <a class="nav-link d-lg-none" href="#">My Profile</a>
-                                                </li>
-                                            -->
                                     </ul>
-                                    <!--
-                                    <ul class="navbar-nav d-lg-block d-none">
-                                        <li class="nav-item dropdown">
-                                            <a class="nav-link dropdown-toggle dropdown-toggle-no-arrow p-lg-0" href="http://example.com" id="dropdown01-5" data-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
-                                                <img alt="Image" src="assets/img/avatar-male-3.jpg" class="avatar avatar-xs">
-                                                <span class="badge badge-danger">8</span>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right" aria-labelledby="dropdown01-5">
-                                                <a class="dropdown-item" href="components-bootstrap.html#">                                <span style="font-size:1.5rem" class="d-lg-none">
-                                                        My Gigs
-                                                    <span class="badge badge-danger">8</span>
-                                                </a>
-                                                <a class="dropdown-item" href="components-bootstrap.html#">My Arbitrations</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="components-bootstrap.html#">Profile</a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    -->
                                 </div>
                             </div>
                             <!--end nav collapse-->
                         </nav>
                         <!-- User Balance - Eth and Current Token -->
-                        <div id="userBalances" class="bg-primary text-white">
+                        <div id="userBalances" class="text-white" style="background-color:#5B8F55;font-size:0.875rem">
                                 <div class="container">
+                                    <div class="row">
+                                        <div class="col-4"><h5>My Tokens</h5></div>
+                                        <div class="col-8 pt-1" style="text-align:right"><b>Value: YYY.YYYY ETH / $XXXXXXX.XX</b></div>
+                                    </div>
+                                    
                                     <div class="row justify-content-center">
-                                        <div class="col p-2" style="text-align:center">
-            
-                                Balance (<%=tokenData.symbol%>): <span id="tokenBalance">...</span>
-                                        </div>
-                                
-                                        <div class="col p-2" style="text-align:center">
-                                            Balance (ETH): <span id="etherBalance">...</span>
-                                        
-            
-                                        </div>
+                                        <% for (var i=0; i<window.token_list.length; i++) { %>
+                                            <div class="col m-2 p-1 rounded" style="text-align:center;font-size:0.8rem;background-color:#2f5811">
+                                                <b><a class="text-white" href="token.html?token_address=<%=token_list[i].contract_address%>"><%=token_list[i].symbol%></a></b><br />
+                                                <span id="balance_<%=token_list[i].symbol%>">0 ($0.00)</span>
+                                                <%
+                                                    // populate_balance(token_list[i].symbol)
+                                                %>
+                                            </div>
+                                        <%}%>
                                     </div>
                                     <!--end of row-->
                                 </div>
@@ -398,7 +327,28 @@
                                     </div>
                                 </div>
                                 <span class="text-info" style="display:none" id="tradeResponse"></span>
+
+                                                             <!-- Buy Ether-->
+                             <div class="card">
+                                    <h5 class="card-header">Purchase Ether</h5>
+                                    <div class="card-body">
+                                    <p>Need crypto? Get the best rates with our partner Changelly. Just click the button below to buy Ether using your credit / debit card, Bitcoin, and other cryptocurrencies.</p>
+                                       <link rel="stylesheet" href="https://changelly.com/widget.css"/> 
+                                       <a id="changellyButton" href="https://changelly.com/widget/v1?auth=email&from=USD&to=ETH&merchant_id=a9d01925ca20&address=<%=window.web3.eth.defaultAccount%>&amount=1&ref_id=a9d01925ca20&color=00cf70" target="_blank"> 
+                                          <button class="btn btn-primary">Buy Ether Now</button> 
+                                       </a> 
+                                       
+                                       <div id="changellyModal" style="z-index:10000"> 
+                                       <div class="changellyModal-content"> 
+                                           <span class="changellyModal-close">x</span> 
+                                           <iframe src="https://changelly.com/widget/v1?auth=email&from=USD&to=ETH&merchant_id=a9d01925ca20&address=<%=window.web3.eth.defaultAccount%>&amount=1&ref_id=a9d01925ca20&color=3e703a" width="600" height="500" class="changelly" scrolling="no" style="overflow-y: hidden; border: none" > Can't load widget </iframe> </div> 
+                                       </div>
+                                   </div>
+   
+                                </div>
+   
                             </div>
+
                         </div>
                                        
         
@@ -409,7 +359,13 @@
                 </script>
 
                 </div>
-            
+
+                <!-- Buy Ether Popup Script -->
+                <script type="text/javascript"> 
+                    setTimeout(() => {
+                        var changellyModal = document.getElementById('changellyModal'); var changellyButton = document.getElementById('changellyButton'); var changellyCloseButton = document.getElementsByClassName('changellyModal-close')[0]; changellyCloseButton.onclick = function() { changellyModal.style.display = 'none'; }; changellyButton.onclick = function widgetClick(e) { e.preventDefault(); changellyModal.style.display = 'block'; }; 
+                    }, 1000);
+                </script> 
             <div class="tab-pane fade " id="tab2-content" role="tabpanel">
                     <script type="text/html" template-engine="ejs">
 
