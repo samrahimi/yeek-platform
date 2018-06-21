@@ -362,7 +362,7 @@ async function sell(amountInTokens) {
 
     $(".alert").hide();
     $(".alert-warning").show();
-
+    //todo: 1 step: token.approveAndCall()
     token.approve(window.model.exchangerAddress, rawTokens).then((tx) => {
         exchanger.sell(rawTokens, minSaleReturn).then((tx) => {
             $(".alert").hide();

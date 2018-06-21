@@ -106,12 +106,6 @@ contract Exchanger is Administered, tokenRecipient {
     event Buy(address indexed purchaser, uint256 amountInWei, uint256 amountInToken);
     event Sell(address indexed seller, uint256 amountInToken, uint256 amountInWei);
 
-    //approveAndCall flow for selling entry point
-    function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external {
-        require(_token == address(tokenContract));
-        sellOneStep(_value, 0, _from);
-    }
-    
     /**
      @dev Deposit tokens to the reserve.
      */
@@ -232,6 +226,10 @@ contract Exchanger is Administered, tokenRecipient {
             tokensToSell 
         ); 
         saleReturn = (saleReturn - (saleReturn * (fee/1000000)));
+        if (saleReturn > address(this).balance) {
+            return address(this).balance;
+        }
+        return saleReturn;
     }
 
     //buy and sell execute live trades against the exchanger. For either method, 
@@ -290,8 +288,16 @@ contract Exchanger is Administered, tokenRecipient {
         msg.sender.transfer(amountInWei); //Always send ether last
     }
 
+
+    //approveAndCall flow for selling entry point
+    function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external {
+        //not needed: if it was the wrong token, the tx fails anyways require(_token == address(tokenContract));
+        sellOneStep(_value, 0, _from);
+    }
+    
+
     //Variant of sell for one step ordering. The seller calls approveAndCall on the token
-    //which calls receiveApproval, which calls this funciton
+    //which calls receiveApproval above, which calls this funciton
     function sellOneStep(uint quantity, uint minSaleReturn, address seller) public {
         uint amountInWei = formulaContract.calculateSaleReturn(
             (tokenContract.totalSupply() / multiplier) - tokenContract.balanceOf(this),

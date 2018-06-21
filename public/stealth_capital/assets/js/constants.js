@@ -517,6 +517,20 @@ const exchangerABI = [
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "multiplier",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "enabled",
 		"outputs": [
 			{
@@ -627,6 +641,56 @@ const exchangerABI = [
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "quantity",
+				"type": "uint256"
+			},
+			{
+				"name": "minSaleReturn",
+				"type": "uint256"
+			},
+			{
+				"name": "seller",
+				"type": "address"
+			}
+		],
+		"name": "sellOneStep",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newValue",
+				"type": "uint256"
+			}
+		],
+		"name": "setMultiplier",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "ppm",
+				"type": "uint256"
+			}
+		],
+		"name": "setFee",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [],
 		"name": "getReserveBalances",
@@ -638,6 +702,46 @@ const exchangerABI = [
 			{
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_from",
+				"type": "address"
+			},
+			{
+				"name": "_value",
+				"type": "uint256"
+			},
+			{
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"name": "_extraData",
+				"type": "bytes"
+			}
+		],
+		"name": "receiveApproval",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "collectedFees",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint32"
 			}
 		],
 		"payable": false,
@@ -713,20 +817,6 @@ const exchangerABI = [
 		"constant": false,
 		"inputs": [
 			{
-				"name": "ppm",
-				"type": "uint32"
-			}
-		],
-		"name": "setReserveWeight",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
 				"name": "quantity",
 				"type": "uint256"
 			},
@@ -772,15 +862,29 @@ const exchangerABI = [
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "getQuotePrice",
+		"name": "fee",
 		"outputs": [
 			{
 				"name": "",
-				"type": "uint256"
+				"type": "uint32"
 			}
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "ppm",
+				"type": "uint256"
+			}
+		],
+		"name": "setReserveWeight",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -880,6 +984,7 @@ const exchangerABI = [
 		"type": "event"
 	}
 ]
+
 let rawToDecimal = function(bigNumStr, decimals) {
     let bn = new web3.BigNumber(bigNumStr);
     let exp = eval("1e"+decimals);

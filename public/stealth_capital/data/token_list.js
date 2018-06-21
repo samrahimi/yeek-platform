@@ -10,7 +10,7 @@ window.token_list = [
         "name": "The Yeek Foundation"
         },
         "contract_address": "0x96387e69fac1d3b63e31a3a70ee3a06761887759",
-        "exchanger_address": "0xb42ce9d2a22061b7d5e569753f92edbaa2dad37b",
+        "exchanger_address": "0x335c949c06fa1ba8744d98e3aa2c2a2deaa9255c",
         "logo_url": "assets/img/tokens/yeek_logo_512.png",
         "network": "mainnet",
         "status": "active",
