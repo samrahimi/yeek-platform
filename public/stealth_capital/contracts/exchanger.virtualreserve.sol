@@ -76,11 +76,15 @@ contract Exchanger is Administered, tokenRecipient {
     uint32 public weight;
     //The fee, in ppm
     uint32 public fee=5000; //0.5%
-    //Price multiplier - for use when the total supply is not in circulation
-    //Lets you use a higher weight with a lower reserve
-    uint32 public multiplier=1;
+    //issuedSupplyRatio - for use in early offerings where a majority of the tokens have not yet been issued.
+    //The issued supply is calculated as: token.totalSupply / issuedSupplyRatio
+    //Example: you have minuted 2mil tokens, sold / gave away 40k in an ICO, and 10k are stored here as a liqudity reserve
+    //Since only 50k total coins have been issued, the issuedSupplyRatio should be set to 40 (2mil / 40 = 50k)
+    uint32 public issuedSupplyRatio=1;
     //Accounting for the fees
-    uint32 public collectedFees=0;
+    uint256 public collectedFees=0;
+    //If part of the ether reserve is stored offsite for security reasons this variable holds that value
+    uint256 public virtualReserveBalance=0;
 
     /** 
         @dev Deploys an exchanger contract for a given token / Ether pairing
@@ -135,6 +139,14 @@ contract Exchanger is Administered, tokenRecipient {
     }
 
     /**
+     @dev Withdraw accumulated fees, without disturbing the core reserve
+     */
+    function extractFees(uint amountInWei) onlyAdmin public {
+        require (amountInWei <= collectedFees);
+        msg.sender.transfer(amountInWei);
+    }
+
+    /**
      @dev Enable trading
      */
     function enable() onlyAdmin public {
@@ -164,9 +176,18 @@ contract Exchanger is Administered, tokenRecipient {
         fee = uint32(ppm);
     }
 
-    function setMultiplier(uint newValue) onlyAdmin public {
+    function setissuedSupplyRatio(uint newValue) onlyAdmin public {
         require (newValue > 0);
-        multiplier = uint32(newValue);
+        issuedSupplyRatio = uint32(newValue);
+    }
+
+    /**
+     * The virtual reserve balance set here is added on to the actual ethereum balance of this contract
+     * when calculating price for buy/sell. Note that if you have no real ether in the reserve, you will 
+     * not have liquidity for sells until you have some buys first.
+     */
+    function setVirtualReserveBalance(uint256 amountInWei) onlyAdmin public {
+        virtualReserveBalance = amountInWei;
     }
 
     //These methods return information about the exchanger, and the buy / sell rates offered on the Token / ETH pairing.
@@ -174,9 +195,10 @@ contract Exchanger is Administered, tokenRecipient {
 
     /**  
      @dev Audit the reserve balances, in the base token and in ether
+     returns: [token balance, ether balance - ledger]
      */
     function getReserveBalances() public view returns (uint256, uint256) {
-        return (tokenContract.balanceOf(this), address(this).balance);
+        return (tokenContract.balanceOf(this), address(this).balance+virtualReserveBalance);
     }
 
 
@@ -187,7 +209,7 @@ contract Exchanger is Administered, tokenRecipient {
     function getQuotePrice() public view returns(uint) {
         uint tokensPerEther = 
         formulaContract.calculatePurchaseReturn(
-            (tokenContract.totalSupply() - tokenContract.balanceOf(this)) * multiplier,
+            (tokenContract.totalSupply() - tokenContract.balanceOf(this)) * issuedSupplyRatio,
             address(this).balance,
             weight,
             1 ether 
@@ -201,8 +223,8 @@ contract Exchanger is Administered, tokenRecipient {
      */
     function getPurchasePrice(uint256 amountInWei) public view returns(uint) {
         uint256 purchaseReturn = formulaContract.calculatePurchaseReturn(
-            (tokenContract.totalSupply() / multiplier) - tokenContract.balanceOf(this),
-            address(this).balance,
+            (tokenContract.totalSupply() / issuedSupplyRatio) - tokenContract.balanceOf(this),
+            address(this).balance + virtualReserveBalance,
             weight,
             amountInWei 
         ); 
@@ -220,8 +242,8 @@ contract Exchanger is Administered, tokenRecipient {
      */
     function getSalePrice(uint256 tokensToSell) public view returns(uint) {
         uint256 saleReturn = formulaContract.calculateSaleReturn(
-            (tokenContract.totalSupply() / multiplier) - tokenContract.balanceOf(this),
-            address(this).balance,
+            (tokenContract.totalSupply() / issuedSupplyRatio) - tokenContract.balanceOf(this),
+            address(this).balance + virtualReserveBalance,
             weight,
             tokensToSell 
         ); 
@@ -254,14 +276,20 @@ contract Exchanger is Administered, tokenRecipient {
      */
     function buy(uint minPurchaseReturn) public payable {
         uint amount = formulaContract.calculatePurchaseReturn(
-            (tokenContract.totalSupply() / multiplier) - tokenContract.balanceOf(this),
-            address(this).balance - msg.value,
+            (tokenContract.totalSupply() / issuedSupplyRatio) - tokenContract.balanceOf(this),
+            (address(this).balance + virtualReserveBalance) - msg.value,
             weight,
             msg.value);
         amount = (amount - ((amount * fee) / 1000000));
+        
+        //Now do the trade if conditions are met
         require (enabled); // ADDED SEMICOLON    
         require (amount >= minPurchaseReturn);
         require (tokenContract.balanceOf(this) >= amount);
+        
+        //Accounting - so we can pull the fees out without changing the balance
+        collectedFees += (msg.value * fee) / 1000000;
+
         emit Buy(msg.sender, msg.value, amount);
         tokenContract.transfer(msg.sender, amount);
     }
@@ -272,8 +300,8 @@ contract Exchanger is Administered, tokenRecipient {
      */
     function sell(uint quantity, uint minSaleReturn) public {
         uint amountInWei = formulaContract.calculateSaleReturn(
-            (tokenContract.totalSupply() / multiplier) - tokenContract.balanceOf(this),
-             address(this).balance,
+            (tokenContract.totalSupply() / issuedSupplyRatio) - tokenContract.balanceOf(this),
+             address(this).balance + virtualReserveBalance,
              weight,
              quantity
         );
@@ -283,6 +311,8 @@ contract Exchanger is Administered, tokenRecipient {
         require (amountInWei >= minSaleReturn);
         require (amountInWei <= address(this).balance);
         require (tokenContract.transferFrom(msg.sender, this, quantity));
+
+        collectedFees += (amountInWei * fee) / 1000000;
 
         emit Sell(msg.sender, quantity, amountInWei);
         msg.sender.transfer(amountInWei); //Always send ether last
@@ -300,8 +330,8 @@ contract Exchanger is Administered, tokenRecipient {
     //which calls receiveApproval above, which calls this funciton
     function sellOneStep(uint quantity, uint minSaleReturn, address seller) public {
         uint amountInWei = formulaContract.calculateSaleReturn(
-            (tokenContract.totalSupply() / multiplier) - tokenContract.balanceOf(this),
-             address(this).balance,
+            (tokenContract.totalSupply() / issuedSupplyRatio) - tokenContract.balanceOf(this),
+             address(this).balance + virtualReserveBalance,
              weight,
              quantity
         );
@@ -311,6 +341,9 @@ contract Exchanger is Administered, tokenRecipient {
         require (amountInWei >= minSaleReturn);
         require (amountInWei <= address(this).balance);
         require (tokenContract.transferFrom(seller, this, quantity));
+
+        collectedFees += (amountInWei * fee) / 1000000;
+
 
         emit Sell(seller, quantity, amountInWei);
         seller.transfer(amountInWei); //Always send ether last

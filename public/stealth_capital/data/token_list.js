@@ -24,20 +24,27 @@ window.token_list = [
         "company_info": {
             "city": "London",
             "country": "UK",
-            "elevator_pitch": "Alain please give me a description of this coin :)",
-            "profile": "",
+            "elevator_pitch": `Tiger Ltd. is a private investment company that will invest in other companies that each
+            have an alternative investment specialty. Every Tiger Share that is sold is backed by no
+            less than 150% of audited assets. <br /><br />
+            <a class="pt-1 btn btn-warning" href="assets/downloads/tiger_whitepaper.pdf">See Whitepaper</a>`,
+
+            "profile": `<img src="assets/img/tokens/tiger_header.png" width="100%" />
+                        <div class="row">
+                            <div class="col-md-3"><h2>Address</h2>TODO</div>
+                            <div class="col-md-9"><h2>Contact Us</h2>TODO</div>
+                        </div>
+                        <br /><br /><br />`,
             "links": {},
             "name": "Tiger Crypto Coin UK LTD"
         },
-        "contract_address": "0xd703311c357db71c9003dfc6e680b1bf16606159",
-        "exchanger_address": "0x0",
+        "contract_address": "0x639c560abc3a9f5c026910555591ecb859066dc3",
+        "exchanger_address": "0x745b8320bfDA9D1fD33334E6ef378b5AA6f8d082",
         "logo_url": "assets/img/tokens/tiger_logo.png",
         "network": "mainnet",
         "status": "pending",
         "symbol": "TIGER",
-        "token_name": "Tiger Crypto Coin UK LTD",
-        "volume_24h": 0,
-        "last_price_usd": 10
+        "token_name": "Tiger Crypto Coin UK LTD"
 
     },
     {
@@ -45,20 +52,33 @@ window.token_list = [
         "company_info": {
             "city": "London",
             "country": "UK",
-            "elevator_pitch": "Alain please give me a description of this coin :)",
-            "profile": "",
+            "elevator_pitch": `Axio has developed a
+            revolutionary software which automates the
+            entire lending life cycle from the on-boarding of
+            agencies seeking to sell their obligations, to
+            purchasing the debt, perfecting the security interest
+            and settlement once repayment has 
+            occurred.. <br /><br />
+
+            <a class="pt-1 btn btn-warning" href="assets/downloads/axio_whitepaper.pdf">See Whitepaper</a>`,
+
+            "profile": `<img src="assets/img/tokens/axio_header.jpg" width="100%" />
+            <div class="row">
+                <div class="col-md-3"><h2>Address</h2>TODO</div>
+                <div class="col-md-9"><h2>Contact Us</h2>TODO</div>
+            </div>
+            <br /><br /><br />`,
+
             "links": {},
             "name": "Axio Crypto Coin UK LTD"
         },
-        "contract_address": "0x639c560abc3a9f5c026910555591ecb859066dc3",
-        "exchanger_address": "0x0",
+        "contract_address": "0xd703311c357db71c9003dfc6e680b1bf16606159",
+        "exchanger_address": "0x7ebadc62b2c0781ebb8045b5df8e6804f8bfb337",
         "logo_url": "assets/img/tokens/axio_logo.png",
         "network": "mainnet",
         "status": "pending",
         "symbol": "AXIO",
-        "token_name": "Axio Crypto Coin UK LTD",
-        "volume_24h": 0,
-        "last_price_usd": 15
+        "token_name": "Axio Crypto Coin UK LTD"
     },
     {
         "airdropper_address": "0x0",

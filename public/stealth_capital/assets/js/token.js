@@ -131,22 +131,26 @@ let updateDropperUI = () => {
 let getQuotePriceForToken = () => {
     if (window.model.exchangerAddress != '0x0') {
         //Get the buy price based on an 0.00001 eth order
-        exchanger.getPurchasePrice(decimalToRaw(0.1, 18)).then((totalTokens) => {
+        exchanger.getPurchasePrice(decimalToRaw(0.001, 18)).then((totalTokens) => {
             let actualTokens = rawToDecimal(totalTokens[0].toString(10), 18);
-            pricing.buy = 0.1 / actualTokens; //If 1 eth gets you n tokens, each token is worth 1/n eth. 
+            pricing.buy = 0.001 / actualTokens; //If 1 eth gets you n tokens, each token is worth 1/n eth. 
+            
+            let newQuotePrice = pricing.buy
+            $(".quote_price").html(newQuotePrice.toFixed(5));
 
             //Get the sale price based on selling n tokens back
+            /*
             exchanger.getSalePrice(decimalToRaw(actualTokens, 18)).then((amountInWei) => {
                 let ether = rawToDecimal(amountInWei[0].toString(10), 18);
                 pricing.sell = ether / actualTokens;
 
                 let newQuotePrice = (pricing.buy + pricing.sell) / 2
                 $(".quote_price").html(newQuotePrice.toFixed(5));
-            })
+            }) */
         })
     }
 
-    return (pricing.buy + pricing.sell) / 2
+    return (pricing.buy)
 }
 
 //Quotes a buy for the specific amount of eth
