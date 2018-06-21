@@ -362,13 +362,21 @@ async function sell(amountInTokens) {
 
     $(".alert").hide();
     $(".alert-warning").show();
-    //todo: 1 step: token.approveAndCall()
+
+    //NEW!  One step sell. Calls receiveApproval on the exchanger contract, which triggers the sale
+    token.approveAndCall(window.model.exchangerAddress, rawTokens, "0x00").then((tx) => {
+        $(".alert").hide();
+        $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/" + tx + "'>" + tx + "</a>");
+        $(".alert-success").show();
+    });
+    
+    /*
     token.approve(window.model.exchangerAddress, rawTokens).then((tx) => {
         exchanger.sell(rawTokens, minSaleReturn).then((tx) => {
             $(".alert").hide();
             $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/" + tx + "'>" + tx + "</a>");
             $(".alert-success").show();
         })
-    })
+    }) */
 }
 
