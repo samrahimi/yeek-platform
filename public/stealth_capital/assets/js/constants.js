@@ -517,20 +517,6 @@ const exchangerABI = [
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "multiplier",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
 		"name": "enabled",
 		"outputs": [
 			{
@@ -666,20 +652,6 @@ const exchangerABI = [
 		"constant": false,
 		"inputs": [
 			{
-				"name": "newValue",
-				"type": "uint256"
-			}
-		],
-		"name": "setMultiplier",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
 				"name": "ppm",
 				"type": "uint256"
 			}
@@ -699,6 +671,20 @@ const exchangerABI = [
 				"name": "",
 				"type": "uint256"
 			},
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "virtualReserveBalance",
+		"outputs": [
 			{
 				"name": "",
 				"type": "uint256"
@@ -741,7 +727,7 @@ const exchangerABI = [
 		"outputs": [
 			{
 				"name": "",
-				"type": "uint32"
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -795,6 +781,48 @@ const exchangerABI = [
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "amountInWei",
+				"type": "uint256"
+			}
+		],
+		"name": "extractFees",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "amountInWei",
+				"type": "uint256"
+			}
+		],
+		"name": "setVirtualReserveBalance",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "issuedSupplyRatio",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -811,6 +839,20 @@ const exchangerABI = [
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newValue",
+				"type": "uint256"
+			}
+		],
+		"name": "setissuedSupplyRatio",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
