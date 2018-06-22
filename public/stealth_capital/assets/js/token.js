@@ -18,6 +18,20 @@ let bindContractFieldToElement = (methodCall, postProcessingFunction, el) => {
     })
 }
 
+let updateWalletBalances = () => {
+    window.token_list.forEach((toke) => {
+        var addy = toke.contract_address;
+        var toker = eth.contract(tokenABI, "", { "from": myAddress }).at(window.model.tokenAddress);
+        var sym = toke.symbol;
+
+        toker.balanceOf(myAddress).then((balance, sym) => {
+            //tokenstats.balance = balance[0].toString(10);
+            $("#balance_"+sym).html(rawToDecimal(balance[0].toString(10), 18));
+        })
+    
+    })
+}
+
 let refreshDisplayData = () => {
     //Connect to the smart contracts. We only need to do this once.
     if (token == null) {
