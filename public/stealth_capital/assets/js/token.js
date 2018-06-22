@@ -18,18 +18,16 @@ let bindContractFieldToElement = (methodCall, postProcessingFunction, el) => {
     })
 }
 
-let updateWalletBalances = () => {
-    window.token_list.forEach((toke) => {
+let updateWalletBalances = async() => {
+    for (var i=0; i < window.token_list.length; i++) {
+        var toke = window.token_list[i];
         var addy = toke.contract_address;
-        var toker = eth.contract(tokenABI, "", { "from": myAddress }).at(window.model.tokenAddress);
+        var toker = eth.contract(tokenABI, "", { "from": myAddress }).at(addy);
         var sym = toke.symbol;
 
-        toker.balanceOf(myAddress).then((balance, sym) => {
-            //tokenstats.balance = balance[0].toString(10);
-            $("#balance_"+sym).html(rawToDecimal(balance[0].toString(10), 18));
-        })
-    
-    })
+        var rawBalance = await toker.balanceOf(myAddress);
+        $("#balance_"+sym).html(parseFloat(rawToDecimal(rawBalance[0].toString(10),18)).toFixed(1));
+    }   
 }
 
 let refreshDisplayData = () => {
@@ -58,8 +56,10 @@ let refreshDisplayData = () => {
     updateTokenInfo();
 
     /* Begin Load User Balances */
-    if (!exchangeUI.readonly)
+    if (!exchangeUI.readonly) {
         updateUserBalances()
+        updateWalletBalances()
+    }
     else
         $("#userBalances").hide();
 
