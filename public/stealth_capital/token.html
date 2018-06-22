@@ -123,8 +123,10 @@
                                 <!--end of container-->
                         </div>
                     </div>
-
-                         <div class="container bg-white pt-3 pb-3">
+                    <!-- Begin profile container -->
+                    <div class="container">
+                         <div class="card pt-3 pb-3">
+                             <div class="card-body">
                             <div class="row justify-content-center">
 
                                 <div class="col-12 col-md-8">
@@ -167,45 +169,48 @@
                                 <!--end of col-->
                             </div>
                             <!--end of row-->
+                            </div>
+                        </div>
+                    </div>
+                        <!--end of container-->
+                        
+                        <!-- hidden tabs -->
+                        <div class="container" style="display:none">
+                            <div class="row">
+                                <div class="col mb-1">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item">
+                                                    <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="false">
+                                                        <i class="icon-swap"></i> 
+                                                        Trade</a>
+                                                </li>
+
+                                            <li class="nav-item">
+                                                    <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="true">
+                                                        <i class="icon-info"></i> 
+                                                        Profile</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">
+                                                        <i class="icon-users"></i> 
+                                                        Community</a>
+                                                </li>
+                                                <% if (window.model.dropperAddress != '0x0') { %>
+
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">
+                                                        <i class="icon-thunder-cloud"></i> 
+                                                        Airdrop!</a>
+                                                </li>
+
+                                                <%}%>
+                                    </ul>
+                                </div>
+                                <!--end of col-->
+                            </div>
+                            <!--end of row-->
                         </div>
                         <!--end of container-->
-          
-                                                <div class="container">
-                                                    <div class="row">
-                                                        <div class="col mb-1">
-                                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                                                    <li class="nav-item">
-                                                                            <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="false">
-                                                                                <i class="icon-swap"></i> 
-                                                                                Trade</a>
-                                                                        </li>
-    
-                                                                    <li class="nav-item">
-                                                                            <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="true">
-                                                                                <i class="icon-info"></i> 
-                                                                                Profile</a>
-                                                                        </li>
-                                                                        <li class="nav-item">
-                                                                            <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">
-                                                                                <i class="icon-users"></i> 
-                                                                                Community</a>
-                                                                        </li>
-                                                                        <% if (window.model.dropperAddress != '0x0') { %>
-
-                                                                        <li class="nav-item">
-                                                                            <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">
-                                                                                <i class="icon-thunder-cloud"></i> 
-                                                                                Airdrop!</a>
-                                                                        </li>
-
-                                                                        <%}%>
-                                                            </ul>
-                                                        </div>
-                                                        <!--end of col-->
-                                                    </div>
-                                                    <!--end of row-->
-                                                </div>
-                                                <!--end of container-->
                         
             
     
@@ -222,7 +227,7 @@
 
                     <div class="container">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                     <div class="card">
                                             <h5 class="card-header">Asset Details</h5>
                                             <div class="card-body">
@@ -252,28 +257,8 @@
                                             </div>
                                     </div> 
                                     
-                                    <div class="card">
-                                            <h5 class="card-header">Send Tokens</h2>
-                                            <div class="card-body">
-                                            <form>
-                                                <div class="form-row mt-2 mb-2 justify-content-center">
-                            
-                                                    <div class="col-5">
-                                                        <input type="text" id="sendTo" class="form-control" placeholder="Address">
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <input type="text" id="sendAmount" class="form-control" placeholder="Amount">
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <button style="width:100%" type="button" id="sendTokens" class="btn btn-primary">Send</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            <span class="text-info" style="display:none" id="sendResponse"></span>
-                                        </div>
-                                    </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <div class="card">
                                         <h5 class="card-header">Trade <%=tokenData.symbol%></h2>
                                          <div class="card-body">
@@ -321,33 +306,65 @@
                                         <h5>Important Trading Notes</h5>
                                         <ul>
                                             <li>Your order will be executed as close as possible to the price quoted above. Up to 5% slippage may occur during periods of high volatility</li>
-                                            <li>When buying tokens with Ether, you will be asked to approve one transaction, to send the ether to the Exchanger. When selling tokens, you will be asked to approve 2 separate transactions - if you do not approve them both, the transaction will fail</li>
-                                            <li>All orders on this system are "Fill or Kill". If your order cannot be executed due to slippage, your ether / tokens will be immediately returned to you</li>
+                                            <li>After you press buy or sell, you will be asked to confirm the transaction in your wallet.</li>
+                                            <li>Transactions will usually complete within 30-60 seconds.</li>
                                         </ul>
                                     </div>
                                 </div>
                                 <span class="text-info" style="display:none" id="tradeResponse"></span>
 
-                                                             <!-- Buy Ether-->
-                             <div class="card">
-                                    <h5 class="card-header">Purchase Ether</h5>
-                                    <div class="card-body">
-                                    <p>Need crypto? Get the best rates with our partner Changelly. Just click the button below to buy Ether using your credit / debit card, Bitcoin, and other cryptocurrencies.</p>
-                                       <link rel="stylesheet" href="https://changelly.com/widget.css"/> 
-                                       <a id="changellyButton" href="https://changelly.com/widget/v1?auth=email&from=USD&to=ETH&merchant_id=a9d01925ca20&address=<%=window.web3.eth.defaultAccount%>&amount=1&ref_id=a9d01925ca20&color=00cf70" target="_blank"> 
-                                          <button class="btn btn-primary">Buy Ether Now</button> 
-                                       </a> 
-                                       
-                                       <div id="changellyModal" style="z-index:10000"> 
-                                       <div class="changellyModal-content"> 
-                                           <span class="changellyModal-close">x</span> 
-                                           <iframe src="https://changelly.com/widget/v1?auth=email&from=USD&to=ETH&merchant_id=a9d01925ca20&address=<%=window.web3.eth.defaultAccount%>&amount=1&ref_id=a9d01925ca20&color=3e703a" width="600" height="500" class="changelly" scrolling="no" style="overflow-y: hidden; border: none" > Can't load widget </iframe> </div> 
-                                       </div>
-                                   </div>
-   
+                                <div class="card">
+                                        <h5 class="card-header">Send Tokens</h2>
+                                        <div class="card-body">
+                                        <form>
+                                            <div class="form-row mt-2 mb-2 justify-content-center">
+                        
+                                                <div class="col-5">
+                                                    <input type="text" id="sendTo" class="form-control" placeholder="Address">
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="text" id="sendAmount" class="form-control" placeholder="Amount">
+                                                </div>
+                                                <div class="col-3">
+                                                    <button style="width:100%" type="button" id="sendTokens" class="btn btn-primary">Send</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <span class="text-info" style="display:none" id="sendResponse"></span>
+                                    </div>
                                 </div>
-   
-                            </div>
+
+
+                        </div>
+                        <!-- Buy Ether-->
+
+                        <div class="col-md-3">
+                                <div class="card">
+                                        <h5 class="card-header">Need Ethereum?</h5>
+                                        <div class="card-body">
+                                                <p>Buy Ethereum using your credit or debit card! Our partner Coinmama offers the best rates we've ever seen for buying Ethereum with dollars or Euros.</p>
+                                                <a class="btn btn-primary" style="width:100%" href="http://go.coinmama.com/visit/?bta=51974&nci=5346" target="_blank">
+                                                    Pay With Card
+                                                </a>
+                                            </div>
+        
+                                        <div class="card-body">
+                                            <p>Got Bitcoin, Altcoins, or Tokens? Trade them for Ethereum right here without leaving our Exchange. Our partner Changelly accepts 100s of cryptocurrencies!</p>
+                                        <link rel="stylesheet" href="https://changelly.com/widget.css"/> 
+                                        <a id="changellyButton" href="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&address=<%=window.web3.eth.defaultAccount%>&amount=1&ref_id=a9d01925ca20&color=00cf70" target="_blank"> 
+                                            <button style="width:100%" class="btn btn-primary">Pay With Crypto</button> 
+                                        </a> 
+                                        
+                                        <div id="changellyModal" style="z-index:10000"> 
+                                        <div class="changellyModal-content"> 
+                                            <span class="changellyModal-close">x</span> 
+                                            <iframe src="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&address=<%=window.web3.eth.defaultAccount%>&amount=1&ref_id=a9d01925ca20&color=3e703a" width="600" height="500" class="changelly" scrolling="no" style="overflow-y: hidden; border: none" > Can't load widget </iframe> </div> 
+                                        </div>
+                                        </div>
+    
+                                    </div>
+    
+                                </div>
 
                         </div>
                                        
