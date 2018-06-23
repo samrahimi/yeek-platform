@@ -1,3 +1,5 @@
+//AXIO exchanger: 0x7ebadc62b2c0781ebb8045b5df8e6804f8bfb337
+
 window.token_list = [
     {
         "airdropper_address": "0xe77078cbbc4592e06849fd2fdddb4721de6e42c8",
@@ -73,7 +75,7 @@ window.token_list = [
             "name": "Axio Crypto Coin UK LTD"
         },
         "contract_address": "0xd703311c357db71c9003dfc6e680b1bf16606159",
-        "exchanger_address": "0x7ebadc62b2c0781ebb8045b5df8e6804f8bfb337",
+        "exchanger_address": "0x0",
         "logo_url": "assets/img/tokens/axio_logo.png",
         "network": "mainnet",
         "status": "pending",
