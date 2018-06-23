@@ -72,8 +72,12 @@ let refreshDisplayData = () => {
             disableTradingUI();
         }
     }
+
+    //Gets the latest ETHUSD exchange rate
+    updateETHUSD();
+
     //Gets the previous quote and fetches the next one - the UI is bound to the updated value inside getQuotePriceForToken
-    pricing.quote = getQuotePriceForToken();
+    getQuotePriceForToken();
 
     //Gets weight, balances from the exchanger and calculates market cap.
     updateReserveBalances()
