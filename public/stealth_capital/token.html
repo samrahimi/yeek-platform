@@ -31,29 +31,6 @@
     <link href="assets/css/theme.css" rel="stylesheet" type="text/css" media="all" />
     <link rel="manifest" href="/manifest.json">
 
-    <!-- Firebase App is always required and must be first -->
-    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
-
-    <!-- Add additional services you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-messaging.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-functions.js"></script>
-
-    <script>
-        // Initialize Firebase
-        var config = {
-            apiKey: "AIzaSyCUhpR-X9vCd5Vy7vmJpjKCn9dn_RviNpo",
-            authDomain: "yeek-platform.firebaseapp.com",
-            databaseURL: "https://yeek-platform.firebaseio.com",
-            projectId: "yeek-platform",
-            storageBucket: "yeek-platform.appspot.com",
-            messagingSenderId: "662027695848"
-        };
-        firebase.initializeApp(config);
-    </script>
-
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ethjs@0.3.4/dist/ethjs.min.js"></script>
@@ -61,10 +38,8 @@
     <script type="text/javascript" src="assets/js/ejs-controller.js?v10"></script>
 
     <script type="text/javascript" src="assets/js/constants.js"></script>
+    <script type="text/javascript" src="assets/js/price.js"></script>
     <script type="text/javascript" src="assets/js/token.js"></script>
-
-
-
 </head>
 
 <body>
@@ -103,18 +78,21 @@
                         <div id="userBalances" class="text-white" style="background-color:#5B8F55;font-size:0.875rem">
                                 <div class="container">
                                     <div class="row">
-                                        <div class="col-4"><h5>My Tokens</h5></div>
-                                        <div class="col-8 pt-1" style="text-align:right"><b>Value: YYY.YYYY ETH / $XXXXXXX.XX</b></div>
+                                        <div class="col-4 pt-1"><h5>My Portfolio</h5></div>
+                                        <div class="col-8 pt-1" style="text-align:right">
+                                            <b>
+                                                Value: <span id="portfolio_balance_eth">...</span> ETH 
+                                                ($<span id="portfolio_balance_usd"></span>)
+                                            </b>
+                                        </div>
                                     </div>
                                     
                                     <div class="row justify-content-center">
                                         <% for (var i=0; i<window.token_list.length; i++) { %>
                                             <div class="col m-2 p-1 rounded" style="text-align:center;font-size:0.8rem;background-color:#2f5811">
                                                 <b><a class="text-white" href="token.html?token_address=<%=token_list[i].contract_address%>"><%=token_list[i].symbol%></a></b><br />
-                                                <span id="balance_<%=token_list[i].symbol%>">0 ($0.00)</span>
-                                                <%
-                                                    // populate_balance(token_list[i].symbol)
-                                                %>
+                                                <span id="balance_<%=token_list[i].symbol%>">0</span><br />
+                                                ($<span id="balance_<%=token_list[i].symbol%>_usd">0.00</span>)
                                             </div>
                                         <%}%>
                                     </div>
@@ -137,7 +115,10 @@
                                                 <h1 class="h2 mb-2"><%=tokenData.token_name%></h1>
                                                 <div class="text-success" style="font-weight:bold">
                                                     <i class="icon-line-graph"></i>
-                                                    <span class="tokenPrice"><span class="quote_price"></span> ETH</span>
+                                                    <span class="tokenPrice">
+                                                        <span class="quote_price"></span> ETH 
+                                                        ($<span class="quote_price_usd"></span>)
+                                                    </span>
                                                 </div>
 
                                             </div>
@@ -172,45 +153,45 @@
                             </div>
                         </div>
                     </div>
-                        <!--end of container-->
+                    <!--end of container-->
                         
-                        <!-- hidden tabs -->
-                        <div class="container" style="display:none">
-                            <div class="row">
-                                <div class="col mb-1">
-                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <!-- hidden tabs -->
+                    <div class="container" style="display:none">
+                        <div class="row">
+                            <div class="col mb-1">
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item">
+                                                <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="false">
+                                                    <i class="icon-swap"></i> 
+                                                    Trade</a>
+                                            </li>
+
+                                        <li class="nav-item">
+                                                <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="true">
+                                                    <i class="icon-info"></i> 
+                                                    Profile</a>
+                                            </li>
                                             <li class="nav-item">
-                                                    <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="false">
-                                                        <i class="icon-swap"></i> 
-                                                        Trade</a>
-                                                </li>
+                                                <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">
+                                                    <i class="icon-users"></i> 
+                                                    Community</a>
+                                            </li>
+                                            <% if (window.model.dropperAddress != '0x0') { %>
 
                                             <li class="nav-item">
-                                                    <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="true">
-                                                        <i class="icon-info"></i> 
-                                                        Profile</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">
-                                                        <i class="icon-users"></i> 
-                                                        Community</a>
-                                                </li>
-                                                <% if (window.model.dropperAddress != '0x0') { %>
+                                                <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">
+                                                    <i class="icon-thunder-cloud"></i> 
+                                                    Airdrop!</a>
+                                            </li>
 
-                                                <li class="nav-item">
-                                                    <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">
-                                                        <i class="icon-thunder-cloud"></i> 
-                                                        Airdrop!</a>
-                                                </li>
-
-                                                <%}%>
-                                    </ul>
-                                </div>
-                                <!--end of col-->
+                                            <%}%>
+                                </ul>
                             </div>
-                            <!--end of row-->
+                            <!--end of col-->
                         </div>
-                        <!--end of container-->
+                        <!--end of row-->
+                    </div>
+                    <!--end of container-->
                         
             
     
@@ -247,7 +228,7 @@
 
                                                 <div class="col-5">Contract</div>
                                                 <div class="col-7">
-                                                    <a class="etherscanUrl" href="https://etherscan.io/token/<%=menuData.tokenAddress%>"><%=menuData.tokenAddress.substring(0,7)%>...</a>
+                                                    <a contract="_blank" class="etherscanUrl" href="https://etherscan.io/token/<%=menuData.tokenAddress%>"><%=menuData.tokenAddress.substring(0,7)%>...</a>
                                                 </div>
 
                                              </div>
@@ -268,7 +249,7 @@
                                                     </div>
 
                                                     <div class="col-5">Contract</div>
-                                                    <div class="col-7"><a href="https://etherscan.io/<%=tokenData.exchanger_address%>"><%=tokenData.exchanger_address.substring(0,7)%>...</a></div>
+                                                    <div class="col-7"><a target="_blank" href="https://etherscan.io/<%=tokenData.exchanger_address%>"><%=tokenData.exchanger_address.substring(0,7)%>...</a></div>
                                             </div>
 
                                             </div>
@@ -287,10 +268,12 @@
         
                                                 <!-- The from currency. Default ETH-->
                                                 <div class="col-md-3 col-12">
-                                                    <div class="input-group">
-                                                      
-                                                    <input type="text" id="convertFrom" class="form-control" placeholder="ETH">
-                                                            </div>
+                                                    <div class="input-group">                                              
+                                                        <input type="text" id="convertFrom" class="form-control" placeholder="ETH" />
+                                                    </div>
+                                                    <small style="font-weight:bold" id="convertFrom_USD" class="form-text text-muted pl-2 text-info">
+                                                    </small>
+
                                                 </div>
         
                                                     <!-- Switches the from currency between ETH and the token. When the token is the from currency, it's considered a SELL order -->
@@ -300,9 +283,11 @@
                                                 
                                                 <!-- The target currency. Defaults to the token. Updates itself when user types in the from currency box -->
                                                 <div class="col-md-3 col-12 mb-1">
-                                                        <div class="input-group">
-                                                    <input type="text" id="convertTo" disabled="disabled" class="form-control" placeholder="<%=tokenData.symbol%>">
-                                                            </div>
+                                                    <div class="input-group">
+                                                        <input type="text" id="convertTo" disabled="disabled" class="form-control" placeholder="<%=tokenData.symbol%>" />
+                                                    </div>
+                                                    <small style="font-weight:bold" id="convertTo_USD" class="form-text text-muted pl-2 text-info">
+                                                    </small>
                                                 </div>
                                                 <div class="col-md-5 col-12">
                                                         <button style="width:100%" disabled="disabled" type="button" id="tradeBtn" class="btn btn-success">Buy</button>
@@ -312,7 +297,7 @@
                                                 Transaction Created - Please approve in Metamask.
                                             </div>
                                             <div class="alert alert-success" role="transaction_complete" style="display:none">
-                                                Sent to Blockchain, TxID: <a id="txid"></a> 
+                                                Sent to Blockchain, TxID: <a target="_blank" id="txid"></a> 
                                             </div>
     
                                                   

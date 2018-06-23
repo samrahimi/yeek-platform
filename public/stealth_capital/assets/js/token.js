@@ -19,15 +19,41 @@ let bindContractFieldToElement = (methodCall, postProcessingFunction, el) => {
 }
 
 let updateWalletBalances = async() => {
+    let totalBalanceEth = 0
+    let totalBalanceUSD = 0
+
     for (var i=0; i < window.token_list.length; i++) {
+        //Load up the token contract
         var toke = window.token_list[i];
         var addy = toke.contract_address;
         var toker = eth.contract(tokenABI, "", { "from": myAddress }).at(addy);
         var sym = toke.symbol;
 
+        //Get user's balance in that token and display
         var rawBalance = await toker.balanceOf(myAddress);
-        $("#balance_"+sym).html(parseFloat(rawToDecimal(rawBalance[0].toString(10),18)).toFixed(1));
-    }   
+        var trueBalance = parseFloat(rawToDecimal(rawBalance[0].toString(10),18));
+        $("#balance_"+sym).html(trueBalance.toFixed(1));
+
+        //Get value of user's holdings in ether, convert to USD, and add 
+        //to their respective total portfolio values.
+        //If a token value cannot be obtained, we consider it to be worth $0 and move on
+        try 
+        {
+            var pricePerToken = await getPriceQuote(toke.exchanger_address)
+            var amtEth = pricePerToken * trueBalance;
+            var amtUsd = convertToUSD(amtEth);
+            $("#balance_"+sym+"_usd").html(amtUsd.toFixed(2))
+            totalBalanceEth += amtEth
+            totalBalanceUSD += amtUsd
+        } catch(x) {
+            $("#balance_"+sym+"_usd").html("?")
+            console.log(x.toString())
+        }
+    }
+
+    //Display the sum total value of user's holdings (in tokens listed on this exchange)
+    $("#portfolio_balance_eth").html(totalBalanceEth.toFixed(3))
+    $("#portfolio_balance_usd").html(totalBalanceUSD.toFixed(2))    
 }
 
 let refreshDisplayData = () => {
@@ -151,16 +177,9 @@ let getQuotePriceForToken = () => {
             
             let newQuotePrice = pricing.buy
             $(".quote_price").html(newQuotePrice.toFixed(5));
-
-            //Get the sale price based on selling n tokens back
-            /*
-            exchanger.getSalePrice(decimalToRaw(actualTokens, 18)).then((amountInWei) => {
-                let ether = rawToDecimal(amountInWei[0].toString(10), 18);
-                pricing.sell = ether / actualTokens;
-
-                let newQuotePrice = (pricing.buy + pricing.sell) / 2
-                $(".quote_price").html(newQuotePrice.toFixed(5));
-            }) */
+            $(".quote_price_usd").html(
+                convertToUSD(newQuotePrice).toFixed(2)
+            )
         })
     }
 
@@ -310,7 +329,7 @@ let bindTokenData = () => {
 
             try {
                 let v = parseFloat($("#convertFrom").val())
-
+                
                 if (v <= 0) {
                     $("#convertTo").val("0");
                     return;
@@ -326,6 +345,25 @@ let bindTokenData = () => {
                     $("#tradeBtn").html(btnString)
                     if (!exchangeUI.readonly)
                         $("#tradeBtn").removeAttr("disabled");
+
+                    //Display USD conversion underneath the field with the ETH
+                    if (exchangeUI.direction == "buy") {
+                        //convertFrom is in ether, display USD below for convenience
+                        var usd = convertToUSD(v).toFixed(2)
+                        $("#convertFrom_USD").html(`
+                            $${usd} USD
+                        `)
+                        $("#convertTo_USD").html('')
+                    } else {
+                        //convertTo is in ether, display USD below for convenience
+                        var usd = convertToUSD(amount).toFixed(2)
+                        $("#convertTo_USD").html(`
+                            $${usd} USD
+                        `)
+                        $("#convertFrom_USD").html('')
+
+                    }
+    
                 })
             } catch (x) {
                 $("#convertTo").val("Error");
