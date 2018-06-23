@@ -1,4 +1,4 @@
-window.db = firebase.firestore();
+//window.db = firebase.firestore();
 
 $(document).ready(() => {
     const tokenAddress = queryString("token_address") || '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
@@ -16,8 +16,8 @@ $(document).ready(() => {
             exchangerAddress: tokenData.exchanger_address,
             menuData: {
                 topLevel: ["Exchange (Alpha)", "How It Works"],
-                pageTitle: "Stealth Capital Holdings",
-                pageDescription: "Buy, sell, and trade asset-backed tokens on the Blockchain.",
+                pageTitle: "The Stealth Exchange",
+                pageDescription: "Trade tokenized, asset-based securities on the Blockchain. Totally decentralized, totally secure.",
                 tokenAddress: tokenAddress,
                 dropperAddress: tokenData.airdropper_contract,
                 exchangerAddress: tokenData.exchanger_contract
