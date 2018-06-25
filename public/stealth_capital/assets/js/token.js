@@ -123,7 +123,7 @@ let updateTokenInfo = () => {
     /* Begin load token info */
     token.totalSupply().then((totalSupply) => {
         tokenstats.totalSupply = totalSupply[0].toString(10);
-        $(".totalSupply").html(rawToDecimal(tokenstats.totalSupply, 18));
+        $(".totalSupply").html(parseInt(rawToDecimal(tokenstats.totalSupply, 18)));
         // result <BN ...>  4500000
     })
 

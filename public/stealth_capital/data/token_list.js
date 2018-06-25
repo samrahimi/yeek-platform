@@ -29,7 +29,8 @@ window.token_list = [
             "elevator_pitch": `Tiger Ltd. is a private investment company that will invest in other companies that each
             have an alternative investment specialty. Every Tiger Share that is sold is backed by no
             less than 150% of audited assets. <br /><br />
-            <a class="pt-1 btn btn-warning" href="assets/downloads/tiger_whitepaper.pdf">See Whitepaper</a>`,
+            <a class="pt-1 btn btn-warning" href="assets/downloads/tiger_whitepaper.pdf">See Whitepaper</a>
+            <a target="_blank" class="pt-1 btn btn-warning" href="http://www.tiger-coin.com">Go To Website</a>`,
 
             "profile": `<img src="assets/img/tokens/tiger_header.png" width="100%" />
                         <div class="row">
@@ -62,7 +63,8 @@ window.token_list = [
             and settlement once repayment has 
             occurred.. <br /><br />
 
-            <a class="pt-1 btn btn-warning" href="assets/downloads/axio_whitepaper.pdf">See Whitepaper</a>`,
+            <a class="pt-1 btn btn-warning" href="assets/downloads/axio_whitepaper.pdf">See Whitepaper</a>
+            <a target="_blank" class="pt-1 btn btn-warning" href="http://www.axio-coin.com">Go To Website</a>`,
 
             "profile": `<img src="assets/img/tokens/axio_header.jpg" width="100%" />
             <div class="row">
@@ -75,7 +77,7 @@ window.token_list = [
             "name": "Axio Crypto Coin UK LTD"
         },
         "contract_address": "0xd703311c357db71c9003dfc6e680b1bf16606159",
-        "exchanger_address": "0x0",
+        "exchanger_address": "0x7ebadc62b2c0781ebb8045b5df8e6804f8bfb337",
         "logo_url": "assets/img/tokens/axio_logo.png",
         "network": "mainnet",
         "status": "pending",
@@ -87,18 +89,21 @@ window.token_list = [
         "company_info": {
             "city": "Toronto",
             "country": "Canada",
-            "elevator_pitch":"Titan Global Holdings, Ltd. principally engages in the business of capitalizing select businesses by securing a maturity payment for its bond holders via a front-ended investment into insurance assets and collecting a percentage of the funded companies net income",
+            "elevator_pitch":`Titan Global Holdings, Ltd. principally engages in the business of capitalizing select businesses by securing a maturity payment for its bond holders via a front-ended investment into insurance assets and collecting a percentage of the funded companies net income
+            <br />
+            <a target="_blank" class="pt-1 btn btn-warning" href="http://titan-insured-equity.com">Go To Website</a>`,
+
             "profile": `<img src="http://img1.wsimg.com/isteam/ip/a1782d83-2a53-4ad0-907b-fde1b0d39c3e/logo/7b02fce5-5f70-4efb-b4eb-dac1bda7a361.png/:/rs=h:125" /><br /><br />Titan Global Holdings, Ltd. principally engages in the business of capitalizing select businesses by securing a maturity payment for its bond holders via a front-ended investment into insurance assets and collecting a percentage of the funded companies net income.<br /><br /><a href="http://titan-insured-equity.com/">http://titan-insured-equity.com</a>`,
             "links": {},
             "name": "Titan Insured Equity"
         },
-        "contract_address": "0xb03481f9529a8846d8fb22e19f4a1808b95472d0",
-        "exchanger_address": "0x0",
-        "logo_url": "assets/img/tokens/titan_logo.png",
+        "contract_address": "0xb10e690cb531512493fa5a88a4a1e1d3506b2258",
+        "exchanger_address": "0xe4f32056ea2dc706dbc4ff6a61f7e87583cd4ec9",
+        "logo_url": "assets/img/tokens/titanv2.png",
         "network": "mainnet",
         "status": "pending",
         "symbol": "TITAN",
-        "token_name": "Titan Insured Equity Coin",
+        "token_name": "Titan Insured Equity",
         "volume_24h": 0,
         "last_price_usd": 15
     },
@@ -107,7 +112,10 @@ window.token_list = [
         "company_info": {
             "city": "Hong Kong",
             "country": "Hong Kong",
-            "elevator_pitch":"Stealth Capital Holdings Ltd. optimizes the Investments in Bonds and Properties with great carefulness to risk vs. return",
+            "elevator_pitch":`Stealth Capital Holdings Ltd. is the owner of the Stealth Exchange
+                              and deals in investments in Bonds and Properties. <br />
+                              <a target="_blank" class="pt-1 btn btn-warning" href="http://stealth-capital.com">Go To Website</a>`,
+
             "profile": 
             `Stealth Capital Holdings Ltd. optimizes the Investments in Bonds and Properties with great carefulness to risk vs. return. Therefore, the Company’s Investment Strategy is to obtain a diverse portfolio of bonds and properties.
             <br /><br />
@@ -124,8 +132,8 @@ window.token_list = [
             "links": {},
             "name": "Stealth Capital"
         },
-        "contract_address": "0xa831585a3eb408eff92b34a041a510d7814d9331",
-        "exchanger_address": "0x0",
+        "contract_address": "0x8ee958f5f77c70aa7ef39077459e30455625152a",
+        "exchanger_address": "0xaee257d4b0ce41ff7620d0bc8ac02974e57053a1",
         "logo_url": "assets/img/tokens/stealth_logo.png",
         "network": "mainnet",
         "status": "pending",
