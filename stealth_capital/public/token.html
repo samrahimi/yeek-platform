@@ -2,22 +2,25 @@
 <html lang="en">
 
 <head>
-            <style>
-                .asset-info, .asset-info span {
-                    font-size:0.875rem !important;
-                }
+    <style>
+        .asset-info,
+        .asset-info span {
+            font-size: 0.875rem !important;
+        }
 
-                .brand-color-primary {
-                    color:#3e703a !important;
-                }
-                .brand-color-light {
-                    color: #8bc34a !important;
-                }
-                .brand-color-dark {
-                    color: #2f5811;
-                }
-            </style>
-            
+        .brand-color-primary {
+            color: #3e703a !important;
+        }
+
+        .brand-color-light {
+            color: #8bc34a !important;
+        }
+
+        .brand-color-dark {
+            color: #2f5811;
+        }
+    </style>
+
     <meta charset="utf-8">
     <script type="text/html" template-engine="ejs">
             <title><%=menuData.pageTitle%></title>
@@ -34,17 +37,21 @@
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ethjs@0.3.4/dist/ethjs.min.js"></script>
+    <!-- Important: This is web3 1.0 - it overrides the old beta web3 that comes with metamask -->
+    <script type="text/javascript" src="assets/js/web3.js"></script>
+    <!-- Web3 1.0 bundles an incomplete and buggy version of "BN.js" ... so we need to include BigNumber.js ourselves -->
+    <script type="text/javascript" src="assets/js/bignumber.js"></script>
     <script type="text/javascript" src="assets/js/ejs.js"></script>
     <script type="text/javascript" src="assets/js/ejs-controller.js?v10"></script>
 
-    <script type="text/javascript" src="assets/js/constants.js"></script>
-    <script type="text/javascript" src="assets/js/price.js"></script>
-    <script type="text/javascript" src="assets/js/token.js"></script>
+    <script type="text/javascript" src="assets/js/constants.js?v2"></script>
+    <script type="text/javascript" src="assets/js/price.js?v2"></script>
+    <script type="text/javascript" src="assets/js/token.js?v2"></script>
 </head>
 
 <body>
     <script src="data/token_list.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/app.js?v2"></script>
 
 
     <script type="text/html" template-engine="ejs">
@@ -78,18 +85,18 @@
                         <div id="userBalances" class="text-white" style="background-color:#5B8F55;font-size:0.875rem">
                                 <div class="container">
                                     <div class="row">
-                                        <div class="col-4 pt-1"><h5>My Portfolio</h5></div>
+                                        <div class="col-4 pt-1"><h5 id="ticker_header">My Portfolio</h5></div>
                                         <div class="col-8 pt-1" style="text-align:right">
-                                            <b>
+                                            <b id="ticker_values">
                                                 Value: <span id="portfolio_balance_eth">...</span> ETH 
                                                 ($<span id="portfolio_balance_usd"></span>)
                                             </b>
                                         </div>
                                     </div>
                                     
-                                    <div class="row justify-content-center">
+                                    <div class="row justify-content-around">
                                         <% for (var i=0; i<window.token_list.length; i++) { %>
-                                            <div class="col m-2 p-1 rounded" style="text-align:center;font-size:0.8rem;background-color:#2f5811">
+                                            <div class="m-2 p-1 rounded col-auto col-md" style="text-align:center;font-size:0.8rem;background-color:#2f5811">
                                                 <b><a class="text-white" href="token.html?token_address=<%=token_list[i].contract_address%>"><%=token_list[i].symbol%></a></b><br />
                                                 <span id="balance_<%=token_list[i].symbol%>">0</span><br />
                                                 ($<span id="balance_<%=token_list[i].symbol%>_usd">0.00</span>)
@@ -155,59 +162,14 @@
                             </div>
                         </div>
                     </div>
-                    <!--end of container-->
-                        
-                    <!-- hidden tabs -->
-                    <div class="container" style="display:none">
-                        <div class="row">
-                            <div class="col mb-1">
-                                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                        <li class="nav-item">
-                                                <a class="nav-link active show" id="tab1" data-toggle="tab" href="#tab1-content" role="tab" aria-selected="false">
-                                                    <i class="icon-swap"></i> 
-                                                    Trade</a>
-                                            </li>
-
-                                        <li class="nav-item">
-                                                <a class="nav-link" id="tab2" data-toggle="tab" href="#tab2-content" role="tab" aria-selected="true">
-                                                    <i class="icon-info"></i> 
-                                                    Profile</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link " id="tab3" data-toggle="tab" href="#tab3-content" role="tab" aria-selected="false">
-                                                    <i class="icon-users"></i> 
-                                                    Community</a>
-                                            </li>
-                                            <% if (window.model.dropperAddress != '0x0') { %>
-
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="tab4" data-toggle="tab" href="#tab4-content" role="tab" aria-selected="false">
-                                                    <i class="icon-thunder-cloud"></i> 
-                                                    Airdrop!</a>
-                                            </li>
-
-                                            <%}%>
-                                </ul>
-                            </div>
-                            <!--end of col-->
-                        </div>
-                        <!--end of row-->
-                    </div>
-                    <!--end of container-->
-                        
-            
-    
-   
             </script>
+    <!-- End Profile Section -->
 
+    <!-- Error message popups (for incompatible browser / wallet) -->
     <ctrl src="./controls/modals.html" id="walletWarnings" doNotWrap="true"></ctrl>
 
-
-    <div class="tab-content" id="myTabContent">
-            <!-- Exchange-->
-            <div class="tab-pane fade show active tradingUI" id="tab1-content" role="tabpanel">
-                    <script type="text/html" template-engine="ejs">
-
+    <!-- Trading UI -->
+    <script type="text/html" template-engine="ejs">
                     <div class="container">
                         <div class="row">
                             <div class="col-md-3">
@@ -251,7 +213,7 @@
                                                     </div>
 
                                                     <div class="col-5">Contract</div>
-                                                    <div class="col-7"><a target="_blank" href="https://etherscan.io/<%=tokenData.exchanger_address%>"><%=tokenData.exchanger_address.substring(0,7)%>...</a></div>
+                                                    <div class="col-7"><a target="_blank" href="https://etherscan.io/address/<%=tokenData.exchanger_address%>"><%=tokenData.exchanger_address.substring(0,7)%>...</a></div>
                                             </div>
 
                                             </div>
@@ -355,14 +317,14 @@
                                         <div class="card-body">
                                             <p>Got Bitcoin, Altcoins, or Tokens? Trade them for Ethereum right here without leaving our Exchange. Our partner Changelly accepts 100s of cryptocurrencies!</p>
                                         <link rel="stylesheet" href="https://changelly.com/widget.css"/> 
-                                        <a id="changellyButton" href="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&address=<%=window.web3.eth.defaultAccount%>&amount=1&ref_id=a9d01925ca20&color=00cf70" target="_blank"> 
+                                        <a id="changellyButton" href="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&amount=1&ref_id=a9d01925ca20&color=00cf70" target="_blank"> 
                                             <button style="width:100%" class="btn btn-primary">Pay With Crypto</button> 
                                         </a> 
                                         
                                         <div id="changellyModal" style="z-index:10000"> 
                                         <div class="changellyModal-content"> 
                                             <span class="changellyModal-close">x</span> 
-                                            <iframe src="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&address=<%=window.web3.eth.defaultAccount%>&amount=1&ref_id=a9d01925ca20&color=3e703a" width="600" height="500" class="changelly" scrolling="no" style="overflow-y: hidden; border: none" > Can't load widget </iframe> </div> 
+                                            <iframe src="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&amount=1&ref_id=a9d01925ca20&color=3e703a" width="600" height="500" class="changelly" scrolling="no" style="overflow-y: hidden; border: none" > Can't load widget </iframe> </div> 
                                         </div>
                                         </div>
     
@@ -379,98 +341,14 @@
                     </div>
                 </script>
 
-                </div>
 
-                <!-- Buy Ether Popup Script -->
-                <script type="text/javascript"> 
-                    setTimeout(() => {
-                        var changellyModal = document.getElementById('changellyModal'); var changellyButton = document.getElementById('changellyButton'); var changellyCloseButton = document.getElementsByClassName('changellyModal-close')[0]; changellyCloseButton.onclick = function() { changellyModal.style.display = 'none'; }; changellyButton.onclick = function widgetClick(e) { e.preventDefault(); changellyModal.style.display = 'block'; }; 
-                    }, 1000);
-                </script> 
-            <div class="tab-pane fade " id="tab2-content" role="tabpanel">
-                    <script type="text/html" template-engine="ejs">
+    <!-- Buy Ether Popup Script -->
+    <script type="text/javascript"> 
+        setTimeout(() => {
+            var changellyModal = document.getElementById('changellyModal'); var changellyButton = document.getElementById('changellyButton'); var changellyCloseButton = document.getElementsByClassName('changellyModal-close')[0]; changellyCloseButton.onclick = function () { changellyModal.style.display = 'none'; }; changellyButton.onclick = function widgetClick(e) { e.preventDefault(); changellyModal.style.display = 'block'; };
+        }, 1000);
+    </script>
 
-                        <!-- Company profile sections -->
-                        <div class="container mt-2">
-                        <div class="row">
-                            <div class="col">
-                                <%-tokenData.company_info.profile || tokenData.company_info.elevator_pitch%>
-                                <br />
-                            </div>
-                        </div>
-                        </div>
-                    </script>
-            </div>
-
-        <!-- Discussion forum-->
-        <div class="tab-pane fade" id="tab3-content" role="tabpanel">
-            <div class="container">
-                <div id="disqus_thread"></div>
-            </div>
-                <script>
-                    
-                    /**
-                     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-                     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-                     */
-              
-                    let DISQUS = function() {  // DON'T EDIT BELOW THIS LINE
-
-                        var d = document, s = d.createElement('script');
-                        
-                        s.src = 'https://yeek-platform.disqus.com/embed.js';
-                        
-                        s.setAttribute('data-timestamp', +new Date());
-                        (d.head || d.body).appendChild(s);
-                    }
-                </script>
-        </div>
-
-        <script type="text/html" template-engine="ejs">
-        <!-- Airdrop Tab -->
-        <% if (window.model.dropperAddress != '0x0') { %>
-            <div class="tab-pane fade" id="tab4-content" role="tabpanel">
-                <div class="container">
-                                <h2>Airdrop!</h2>
-        
-                                            <div class="row">
-                                                <div class="col">
-                                                    <label>Dispensed</label>
-                                                    <p> 
-                                                        <span id="tokensDispensed"></span>
-                                                        <span class="symbol"></span>
-                                                    </p>
-                                                </div>
-                                                <div class="col">
-                                                        <label>Available</label>
-                                                        <p> 
-                                                            <span id="tokensRemaining"></span>
-                                                            <span class="symbol"></span>
-                                                        </p>
-                                                    </div>
-                                        
-                                                    <div class="col">
-                                                        <label>Airdrop Amt.</label>
-                                                        <p> 
-                                                            <span id="airdropAmount"></span>
-                                                            <span class="symbol"></span>
-                                                        </p>
-                                                    </div>
-                                            </div>
-                                            <div class="row pt-2">
-                                                <div class="col">
-                                                    <p>Your Airdrop Status: <span id="eligibility">Please wait...</span></p>
-                                                    <button id="withdrawAirdropTokens" style="width:100%;">Get My Tokens</button>
-                                                </div>
-                                            </div>
-        
-
-                </div>
-            </div>
-        <%}%>
-        </script>
-    
-    </div>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
     <script type="text/javascript" src="assets/js/jquery.smartWizard.min.js"></script>
@@ -481,25 +359,19 @@
     <script type="text/javascript" src="assets/js/zoom.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="assets/js/theme.js"></script>
-    
-<script>
-async function waitForTxToBeMined (txHash) {
-  let txReceipt
-  while (!txReceipt) {
-    try {
-      txReceipt = await eth.getTransactionReceipt(txHash)
-    } catch (err) {
-      console.log("Error token-512... "+err.toString())
-    }
-  }
-  return txReceipt;
-}
 
+    <br />
+    <br />
 
+    <script type="text/html" template-engine="ejs">
+        <center>
+        <small>Webapp Version: 
+        <%=window.versionString%>, 
 
-
+               Contract Version: 1.2-virtualreserve
+        </small>
+    </center>
 </script>
-
 </body>
 
 </html>

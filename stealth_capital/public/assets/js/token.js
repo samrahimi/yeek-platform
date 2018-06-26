@@ -1,4 +1,4 @@
-let tokenstats = { airdropPending: false }
+let tokenstats = { airdropPending: false, airdropperEnabled: false }
 let pricing = { buy: 0, sell: 0, quote: 0 }
 let exchangeUI = {
     direction: "buy",
@@ -18,6 +18,42 @@ let bindContractFieldToElement = (methodCall, postProcessingFunction, el) => {
     })
 }
 
+//If user is not connected to their wallet, treat the top bar as a straight price ticker:
+//SYMBOL, PRICE-ETH, PRICE-USD
+let updateTickerPrices = async() => {
+    for (var i=0; i < window.token_list.length; i++) {
+        //Load up the token contract
+        var toke = window.token_list[i];
+        var addy = toke.contract_address;
+        var toker = eth.contract(tokenABI).at(addy);
+        var sym = toke.symbol;
+
+        //Get user's balance in that token and display
+        //var rawBalance = await toker.balanceOf(myAddress);
+        //var trueBalance = parseFloat(rawToDecimal(rawBalance[0].toString(10),18));
+        //$("#balance_"+sym).html(trueBalance.toFixed(1));
+
+        //Show price of token in USD and ETH
+        try 
+        {
+            var pricePerToken = await getPriceQuote(toke.exchanger_address)
+            var pricePerTokenUSD = convertToUSD(pricePerToken);
+            $("#balance_"+sym).html(pricePerToken.toFixed(5)+" ETH")
+            $("#balance_"+sym+"_usd").html(pricePerTokenUSD.toFixed(2))
+        } catch(x) {
+            //Die politely
+            $("#balance_"+sym+"_usd").html("?")
+            console.log(x.toString())
+        }
+    }
+
+    //Adjust the display so its clear this is a ticker not a wallet
+    $("#ticker_values").hide();
+    $("#ticker_header").html("Ticker")
+}
+
+//When user is connected to their wallet: get their balance of each token on the ticker
+//display it, calculate USD and ETH values, and sum up the total portfolio
 let updateWalletBalances = async() => {
     let totalBalanceEth = 0
     let totalBalanceUSD = 0
@@ -76,6 +112,9 @@ let refreshDisplayData = () => {
     //Gets the latest ETHUSD exchange rate
     updateETHUSD();
 
+    //Gets the recommended gas price and sets the gas for transactions based on that
+    updateGasPrice();
+
     //Gets the previous quote and fetches the next one - the UI is bound to the updated value inside getQuotePriceForToken
     getQuotePriceForToken();
 
@@ -87,12 +126,12 @@ let refreshDisplayData = () => {
 
     /* Begin Load User Balances */
     if (!exchangeUI.readonly) {
-        updateUserBalances()
+        //updateUserBalances()
         updateWalletBalances()
     }
-    else
-        $("#userBalances").hide();
-
+    else {
+        updateTickerPrices(); //Convert the wallet into a price ticker
+    }
     /* Begin Load Airdropper Info */
 
     if (window.model.dropperAddress != '0x0') {
@@ -140,7 +179,8 @@ let updateTokenInfo = () => {
 
 //Gets status of the airdrop, if an airdropper contract is present
 let updateDropperUI = () => {
-
+    if (!exchangeUI.airdroppperEnabled) return false;
+    
     dropper.tokensDispensed().then((amount) => {
         tokenstats.dispensed = amount[0].toString(10);
         $("#tokensDispensed").html(rawToDecimal(tokenstats.dispensed, 18));
@@ -235,8 +275,12 @@ let bindTokenData = () => {
             $("#wallet_warning").modal('show');
             exchangeUI.readonly = true;
             myAddress = "0x0"
-            window.web3 = new Web3(new Web3.providers.HttpProvider("https://infura.io/MEDIUMTUTORIAL"))
 
+            //Workaround for using web3 1.0 with HTTP provider
+            Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
+            window.web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/yQKGJVARKy6KfaHEJmy8"))
+            
+            console.log("Using web3 1.0 with Infura node. Metamask etc not found")
         }
         else {
             myAddress = window.web3.eth.defaultAccount;
@@ -248,7 +292,21 @@ let bindTokenData = () => {
                 $("#wallet_login_warning").modal('show');
                 exchangeUI.readonly = true;
                 myAddress = "0x0"
-                window.web3 = new Web3(new Web3.providers.HttpProvider("https://infura.io/MEDIUMTUTORIAL"))
+
+                //Workaround for using web3 1.0 with HTTP provider
+                Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
+                window.web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/yQKGJVARKy6KfaHEJmy8"))
+                
+                console.log("Using web3 1.0 with Infura node. Metamask etc not logged in")
+            } else {
+                //We got back an account address, so the user has metamask, or another browser-integrated wallet.
+                //Great. They can trade.
+                //By re-instantiating window.web3 here, it forces the use of web3 1.0 (loaded from /assets/js/web3.js)
+                //instead of the injected web3 from metamask, which is an old beta. 
+                //But by using window.web3.currentProvider as the provider, we still get to talk to metamask.
+                //See: https://guillaumeduveau.com/en/blockchain/ethereum/metamask-web3
+                window.web3 = new Web3(window.web3.currentProvider);
+                console.log("Found Metamask or compatible wallet. Setting as provider and upgrading web3 to v1.0")
             }
         }
 
@@ -276,7 +334,8 @@ let bindTokenData = () => {
             $("#sendResponse").html("Submitted: Please confirm the transaction in Metamask");
             token.transfer(
                 $('#sendTo').val(),
-                decimalToRaw($('#sendAmount').val(), tokenstats.decimals)
+                decimalToRaw($('#sendAmount').val(), tokenstats.decimals),
+                {gasPrice: web3.utils.toWei(window.gasPrice.toString(), 'gwei')}
             )
                 .then(function (transferTxHash) {
                     $("#sendResponse").removeClass("text-info").addClass("text-success");
@@ -402,7 +461,8 @@ async function buy(amountInEther) {
 
     exchanger.buy(minPurchaseReturn, {
         "from": myAddress,
-        "value": valueInWei
+        "value": valueInWei,
+        gasPrice: web3.utils.toWei(window.gasPrice.toString(), 'gwei')
     }).then((tx) => {
         $(".alert").hide();
         $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/" + tx + "'>" + tx + "</a>");
@@ -424,7 +484,10 @@ async function sell(amountInTokens) {
     $(".alert-warning").show();
 
     //NEW!  One step sell. Calls receiveApproval on the exchanger contract, which triggers the sale
-    token.approveAndCall(window.model.exchangerAddress, rawTokens, "0x00").then((tx) => {
+    token.approveAndCall(window.model.exchangerAddress, rawTokens, "0x00", 
+    {        
+        gasPrice: web3.utils.toWei(window.gasPrice.toString(), 'gwei')
+    }).then((tx) => {
         $(".alert").hide();
         $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/" + tx + "'>" + tx + "</a>");
         $(".alert-success").show();

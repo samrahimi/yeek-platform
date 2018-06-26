@@ -1028,12 +1028,12 @@ const exchangerABI = [
 ]
 
 let rawToDecimal = function(bigNumStr, decimals) {
-    let bn = new web3.BigNumber(bigNumStr);
+    let bn = new BigNumber(bigNumStr);
     let exp = eval("1e"+decimals);
     return bn.div(exp).toFixed(5);
 }
 let decimalToRaw = function(num, decimals) {
-    let bn = new web3.BigNumber(num);
+    let bn = new BigNumber(num);
     let exp = eval("1e"+decimals);
-    return bn.mul(exp).toFixed();
+    return bn.times(exp).toFixed();
 }

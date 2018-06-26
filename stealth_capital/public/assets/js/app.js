@@ -1,5 +1,5 @@
 //window.db = firebase.firestore();
-
+window.versionString = "0.8 a 3"
 $(document).ready(() => {
     const tokenAddress = queryString("token_address") || '0x96387e69fac1d3b63e31a3a70ee3a06761887759';
     const formulaAddress = "0x3ae6abeb18dfa61f85faff25aef28c8cd6ddbe6b"; //MAINNET!
