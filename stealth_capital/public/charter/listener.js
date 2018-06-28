@@ -44,23 +44,34 @@ async function watchBuyEv(contractAddress, contractABI){
 }
 
 async function getPastEv(contractAddress, contractABI){
-
+    var amtWeiData = [];
     var contract = new web3.eth.Contract(contractABI, contractAddress);
-    contract.getPastEvents("allEvents", {
+    var events = await contract.getPastEvents("Sell", {
             filter: {},
             fromBlock: 0, 
             toBlock: 'latest'
         }
-    ).then((events) => {
-        console.log(JSON.stringify(events, null, 2));
-    });
-}
+    )
+    for (var i = 0; i < events.length; i++){
+        amtWeiData.push([events[i]['blockNumber'], Number(events[i]['returnValues']['amountInWei'])]);
+    }
 
-setTimeout(() => {
+    return amtWeiData;
+};
+
+
+setTimeout(async() => {
     initWeb3();
-    getPastEv(testAddress, exchangerABI);
-    window.alert("DONE!");
+    
+    var amtWeiSellData = await getPastEv(testAddress, exchangerABI);
+    
+    for (var i = 0; i < amtWeiSellData.length; i++){
+        let block = await web3.eth.getBlock(amtWeiSellData[i][0]);
+        console.log(JSON.stringify(block, null, 3));
+        addDataPoint(myChart, amtWeiSellData[i][0], amtWeiSellData[i][1]);
+    }
 }, 1000);
+
 
 
 
