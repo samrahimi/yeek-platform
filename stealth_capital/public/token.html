@@ -90,7 +90,7 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="row justify-content-around">
+                                    <div class="row hscrollable">
                                         <% for (var i=0; i<window.token_list.length; i++) { %>
                                             <div class="m-2 p-1 rounded col-auto col-md" style="text-align:center;font-size:0.8rem;background-color:#2f5811">
                                                 <b><a class="text-white" href="token.html?token_address=<%=token_list[i].contract_address%>"><%=token_list[i].symbol%></a></b><br />
@@ -106,231 +106,213 @@
                     </div>
                     <!-- Begin profile container -->
                     <div class="container token-profile">
-                         <div class="card mt-3 mb-3">
-                             <h4 class="card-header"><%=tokenData.token_name%></h5>
-                             <div class="card-body">
-                            <div class="row justify-content-center">
+                                <div class="row">
+                                    <div class="col-12 col-md-5">
+                                        <!-- Profile -->
+                                        <div class="card mt-3 mb-3">
+                                            <h4 class="card-header hscrollable">
+                                                <img alt="Token Symbol" width="64" src="<%=tokenData.logo_url%>" />
+                                                <%=tokenData.token_name%>
+                                            </h4>
+                                            <div class="card-body">
+                                                            <div class="mb-3">
+                                                                <div class="brand-color-primary" style="font-weight:bold">
+                                                                    <h5 class="tokenPrice">                                                    
+                                                                    <i class="icon-line-graph"></i>
+                                                                        <span class="quote_price"></span> ETH 
+                                                                        ($<span class="quote_price_usd"></span>)
+                                                                    </h5>
+                                                                </div>
 
-                                <div class="col-12 col-md-8">
-                                    <div class="media" style="margin-bottom:0">
-                                        <img alt="Token Symbol" src="<%=tokenData.logo_url%>" class="mr-md-5 avatar avatar-xlg" />
-                                        <div class="media-body">
-                                            <div class="mb-3">
-                                                <div class="brand-color-primary" style="font-weight:bold">
-                                                    <h5 class="tokenPrice">                                                    
-                                                    <i class="icon-line-graph"></i>
-                                                        <span class="quote_price"></span> ETH 
-                                                        ($<span class="quote_price_usd"></span>)
-                                                    </h5>
-                                                </div>
-
+                                                            </div>
+                                                            <p><%-tokenData.company_info.elevator_pitch%></p>
+                                                            <div>
+                                                                    <!--
+                                                                    <button class="btn btn-outline-primary" data-toggle="button"><i class="icon-add-user"></i> Follow</button>
+                                                                    <button class="btn btn-outline-primary"><i class="socicon-facebook"></i>
+                                                                    </button>
+                                                                    <div class="dropdown d-inline-block">
+                                                                        <button class="btn btn-outline-primary dropdown-toggle dropdown-toggle-no-arrow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                            <i class="icon-dots-three-horizontal"></i>
+                                                                        </button>
+                                                                        <div class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 36px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                            <a class="dropdown-item" href="app-profile-creator.html#">Add to group</a>
+                                                                            <a class="dropdown-item" href="app-profile-creator.html#">Share Profile</a>
+                                                                            <div class="dropdown-divider"></div>
+                                                                            <a class="dropdown-item" href="app-profile-creator.html#">Block</a>
+                                                                            <a class="dropdown-item" href="app-profile-creator.html#">Report</a>
+                                                                        </div>
+                                                                    </div>
+                                                                -->
+                                                                </div>
                                             </div>
-                                            <p><%-tokenData.company_info.elevator_pitch%></p>
-                                            <div>
-                                                    <!--
-                                                    <button class="btn btn-outline-primary" data-toggle="button"><i class="icon-add-user"></i> Follow</button>
-                                                    <button class="btn btn-outline-primary"><i class="socicon-facebook"></i>
-                                                    </button>
-                                                    <div class="dropdown d-inline-block">
-                                                        <button class="btn btn-outline-primary dropdown-toggle dropdown-toggle-no-arrow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <i class="icon-dots-three-horizontal"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-sm" aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 36px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                            <a class="dropdown-item" href="app-profile-creator.html#">Add to group</a>
-                                                            <a class="dropdown-item" href="app-profile-creator.html#">Share Profile</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item" href="app-profile-creator.html#">Block</a>
-                                                            <a class="dropdown-item" href="app-profile-creator.html#">Report</a>
-                                                        </div>
-                                                    </div>
-                                                -->
-                                                </div>
                                         </div>
-                                    </div>
+                                        <!-- Asset Info -->
+                                        <div class="card mt-1">
+                                                <h5 class="card-header">Asset Details</h5>
+                                                <div class="card-body">
+                                                  <h6>Token</h6>
+                                                  <div class="row asset-info">
+                                                    <div class="col-5">Price</div>
+                                                    <div class="col-7"> <span class="quote_price">Loading...</span> ETH</div>
+                                                    
+                                                    <div class="col-5">Symbol</div>
+                                                    <div class="col-7"><%=tokenData.symbol%></div>
     
+                                                    <div class="col-5">Market Cap</div>
+                                                    <div class="col-7"><span class="market_cap">Loading...</span> ETH</div>
+    
+                                                    <div class="col-5">Supply</div>
+                                                    <div class="col-7"><span class="totalSupply">Loading...</span></div>
+    
+                                                    <div class="col-5">Contract</div>
+                                                    <div class="col-7">
+                                                        <a contract="_blank" class="etherscanUrl" href="https://etherscan.io/token/<%=menuData.tokenAddress%>"><%=menuData.tokenAddress.substring(0,7)%>...</a>
+                                                    </div>
+    
+                                                 </div>
+                                                 <hr />
+                                                <h6>Exchanger</h6>
+                                                <div class="row asset-info">
+                                                        <div class="col-5">Reserves</div>
+                                                        <div class="col-7" style="font-size:0.8rem !important">
+                                                                <span style="font-size:0.8rem !important" class="reserve_balance_tokens">Loading...</span> <%=tokenData.symbol%><br />
+                                                                <span style="font-size:0.8rem !important" class="reserve_balance">Loading...</span> ETH
+                                                        </div>
+    
+                                                        <div class="col-5">
+                                                            Weight
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <span class="reserve_weight">Loading...</span> %
+                                                        </div>
+    
+                                                        <div class="col-5">Contract</div>
+                                                        <div class="col-7"><a target="_blank" href="https://etherscan.io/address/<%=tokenData.exchanger_address%>"><%=tokenData.exchanger_address.substring(0,7)%>...</a></div>
+                                                </div>
+    
+                                                </div>
+                                        </div> 
+                                        
+                                        <!-- Buy Ether -->
+                                        <div class="card mt-3 mt-md-1">
+                                                <h5 class="card-header">Need Ethereum?</h5>
+                                                <div class="card-body">
+                                                        <p>Buy Ethereum using your credit or debit card! Our partner Coinmama offers the best rates we've ever seen for buying Ethereum with dollars or Euros.</p>
+                                                        <a class="btn btn-primary" style="width:100%" href="http://go.coinmama.com/visit/?bta=51974&nci=5346" target="_blank">
+                                                            Pay With Card
+                                                        </a>
+                                                    </div>
+                
+                                                <div class="card-body">
+                                                    <p>Got Bitcoin, Altcoins, or Tokens? Trade them for Ethereum right here without leaving our Exchange. Our partner Changelly accepts 100s of cryptocurrencies!</p>
+                                                <link rel="stylesheet" href="https://changelly.com/widget.css"/> 
+                                                <a id="changellyButton" href="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&amount=1&ref_id=a9d01925ca20&color=00cf70" target="_blank"> 
+                                                    <button style="width:100%" class="btn btn-primary">Pay With Crypto</button> 
+                                                </a> 
+                                                
+                                                <div id="changellyModal" style="z-index:10000"> 
+                                                <div class="changellyModal-content"> 
+                                                    <span class="changellyModal-close">x</span> 
+                                                    <iframe src="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&amount=1&ref_id=a9d01925ca20&color=3e703a" width="600" height="500" class="changelly" scrolling="no" style="overflow-y: hidden; border: none" > Can't load widget </iframe> </div> 
+                                                </div>
+                                                </div>
+            
+                                            </div>
+            
+                                        </div>
     
 
-
+                                    <div class="col-12 col-md-7">
+                                            <!-- Trade -->
+                                            <div class="card mt-1 mt-md-3">
+                                                    <h4 class="card-header">
+                                                            <img height="64" width="1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAOUlEQVR42u3OIQEAAAACIP1/2hkWWEBzVgEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAYF3YDicAEE8VTiYAAAAAElFTkSuQmCC">
+                                                            Trade <%=tokenData.symbol%></h4>
+                                                     <div class="card-body">
+                    
+                                                        <form autocomplete="off">
+                                                        <input autocomplete="false" name="hidden" type="text" style="display:none;">
+                    
+                                                        <div class="form-row mt-2 mb-2 justify-content-center">
+                    
+                                                            <!-- The from currency. Default ETH-->
+                                                            <div class="col-md-3 col-12">
+                                                                <div class="input-group">                                              
+                                                                    <input type="text" id="convertFrom" class="form-control" placeholder="ETH" />
+                                                                </div>
+                                                                <small style="font-weight:bold" id="convertFrom_USD" class="form-text text-muted pl-2 text-info">
+                                                                </small>
+            
+                                                            </div>
+                    
+                                                                <!-- Switches the from currency between ETH and the token. When the token is the from currency, it's considered a SELL order -->
+                                                                 <div class="col-md-1 col-12 mt-1" style="text-align:center">
+                                                                    <a id="swapBuySell" href="#"><i style="font-size:1.5rem;" class="icon-swap"></i></a>
+                                                                </div>
+                                                            
+                                                            <!-- The target currency. Defaults to the token. Updates itself when user types in the from currency box -->
+                                                            <div class="col-md-3 col-12 mb-1">
+                                                                <div class="input-group">
+                                                                    <input type="text" id="convertTo" disabled="disabled" class="form-control" placeholder="<%=tokenData.symbol%>" />
+                                                                </div>
+                                                                <small style="font-weight:bold" id="convertTo_USD" class="form-text text-muted pl-2 text-info">
+                                                                </small>
+                                                            </div>
+                                                            <div class="col-md-5 col-12">
+                                                                    <button style="width:100%" disabled="disabled" type="button" id="tradeBtn" class="btn btn-success">Buy</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="alert alert-warning" role="transaction_pending" style="display:none">
+                                                            Transaction Created - Please approve in Metamask.
+                                                        </div>
+                                                        <div class="alert alert-success" role="transaction_complete" style="display:none">
+                                                            Sent to Blockchain, TxID: <a target="_blank" id="txid"></a> 
+                                                        </div>
+                
+                                                              
+                                                    </form>
+                    
+                                                    <hr />
+                    
+                                                    <h5>Important Trading Notes</h5>
+                                                    <ul>
+                                                        <li>Your order will be executed as close as possible to the price quoted above. Up to 5% slippage may occur during periods of high volatility</li>
+                                                        <li>After you press buy or sell, you will be asked to confirm the transaction in your wallet.</li>
+                                                        <li>Transactions will usually complete within 30-60 seconds.</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <span class="text-info" style="display:none" id="tradeResponse"></span>
+            
+                                            <!-- Send Tokens -->
+                                            <div class="card mt-3">
+                                                    <h5 class="card-header">Send Tokens</h2>
+                                                    <div class="card-body">
+                                                    <form>
+                                                        <div class="form-row mt-2 mb-2 justify-content-center">
+                                    
+                                                            <div class="col-5">
+                                                                <input type="text" id="sendTo" class="form-control" placeholder="Address">
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <input type="text" id="sendAmount" class="form-control" placeholder="Amount">
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <button style="width:100%" type="button" id="sendTokens" class="btn btn-primary">Send</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                    <span class="text-info" style="display:none" id="sendResponse"></span>
+                                                </div>
+                                            </div>
+        
+            
                                 </div>
-                                <!--end of col-->
-                            </div>
-                            <!--end of row-->
-                            </div>
-                        </div>
                     </div>
     <!-- End Profile Section -->
 
 
-    <!-- Trading UI -->
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-3">
-                                    <div class="card mt-1">
-                                            <h5 class="card-header">Asset Details</h5>
-                                            <div class="card-body">
-                                              <h6>Token</h6>
-                                              <div class="row asset-info">
-                                                <div class="col-5">Price</div>
-                                                <div class="col-7"> <span class="quote_price">Loading...</span> ETH</div>
-                                                
-                                                <div class="col-5">Symbol</div>
-                                                <div class="col-7"><%=tokenData.symbol%></div>
-
-                                                <div class="col-5">Market Cap</div>
-                                                <div class="col-7"><span class="market_cap">Loading...</span> ETH</div>
-
-                                                <div class="col-5">Supply</div>
-                                                <div class="col-7"><span class="totalSupply">Loading...</span></div>
-
-                                                <div class="col-5">Contract</div>
-                                                <div class="col-7">
-                                                    <a contract="_blank" class="etherscanUrl" href="https://etherscan.io/token/<%=menuData.tokenAddress%>"><%=menuData.tokenAddress.substring(0,7)%>...</a>
-                                                </div>
-
-                                             </div>
-                                             <hr />
-                                            <h6>Exchanger</h6>
-                                            <div class="row asset-info">
-                                                    <div class="col-5">Reserves</div>
-                                                    <div class="col-7" style="font-size:0.8rem !important">
-                                                            <span style="font-size:0.8rem !important" class="reserve_balance_tokens">Loading...</span> <%=tokenData.symbol%><br />
-                                                            <span style="font-size:0.8rem !important" class="reserve_balance">Loading...</span> ETH
-                                                    </div>
-
-                                                    <div class="col-5">
-                                                        Weight
-                                                    </div>
-                                                    <div class="col-7">
-                                                        <span class="reserve_weight">Loading...</span> %
-                                                    </div>
-
-                                                    <div class="col-5">Contract</div>
-                                                    <div class="col-7"><a target="_blank" href="https://etherscan.io/address/<%=tokenData.exchanger_address%>"><%=tokenData.exchanger_address.substring(0,7)%>...</a></div>
-                                            </div>
-
-                                            </div>
-                                    </div> 
-                                    
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card mt-3 mt-md-1">
-                                        <h5 class="card-header">Trade <%=tokenData.symbol%></h2>
-                                         <div class="card-body">
-        
-                                    <form autocomplete="off">
-                                            <input autocomplete="false" name="hidden" type="text" style="display:none;">
-        
-                                            <div class="form-row mt-2 mb-2 justify-content-center">
-        
-                                                <!-- The from currency. Default ETH-->
-                                                <div class="col-md-3 col-12">
-                                                    <div class="input-group">                                              
-                                                        <input type="text" id="convertFrom" class="form-control" placeholder="ETH" />
-                                                    </div>
-                                                    <small style="font-weight:bold" id="convertFrom_USD" class="form-text text-muted pl-2 text-info">
-                                                    </small>
-
-                                                </div>
-        
-                                                    <!-- Switches the from currency between ETH and the token. When the token is the from currency, it's considered a SELL order -->
-                                                     <div class="col-md-1 col-12 mt-1" style="text-align:center">
-                                                        <a id="swapBuySell" href="#"><i style="font-size:1.5rem;" class="icon-swap"></i></a>
-                                                    </div>
-                                                
-                                                <!-- The target currency. Defaults to the token. Updates itself when user types in the from currency box -->
-                                                <div class="col-md-3 col-12 mb-1">
-                                                    <div class="input-group">
-                                                        <input type="text" id="convertTo" disabled="disabled" class="form-control" placeholder="<%=tokenData.symbol%>" />
-                                                    </div>
-                                                    <small style="font-weight:bold" id="convertTo_USD" class="form-text text-muted pl-2 text-info">
-                                                    </small>
-                                                </div>
-                                                <div class="col-md-5 col-12">
-                                                        <button style="width:100%" disabled="disabled" type="button" id="tradeBtn" class="btn btn-success">Buy</button>
-                                                </div>
-                                            </div>
-                                            <div class="alert alert-warning" role="transaction_pending" style="display:none">
-                                                Transaction Created - Please approve in Metamask.
-                                            </div>
-                                            <div class="alert alert-success" role="transaction_complete" style="display:none">
-                                                Sent to Blockchain, TxID: <a target="_blank" id="txid"></a> 
-                                            </div>
-    
-                                                  
-                                        </form>
-        
-                                        <hr />
-        
-                                        <h5>Important Trading Notes</h5>
-                                        <ul>
-                                            <li>Your order will be executed as close as possible to the price quoted above. Up to 5% slippage may occur during periods of high volatility</li>
-                                            <li>After you press buy or sell, you will be asked to confirm the transaction in your wallet.</li>
-                                            <li>Transactions will usually complete within 30-60 seconds.</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <span class="text-info" style="display:none" id="tradeResponse"></span>
-
-                                <div class="card mt-3">
-                                        <h5 class="card-header">Send Tokens</h2>
-                                        <div class="card-body">
-                                        <form>
-                                            <div class="form-row mt-2 mb-2 justify-content-center">
-                        
-                                                <div class="col-5">
-                                                    <input type="text" id="sendTo" class="form-control" placeholder="Address">
-                                                </div>
-                                                <div class="col-4">
-                                                    <input type="text" id="sendAmount" class="form-control" placeholder="Amount">
-                                                </div>
-                                                <div class="col-3">
-                                                    <button style="width:100%" type="button" id="sendTokens" class="btn btn-primary">Send</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <span class="text-info" style="display:none" id="sendResponse"></span>
-                                    </div>
-                                </div>
-
-
-                        </div>
-                        <!-- Buy Ether-->
-
-                        <div class="col-md-3">
-                                <div class="card mt-3 mt-md-1">
-                                        <h5 class="card-header">Need Ethereum?</h5>
-                                        <div class="card-body">
-                                                <p>Buy Ethereum using your credit or debit card! Our partner Coinmama offers the best rates we've ever seen for buying Ethereum with dollars or Euros.</p>
-                                                <a class="btn btn-primary" style="width:100%" href="http://go.coinmama.com/visit/?bta=51974&nci=5346" target="_blank">
-                                                    Pay With Card
-                                                </a>
-                                            </div>
-        
-                                        <div class="card-body">
-                                            <p>Got Bitcoin, Altcoins, or Tokens? Trade them for Ethereum right here without leaving our Exchange. Our partner Changelly accepts 100s of cryptocurrencies!</p>
-                                        <link rel="stylesheet" href="https://changelly.com/widget.css"/> 
-                                        <a id="changellyButton" href="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&amount=1&ref_id=a9d01925ca20&color=00cf70" target="_blank"> 
-                                            <button style="width:100%" class="btn btn-primary">Pay With Crypto</button> 
-                                        </a> 
-                                        
-                                        <div id="changellyModal" style="z-index:10000"> 
-                                        <div class="changellyModal-content"> 
-                                            <span class="changellyModal-close">x</span> 
-                                            <iframe src="https://changelly.com/widget/v1?auth=email&from=BTC&to=ETH&merchant_id=a9d01925ca20&amount=1&ref_id=a9d01925ca20&color=3e703a" width="600" height="500" class="changelly" scrolling="no" style="overflow-y: hidden; border: none" > Can't load widget </iframe> </div> 
-                                        </div>
-                                        </div>
-    
-                                    </div>
-    
-                                </div>
-
-                        </div>
-                                       
-        
-        
-               
-        
-                    </div>
                 </script>
 
 
