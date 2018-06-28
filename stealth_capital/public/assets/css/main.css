@@ -23,10 +23,7 @@
 .brand-bg-dark {
     background-color: #2f5811;
 }
-.token-profile img {
-    width: 35% !important;
-}
-.token-profile button, .token-profile a.btn {
+.token-profile a.btn {
     margin-top:10px !important;
 }
 .btn-success {
@@ -34,4 +31,14 @@
 }
 .btn-primary {
     background-color: #3e703a !important;
+}
+
+.hscrollable::-webkit-scrollbar { 
+    display: none; 
+}
+
+.hscrollable {
+    white-space:nowrap;
+    overflow-x:scroll;
+    flex-wrap:nowrap;
 }
