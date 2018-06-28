@@ -462,7 +462,7 @@ async function buy(amountInEther) {
     exchanger.buy(minPurchaseReturn, {
         "from": myAddress,
         "value": valueInWei,
-        gasPrice: web3.utils.toWei(window.gasPrice.toString(), 'gwei')
+        gasPrice: web3.utils.toWei(window.gasPrice.toFixed(1), 'gwei')
     }).then((tx) => {
         $(".alert").hide();
         $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/" + tx + "'>" + tx + "</a>");
@@ -486,7 +486,7 @@ async function sell(amountInTokens) {
     //NEW!  One step sell. Calls receiveApproval on the exchanger contract, which triggers the sale
     token.approveAndCall(window.model.exchangerAddress, rawTokens, "0x00", 
     {        
-        gasPrice: web3.utils.toWei(window.gasPrice.toString(), 'gwei')
+        gasPrice: web3.utils.toWei(window.gasPrice.toFixed(1), 'gwei')
     }).then((tx) => {
         $(".alert").hide();
         $(".alert-success").html("Transaction Processing: <a href='https://etherscan.io/tx/" + tx + "'>" + tx + "</a>");
