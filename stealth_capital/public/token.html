@@ -2,25 +2,6 @@
 <html lang="en">
 
 <head>
-    <style>
-        .asset-info,
-        .asset-info span {
-            font-size: 0.875rem !important;
-        }
-
-        .brand-color-primary {
-            color: #3e703a !important;
-        }
-
-        .brand-color-light {
-            color: #8bc34a !important;
-        }
-
-        .brand-color-dark {
-            color: #2f5811;
-        }
-    </style>
-
     <meta charset="utf-8">
     <script type="text/html" template-engine="ejs">
             <title><%=menuData.pageTitle%></title>
@@ -31,9 +12,11 @@
     <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,400i,500" rel="stylesheet">
     <link href="assets/css/socicon.css" rel="stylesheet" type="text/css" media="all" />
     <link href="assets/css/entypo.css" rel="stylesheet" type="text/css" media="all" />
-    <link href="assets/css/theme.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <link rel="stylesheet" type="text/css" media="all" href="assets/css/main.css" />
+    <!--
     <link rel="manifest" href="/manifest.json">
-
+    -->
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ethjs@0.3.4/dist/ethjs.min.js"></script>
@@ -54,7 +37,11 @@
     <script src="data/token_list.js"></script>
     <script src="assets/js/app.js?v2"></script>
 
+    <!-- Error message popups (for incompatible browser / wallet) -->
+    <ctrl src="./controls/modals.html" id="walletWarnings" doNotWrap="true"></ctrl>
 
+    <!-- The page contains EJS template expressions... we wrap it in  script tag, render the EJS,
+         and output it as a div to the browser-->
     <script type="text/html" template-engine="ejs">
                     <div class="sticky-top">
                         <!-- Main Nav -->
@@ -110,8 +97,9 @@
                         </div>
                     </div>
                     <!-- Begin profile container -->
-                    <div class="container">
-                         <div class="card pt-3 pb-3">
+                    <div class="container token-profile">
+                         <div class="card mt-3 mb-3">
+                             <h4 class="card-header"><%=tokenData.token_name%></h5>
                              <div class="card-body">
                             <div class="row justify-content-center">
 
@@ -120,13 +108,12 @@
                                         <img alt="Token Symbol" src="<%=tokenData.logo_url%>" class="mr-md-5 avatar avatar-xlg" />
                                         <div class="media-body">
                                             <div class="mb-3">
-                                                <h1 class="h2 mb-2"><%=tokenData.token_name%></h1>
-                                                <div class="text-success" style="font-weight:bold">
+                                                <div class="brand-color-primary" style="font-weight:bold">
+                                                    <h5 class="tokenPrice">                                                    
                                                     <i class="icon-line-graph"></i>
-                                                    <span class="tokenPrice">
                                                         <span class="quote_price"></span> ETH 
                                                         ($<span class="quote_price_usd"></span>)
-                                                    </span>
+                                                    </h5>
                                                 </div>
 
                                             </div>
@@ -163,18 +150,14 @@
                             </div>
                         </div>
                     </div>
-            </script>
     <!-- End Profile Section -->
 
-    <!-- Error message popups (for incompatible browser / wallet) -->
-    <ctrl src="./controls/modals.html" id="walletWarnings" doNotWrap="true"></ctrl>
 
     <!-- Trading UI -->
-    <script type="text/html" template-engine="ejs">
                     <div class="container">
                         <div class="row">
                             <div class="col-md-3">
-                                    <div class="card">
+                                    <div class="card mt-1">
                                             <h5 class="card-header">Asset Details</h5>
                                             <div class="card-body">
                                               <h6>Token</h6>
@@ -222,7 +205,7 @@
                                     
                             </div>
                             <div class="col-md-6">
-                                <div class="card">
+                                <div class="card mt-3 mt-md-1">
                                         <h5 class="card-header">Trade <%=tokenData.symbol%></h2>
                                          <div class="card-body">
         
@@ -280,7 +263,7 @@
                                 </div>
                                 <span class="text-info" style="display:none" id="tradeResponse"></span>
 
-                                <div class="card">
+                                <div class="card mt-3">
                                         <h5 class="card-header">Send Tokens</h2>
                                         <div class="card-body">
                                         <form>
@@ -306,7 +289,7 @@
                         <!-- Buy Ether-->
 
                         <div class="col-md-3">
-                                <div class="card">
+                                <div class="card mt-3 mt-md-1">
                                         <h5 class="card-header">Need Ethereum?</h5>
                                         <div class="card-body">
                                                 <p>Buy Ethereum using your credit or debit card! Our partner Coinmama offers the best rates we've ever seen for buying Ethereum with dollars or Euros.</p>

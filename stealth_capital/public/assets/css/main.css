@@ -1,0 +1,37 @@
+.asset-info,
+.asset-info span {
+    font-size: 0.875rem !important;
+}
+
+.brand-color-primary {
+    color: #3e703a !important;
+}
+.brand-bg-primary {
+    background-color: #3e703a !important;
+}
+
+.brand-color-light {
+    color: #8bc34a !important;
+}
+.brand-bg-light {
+    background-color: #8bc34a !important;
+}
+
+.brand-color-dark {
+    color: #2f5811;
+}
+.brand-bg-dark {
+    background-color: #2f5811;
+}
+.token-profile img {
+    width: 35% !important;
+}
+.token-profile button, .token-profile a.btn {
+    margin-top:10px !important;
+}
+.btn-success {
+    background-color: #8bc34a !important;
+}
+.btn-primary {
+    background-color: #3e703a !important;
+}
