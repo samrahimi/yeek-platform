@@ -43,33 +43,59 @@ async function watchBuyEv(contractAddress, contractABI){
 
 }
 
+// function will return all past events amount in wei data
+// for the last 30 days
 async function getPastEv(contractAddress, contractABI){
-    var amtWeiData = [];
+    var amtWeiSell = [];
+    var amtWeiBuy = [];
     var contract = new web3.eth.Contract(contractABI, contractAddress);
-    var events = await contract.getPastEvents("Sell", {
+    var latestBlockNum = await web3.eth.getBlockNumber();
+    // 30 days = 2592000 seconds and avg block time is 15 seconds
+    // avg num blocks in last 30 days = 2592000 / 15
+    // and we subtract that from the current latest block number
+    var events = await contract.getPastEvents("allEvents", {
             filter: {},
-            fromBlock: 0, 
+            fromBlock: latestBlockNum - (2592000 / 15.0), 
             toBlock: 'latest'
         }
     )
-    for (var i = 0; i < events.length; i++){
-        amtWeiData.push([events[i]['blockNumber'], Number(events[i]['returnValues']['amountInWei'])]);
-    }
 
-    return amtWeiData;
+    let eventsFormatted = events.map((x) =>  
+        {
+            return {
+                blockNum:x.blockNumber, 
+                direction: x.event, 
+                amountInWei: x.returnValues.amountInWei, 
+                amountInTokens:x.returnValues.amountInToken,
+                avgPricePerShare: x.returnValues.amountInWei / x.returnValues.amountInToken
+            }
+        });
+    return eventsFormatted;
 };
 
+function calculateTimeStamp(latestBlockNum, blockNum){
+    //avg block time is 15 seconds (between 10 and 19 seconds)
+    return (latestBlockNum - blockNum) * 15.0;
+
+}
+
+async function graphData(data, chart){
+
+    var latestBlockNum = await web3.eth.getBlockNumber();
+    for (var i = 0; i < data.length; i++){
+        var timeStamp = calculateTimeStamp(latestBlockNum, data[i].blockNum);
+        // graph amtWei / amtToken = average price per share
+        // graph both buy and sell events
+        addDataPoint(chart, timeStamp, data[i].avgPricePerShare);
+    }
+}
 
 setTimeout(async() => {
     initWeb3();
-    
-    var amtWeiSellData = await getPastEv(testAddress, exchangerABI);
-    
-    for (var i = 0; i < amtWeiSellData.length; i++){
-        let block = await web3.eth.getBlock(amtWeiSellData[i][0]);
-        console.log(JSON.stringify(block, null, 3));
-        addDataPoint(myChart, amtWeiSellData[i][0], amtWeiSellData[i][1]);
-    }
+
+    var data = await getPastEv(testAddress, exchangerABI);
+    graphData(data, myChart);
+
 }, 1000);
 
 
