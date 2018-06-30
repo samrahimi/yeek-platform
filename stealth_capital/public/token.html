@@ -36,8 +36,8 @@
     <script type="text/javascript" src="assets/js/ejs-controller.js?v10"></script>
 
     <script type="text/javascript" src="assets/js/constants.js?v2"></script>
-    <script type="text/javascript" src="assets/js/price.js?v2"></script>
-    <script type="text/javascript" src="assets/js/token.js?v2"></script>
+    <script type="text/javascript" src="assets/js/price.js?v3"></script>
+    <script type="text/javascript" src="assets/js/token.js?v3"></script>
 </head>
 
 <body>
@@ -284,7 +284,14 @@
                                                 </div>
                                             </div>
                                             <span class="text-info" style="display:none" id="tradeResponse"></span>
-            
+                                            
+                                            <!-- Chart -->
+                                            <div class="card mt-3">
+                                                <h5 class="card-header">Price Chart</h5>
+                                                <div class="card-body">
+                                                    <iframe src="" id="chart_frame" width="100%" scrolling="no" style="border:0px"></iframe> 
+                                                </div>
+                                            </div>
                                             <!-- Send Tokens -->
                                             <div class="card mt-3">
                                                     <h5 class="card-header">Send Tokens</h2>
