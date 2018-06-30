@@ -262,6 +262,14 @@ async function updateReserveBalances() {
 
 }
 
+function initPriceChart() {
+    let iframe_src= `charter/chart.html?address=${window.model.exchangerAddress}&name=${window.tokenData.symbol}&days=7`
+    let width = $("#chart_frame").width(); //Pre-set to 100% of the container card
+    let height = width * 9 / 16;           //16:9 dimension
+    $("#chart_frame").height(height);      //Set the height
+    $("#chart_frame").attr("src", iframe_src)   //Only set the SRC after adjusting width and height, so the chart knows how to size itself
+}
+
 //Init function / entry point. Call from main document ready method 
 //after data has been pulled from db and is available on window.model
 let bindTokenData = () => {
@@ -328,6 +336,8 @@ let bindTokenData = () => {
             })
         }
 
+
+        //Listen for user clicks on send, trade btns etc.
 
         $('#sendTokens').on('click', function () {
             $("#sendResponse").show();
@@ -437,6 +447,8 @@ let bindTokenData = () => {
         })
 
 
+        //Set up the chart
+        initPriceChart()
 
 
         console.log("Account: " + myAddress);

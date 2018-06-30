@@ -14,7 +14,7 @@ function produceGraph(titleName, ctx){
                 data: [],
                 backgroundColor: ['rgba(0, 128, 0, 0.6)'],
                 borderColor: ['rgba(0, 128, 0, 1)'],
-                borderWidth: 4
+                borderWidth: 2
             }]
         },
         options: {
@@ -26,7 +26,7 @@ function produceGraph(titleName, ctx){
                 }],
                 yAxes: [{
                     ticks: {
-                        beginAtZero:true
+                        beginAtZero:false
                     }
                 }]
             }

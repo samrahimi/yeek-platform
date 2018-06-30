@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <title>Stealth Exchange Chart Generator</title>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <style>
+        .centered {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        }
+        </style>
+    </head>
+    <body>
+        
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <div id="chart_div"></div>
+        <div class="centered">Please wait... Chart is loading</div>
+          
+        <script src="../assets/js/bignumber.js"></script>
+        <script src="../assets/js/web3.js"></script>
+        <script src="../assets/js/constants.js"></script>
+        
+        <script src="listener.js"></script>
+
+        <script>
+        google.charts.load('current', {packages: ['corechart', 'line']});
+        //we don't need this... there's a 1s delay on the web3 event loading, so 
+        //we can be confident that charts will be loaded by the time the data is read
+
+        //Called from listener.js after gathering and formatting the data
+        function drawChart(dataset, symbol, numDays) {
+            $(".centered").hide(); //Hide the "loading" message
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', '');      //The x-axis, which is time
+            data.addColumn('number','');  //The line being charted, title is the symbol of the token
+
+            //Should be a 2d array. [[time, price], [time, price]]
+            data.addRows(dataset);
+
+
+            /* Uncomment if using Classic (non-material) charts
+            var options = {
+                hAxis: {
+                title: 'Time',
+                logScale: false
+                },
+                vAxis: {
+                title: 'Price',
+                logScale: false
+                },
+                colors: ['#a52714']
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+            } */
+
+            var options = {
+            title: symbol+ ' Price History - '+numDays+" Days",
+            legend: 'none',
+            vAxis: {
+                format: '#.#######'
+            },
+            width: parseInt(window.innerWidth),
+            height: parseInt(window.innerHeight * 0.95)
+        };
+
+        /* Material design
+        var chart = new google.charts.Line(document.getElementById('chart_div'));
+        chart.draw(data, google.charts.Line.convertOptions(options)); */
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+    }
+
+        </script>
+
+    </body>
+</html>
