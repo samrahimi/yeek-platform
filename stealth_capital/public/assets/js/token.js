@@ -18,6 +18,7 @@ let bindContractFieldToElement = (methodCall, postProcessingFunction, el) => {
     })
 }
 
+
 //If user is not connected to their wallet, treat the top bar as a straight price ticker:
 //SYMBOL, PRICE-ETH, PRICE-USD
 let updateTickerPrices = async() => {
@@ -38,18 +39,15 @@ let updateTickerPrices = async() => {
         {
             var pricePerToken = await getPriceQuote(toke.exchanger_address)
             var pricePerTokenUSD = convertToUSD(pricePerToken);
-            $("#balance_"+sym).html(pricePerToken.toFixed(5)+" ETH")
-            $("#balance_"+sym+"_usd").html(pricePerTokenUSD.toFixed(2))
+            $("#price_"+sym).html(pricePerToken.toFixed(5)+" ETH")
+            $("#price_"+sym+"_usd").html(pricePerTokenUSD.toFixed(2))
         } catch(x) {
             //Die politely
-            $("#balance_"+sym+"_usd").html("?")
+            $("#price_"+sym+"_usd").html("?")
             console.log(x.toString())
         }
     }
 
-    //Adjust the display so its clear this is a ticker not a wallet
-    $("#ticker_values").hide();
-    $("#ticker_header").html("Ticker")
 }
 
 //When user is connected to their wallet: get their balance of each token on the ticker
@@ -64,17 +62,17 @@ let updateWalletBalances = async() => {
         var addy = toke.contract_address;
         var toker = eth.contract(tokenABI, "", { "from": myAddress }).at(addy);
         var sym = toke.symbol;
-
-        //Get user's balance in that token and display
-        var rawBalance = await toker.balanceOf(myAddress);
-        var trueBalance = parseFloat(rawToDecimal(rawBalance[0].toString(10),18));
-        $("#balance_"+sym).html(trueBalance.toFixed(1));
-
-        //Get value of user's holdings in ether, convert to USD, and add 
-        //to their respective total portfolio values.
-        //If a token value cannot be obtained, we consider it to be worth $0 and move on
         try 
         {
+
+            //Get user's balance in that token and display
+            var rawBalance = await toker.balanceOf(myAddress);
+            var trueBalance = parseFloat(rawToDecimal(rawBalance[0].toString(10),18));
+            $("#balance_"+sym).html(trueBalance.toFixed(1));
+
+            //Get value of user's holdings in ether, convert to USD, and add 
+            //to their respective total portfolio values.
+            //If a token value cannot be obtained, we consider it to be worth $0 and move on
             var pricePerToken = await getPriceQuote(toke.exchanger_address)
             var amtEth = pricePerToken * trueBalance;
             var amtUsd = convertToUSD(amtEth);
@@ -124,14 +122,16 @@ let refreshDisplayData = () => {
     //Gets basic info about the token
     updateTokenInfo();
 
-    /* Begin Load User Balances */
+    //Gets the spot price for each asset traded on the exchange and displays in a ticker
+    updateTickerPrices(); 
+
+    //If we have a live wallet, gets the user's balances for all listed tokens 
+    //and calculates their portfolio value in USD and ETH
     if (!exchangeUI.readonly) {
         //updateUserBalances()
         updateWalletBalances()
     }
-    else {
-        updateTickerPrices(); //Convert the wallet into a price ticker
-    }
+
     /* Begin Load Airdropper Info */
 
     if (window.model.dropperAddress != '0x0') {
@@ -445,6 +445,27 @@ let bindTokenData = () => {
             }
 
         })
+
+        //Buttons for toggling btwn portfolio and price ticker feeds
+        $("#switch_to_portfolio").on("click", () => {
+            if (exchangeUI.readonly)
+            {
+                alert("To view your portfolio and balances, please install the Metamask browser plugin. Alternatively, you can use a Blockchain-compatible browser such as Trust, Mist, or Toshi.")
+                return false;
+            }
+            updateWalletBalances()
+            $("#tickerPrices").hide()
+            $("#userBalances").show()
+            return false
+        })
+
+        $("#switch_to_ticker").on("click", () => {
+            updateTickerPrices()    
+            $("#userBalances").hide()
+            $("#tickerPrices").show()
+            return false
+        })
+
 
 
         //Set up the chart

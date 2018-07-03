@@ -32,7 +32,7 @@ async function getPriceQuote(exchangerAddress) {
 
 async function updateGasPrice() {
     web3.eth.getGasPrice((e,r) =>{
-        web3.eth.getGasPrice((e,r) => console.log("Default gas price: "+r.toString(10)))
+        console.log("Default gas price: "+r.toString(10));
         let g= r / 1000000000
         if (g <= 10) 
             window.gasPrice = g * 3
