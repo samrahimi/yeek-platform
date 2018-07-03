@@ -26,13 +26,19 @@
 .token-profile a.btn {
     margin-top:10px !important;
 }
+.btn-half {
+    width:45%; /*for making 2 columns of buttons */
+}
 .btn-success {
     background-color: #8bc34a !important;
 }
 .btn-primary {
     background-color: #3e703a !important;
 }
-
+.toggle-portfolio-view {
+    color: #dddddd !important;
+    text-decoration:none;
+}
 .hscrollable::-webkit-scrollbar { 
     display: none; 
 }
@@ -42,3 +48,25 @@
     overflow-x:scroll;
     flex-wrap:nowrap;
 }
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+  }
+  body {
+    /* Margin bottom by footer height */
+    margin-bottom: 120px;
+  }
+  .footer {
+    position: fixed;
+    z-index:1200;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 120px;
+    background-color:#3e703a;
+  }
+  
+  

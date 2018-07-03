@@ -31,7 +31,7 @@
     <link href="assets/css/socicon.css" rel="stylesheet" type="text/css" media="all" />
     <link href="assets/css/entypo.css" rel="stylesheet" type="text/css" media="all" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-    <link rel="stylesheet" type="text/css" media="all" href="assets/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="assets/css/main.css?v1" />
     <!--
     <link rel="manifest" href="/manifest.json">
     -->
@@ -45,14 +45,14 @@
     <script type="text/javascript" src="assets/js/ejs.js"></script>
     <script type="text/javascript" src="assets/js/ejs-controller.js?v10"></script>
 
-    <script type="text/javascript" src="assets/js/constants.js?v2"></script>
-    <script type="text/javascript" src="assets/js/price.js?v3"></script>
-    <script type="text/javascript" src="assets/js/token.js?v3"></script>
+    <script type="text/javascript" src="assets/js/constants.js?v3"></script>
+    <script type="text/javascript" src="assets/js/price.js?v4"></script>
+    <script type="text/javascript" src="assets/js/token.js?v4"></script>
 </head>
 
 <body>
-    <script src="data/token_list.js"></script>
-    <script src="assets/js/app.js?v2"></script>
+    <script src="data/token_list.js?v3"></script>
+    <script src="assets/js/app.js?v3"></script>
 
     <!-- Error message popups (for incompatible browser / wallet) -->
     <ctrl src="./controls/modals.html" id="walletWarnings" doNotWrap="true"></ctrl>
@@ -86,32 +86,8 @@
                             </div>
                             <!--end nav collapse-->
                         </nav>
-                        <!-- User Balance - Eth and Current Token -->
-                        <div id="userBalances" class="text-white" style="background-color:#5B8F55;font-size:0.875rem">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-4 pt-1"><h5 id="ticker_header">My Portfolio</h5></div>
-                                        <div class="col-8 pt-1" style="text-align:right">
-                                            <b id="ticker_values">
-                                                Value: <span id="portfolio_balance_eth">...</span> ETH 
-                                                ($<span id="portfolio_balance_usd"></span>)
-                                            </b>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row hscrollable">
-                                        <% for (var i=0; i<window.token_list.length; i++) { %>
-                                            <div class="m-2 p-1 rounded col-auto col-md" style="text-align:center;font-size:0.8rem;background-color:#2f5811">
-                                                <b><a class="text-white" href="token.html?token_address=<%=token_list[i].contract_address%>"><%=token_list[i].symbol%></a></b><br />
-                                                <span id="balance_<%=token_list[i].symbol%>">0</span><br />
-                                                ($<span id="balance_<%=token_list[i].symbol%>_usd">0.00</span>)
-                                            </div>
-                                        <%}%>
-                                    </div>
-                                    <!--end of row-->
-                                </div>
-                                <!--end of container-->
-                        </div>
+
+
                     </div>
                     <!-- Begin profile container -->
                     <div class="container token-profile">
@@ -326,7 +302,7 @@
             
                                 </div>
                     </div>
-    <!-- End Profile Section -->
+                    <!-- End Profile Section -->
 
 
                 </script>
@@ -339,7 +315,66 @@
         }, 1000);
     </script>
 
+    <!-- Fixed Footer -->
+    <script type="text/html" template-engine="ejs">
 
+    <footer class="footer">
+        <div class="container-fluid">
+                        <!-- Portfolio view - shows tokens owned by the user + their qty -->
+                        <div id="userBalances" class="text-white" style="display:none;;font-size:0.875rem">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-6 pt-1"><span id="ticker_header">Wallet
+                                            <a href="#" id="switch_to_ticker" class="toggle-portfolio-view">(See Prices)</a></span>
+                                        </div>
+                                        <div class="col-6 pt-1" style="text-align:right">
+                                            <b id="ticker_values">
+                                                Value: <span id="portfolio_balance_eth">...</span> ETH 
+                                                ($<span id="portfolio_balance_usd"></span>)
+                                            </b><br />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row hscrollable">
+                                        <% for (var i=0; i<window.token_list.length; i++) { %>
+                                            <div class="m-2 p-1 rounded col-auto col-md" style="text-align:center;font-size:0.8rem;background-color:#2f5811">
+                                                <b><a class="text-white" href="token.html?token_address=<%=token_list[i].contract_address%>"><%=token_list[i].symbol%></a></b><br />
+                                                <span id="balance_<%=token_list[i].symbol%>">0</span><br />
+                                                ($<span id="balance_<%=token_list[i].symbol%>_usd">0.00</span>)
+                                            </div>
+                                        <%}%>
+                                    </div>
+                                    <!--end of row-->
+                                </div>
+                                <!--end of container-->
+                        </div>
+
+                        <!-- Ticker view - just shows the tokens and their prices -->
+                        <div id="tickerPrices" class="text-white" style="font-size:0.875rem">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col pt-1"><span id="ticker_header">All Prices
+                                        <a href="#" id="switch_to_portfolio" class="toggle-portfolio-view">(See Wallet)</a>
+
+                                    </span></div>
+                                </div>
+                                
+                                <div class="row hscrollable">
+                                    <% for (var i=0; i<window.token_list.length; i++) { %>
+                                        <div class="m-2 p-1 rounded col-auto col-md" style="text-align:center;font-size:0.8rem;background-color:#2f5811">
+                                            <b><a class="text-white" href="token.html?token_address=<%=token_list[i].contract_address%>"><%=token_list[i].symbol%></a></b><br />
+                                            <span id="price_<%=token_list[i].symbol%>">0</span><br />
+                                            ($<span id="price_<%=token_list[i].symbol%>_usd">0.00</span>)
+                                        </div>
+                                    <%}%>
+                                </div>
+                                <!--end of row-->
+                            </div>
+                            <!--end of container-->
+                    </div>
+        </div>
+    </footer>
+    </script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
     <script type="text/javascript" src="assets/js/jquery.smartWizard.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.0.10/flickity.pkgd.min.js"></script>
@@ -349,19 +384,6 @@
     <script type="text/javascript" src="assets/js/zoom.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="assets/js/theme.js"></script>
-
-    <br />
-    <br />
-
-    <script type="text/html" template-engine="ejs">
-        <center>
-        <small>Webapp Version: 
-        <%=window.versionString%>, 
-
-               Contract Version: 1.2-virtualreserve
-        </small>
-    </center>
-</script>
 </body>
 
 </html>
