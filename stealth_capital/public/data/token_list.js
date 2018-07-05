@@ -29,8 +29,8 @@ window.token_list = [
             "links": {},
             "name": "Munex360"
         },
-        "contract_address": "0x0",
-        "exchanger_address": "0x0",
+        "contract_address": "0xeaa172cb4d76c4af71d8d4bfcf90dc20265d5dc0",
+        "exchanger_address": "0x4aa9a9d81c6d01a1da68e769472077b3db5ebd9e",
         "logo_url": "/munex/munex_logo_transparent.png",
         "network": "mainnet",
         "symbol": "MUNEX",
