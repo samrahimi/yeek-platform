@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+</head>
+<body>
+<script src="../assets/js/web3.js"></script>
+<script src="../assets/js/constants.js"></script>
+		
+<script src="https://cdn.anychart.com/releases/8.2.1/js/anychart-base.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.2.1/js/anychart-stock.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.2.1/js/anychart-exports.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.2.1/js/anychart-ui.min.js"></script>
+
+<style>
+html, body, #container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+</style>
+
+<div id="container"></div>
+
+<script>
+function drawChart(data) {
+
+    // set the data
+    var table = anychart.data.table('x');
+    table.addData(data);
+  
+    // map the data
+	mapping = table.mapAs();
+    mapping.addField('open', 'open');
+    mapping.addField('high', 'high');
+    mapping.addField('low', 'low');
+    mapping.addField('close', 'close');
+
+    // chart type
+    var chart = anychart.stock();
+
+    // set the series
+    var series = chart.plot(0).candlestick(mapping);
+    series.name("MUNEX Price");
+
+    chart.title('MUNEX, daily');
+    chart.container('container');
+
+    chart.draw();
+}
+</script>
+</div>
+<script src="listenerv2.js"></script>
+
+</body>
+</html>
