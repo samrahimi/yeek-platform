@@ -3,7 +3,7 @@ let AVG_BLOCK_TIME = 15
 let SECONDS_PER_DAY = 86400
 let DATASET = null
 let ASSET_NAME = null
-let DAYS = 0
+let numDays = 30
 let LATEST_BLOCK_NUM = null
 let DATA = []; // global data array
 
@@ -83,29 +83,46 @@ async function setLatestBlockNumber(){
     LATEST_BLOCK_NUM = await web3.eth.getBlockNumber();
 
 }
+
+
+//A block is about 15 seconds
+//To convert a block number to a time, we figure out how many seconds ago it was created
+//(latestBlockNumber - blockNumber) * 15 and then subtract that from the current date
+function calculateTimeStamp(blockNumber){
+    //How many seconds ago did it happen
+    let secs = (LATEST_BLOCK_NUM - blockNumber) * AVG_BLOCK_TIME
+    let now = Date.now()               //Gets current date as milliseconds since 1970
+    let previous = now - (secs * 1000) //We figure out the previous date by calculating the block age in seconds, multiply by 1000, subtract from now
+
+    //Return as a standard timestamp, caller can convert to Date if they wish
+    return previous
+}
+
+
 // gets all past events (Buy and Sell) from a given exchanger contract
 // going back a specific number of days
-async function getPastEv(contractAddress, contractABI, blockNumber=-1){
+async function getPastEv(contractAddress, contractABI){
     var contract = new web3.eth.Contract(contractABI, contractAddress);
-    var differ = 0;
     LATEST_BLOCK_NUM = await web3.eth.getBlockNumber();
+
+    /*
     if (blockNumber !== -1){
         differ = blockNumber;
     }else{
         differ = (30 * SECONDS_PER_DAY) / AVG_BLOCK_TIME // last 30 days
-    }
+    } */
 
     // 30 days = 2592000 seconds and avg block time is 15 seconds
     // avg num blocks in last 30 days = 2592000 / 15
     // and we subtract that from the current latest block number
     var events = await contract.getPastEvents("allEvents", {
             filter: {},
-            fromBlock: LATEST_BLOCK_NUM - differ, 
+            fromBlock: LATEST_BLOCK_NUM - ((numDays * SECONDS_PER_DAY) / AVG_BLOCK_TIME), 
             toBlock: 'latest'
         }
     )
 
-    DATA.push(events.map((x) =>  
+    DATA = events.map((x) =>  
         {
             return {
                 blockNum:x.blockNumber,
@@ -115,39 +132,27 @@ async function getPastEv(contractAddress, contractABI, blockNumber=-1){
                 amountInTokens:x.returnValues.amountInToken,
                 avgPricePerShare: x.returnValues.amountInWei / x.returnValues.amountInToken
             }
-        }));
+        })
 };
 
 // sorts data into hash map defined by bucket duration parameter
 async function bucketData(data, bucket_duration){
     var table = {}
-    for (var i = 0; i < DATA.length; i++){
-        for (var j = 0; j < DATA[i].length; j++){
-            var ev = DATA[i][j];
-            var temp = ev.timeStamp;
-            var k = 0;
-            while (temp > 0){
-                temp = temp - bucket_duration;
-                k = k + 1;
-            }
-            var key = bucket_duration * k;
-            if (!(String(key) in table)){
-                table[String(key)] = [ev];
-            }else{
-                console.log("shabba");
-                table[String(key)].push(ev);
-            }
-        }
+    for (var i = 0; i < data.length; i++){
+        var key = (Math.floor(data[i].timeStamp / bucket_duration) * bucket_duration).toString()
+        if (table[key] == null || typeof table[key] == "undefined")
+            table[key]=[]
+        
+        table[key].push(data[i])
     }
-    return table;
-
+    return table
 }
 
 // this function grabs opening price, closing price, highest and lowest avg price/share,
 // transaction volume in eth, and the change in price for each bucket in table passed
 async function grabGraphingData(table){
 
-    var gData = {};
+    var gData = []
 
     for (var key in table){
         var events = table[key]
@@ -164,43 +169,34 @@ async function grabGraphingData(table){
                 low = events[i].avgPricePerShare;
             }
         }
-
-        gData[key] = [{
+        let rounded_date = new Date(parseInt(key))
+        
+        gData.push({
+            "x": key,
             "open": openingPrice,
             "close": closingPrice,
             "high": high,
-            "low": low,
-            "volume": null,
-            "priceChange": deltaPrice
-        }];
+            "low": low
+        });
     }
+    return gData
 
 
-}
-//A block is about 15 seconds
-//To convert a block number to a time, we figure out how many seconds ago it was created
-//(latestBlockNumber - blockNumber) * 15 and then subtract that from the current date
-function calculateTimeStamp(blockNumber){
-    //How many seconds ago did it happen
-    let secs = (LATEST_BLOCK_NUM - blockNumber) * AVG_BLOCK_TIME
-    let now = Date.now()               //Gets current date as milliseconds since 1970
-    let previous = now - (secs * 1000) //We figure out the previous date by calculating the block age in seconds, multiply by 1000, subtract from now
-
-    //Return as a standard timestamp, caller can convert to Date if they wish
-    return previous
 }
 
 async function main(testAddress, exchangerABI){
 
     await getPastEv(testAddress, exchangerABI);
-    var table = await bucketData(DATA, SECONDS_PER_DAY);
-    return table;
+    var table = await bucketData(DATA, SECONDS_PER_DAY*1000);
+    var graphable = await grabGraphingData(table)
+    return graphable
 }
 
 setTimeout(async() => {
     initWeb3();
-    var table = await main(testAddress, exchangerABI);
-    console.log(JSON.stringify(table, null, 2));
+    var graphable = await main(testAddress, exchangerABI);
+    drawChart(graphable); //Renders the chart by calling drawChart (in candlestick.html)
+    console.log(JSON.stringify(graphable, null, 2));
 }, 1000);
 
 
