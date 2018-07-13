@@ -142,25 +142,35 @@ async function bucketData(data, bucket_duration){
         var key = (Math.floor(data[i].timeStamp / bucket_duration) * bucket_duration).toString()
         if (table[key] == null || typeof table[key] == "undefined")
             table[key]=[]
-        
+
         table[key].push(data[i])
     }
     return table
 }
 
+//calculaes decimal change in price, not percentage
+function changeInPrice(p1, p2){
+
+    return (p2 - p1)/p1;
+
+}
 // this function grabs opening price, closing price, highest and lowest avg price/share,
-// transaction volume in eth, and the change in price for each bucket in table passed
+// tx volume in eth, and the change in price for each bucket in table passed
+// tx volume is calculated for last 24 hours.
 async function grabGraphingData(table){
 
     var gData = []
 
-    for (var key in table){
+    // loop through each bucket
+    for (var key in table){ 
         var events = table[key]
         var openingPrice = events[0].avgPricePerShare;
         var closingPrice = events[events.length - 1].avgPricePerShare;
-        var deltaPrice = 1.0 / (closingPrice - openingPrice);
+        var deltaPrice = changeInPrice(openingPrice, closingPrice); // decimal change in price
         var high = closingPrice;
         var low = openingPrice;
+        var vol = 0.0;
+        // loop through each event
         for (var i = 0; i < events.length; i++){
             if (high < events[i].avgPricePerShare){
                 high = events[i].avgPricePerShare;
@@ -168,15 +178,22 @@ async function grabGraphingData(table){
             if (low > events[i].avgPricePerShare){
                 low = events[i].avgPricePerShare;
             }
+            // get volume in last 24 hours 
+            if (SECONDS_PER_DAY >= calculateTimeStamp(LATEST_BLOCK_NUM) - Number(key)){
+                vol = vol + events[i].amountInWei;
+            }
+            
         }
         let rounded_date = new Date(parseInt(key))
-        
+        var ethVol = vol / Math.pow(10.0, 18);
         gData.push({
             "x": key,
             "open": openingPrice,
             "close": closingPrice,
             "high": high,
-            "low": low
+            "low": low,
+            "vol": ethVol,
+            'change': deltaPrice
         });
     }
     return gData
