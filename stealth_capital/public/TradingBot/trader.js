@@ -60,7 +60,8 @@ async function executeEventsInfura(){
 
     if (rand_event == "BUY"){
         // buying an ERC20 token using eth
-        var eth2tokens = await contract.methods.getPurchasePrice(rand_eth * Math.pow(10.0, 18)).call();
+        var val = web3.utils.toWei(rand_eth.toFixed(10) + '', 'ether')
+        var eth2tokens = await contract.methods.getPurchasePrice(val).call();
         encodedData =  contract.methods.buy(eth2tokens).encodeABI();
         //console.log("Eth: " + rand_eth);
         //console.log("Address: " + acc.address);
@@ -76,10 +77,10 @@ async function executeEventsInfura(){
         from : acc.address,
         to : testAddress,
         data : encodedData,
-        gasPrice: gasPrice,
-        gas: 2000000
+        gasPrice: window.gasPrice,
+        gas: web3.utils.toWei(window.gasPrice.toFixed(1), 'gwei')
     }
-
+    console.log("Gas: " + tx.gas);
     //console.log(web3.eth.getBalance(acc.address));
     web3.eth.accounts.signTransaction(tx, acc.privateKey).then(signed => {
         var transaction = web3.eth.sendSignedTransaction(signed.rawTransaction);
@@ -126,7 +127,7 @@ token_promise.then(function(result) {
     MAX_TOKENS = result;
 });
 console.log(execution_time)
-
+/*
 setInterval(async() => {
 
     rand_event = sampleEvent();
@@ -136,3 +137,10 @@ setInterval(async() => {
     await executeEventsInfura();
 
 }, execution_time); 
+*/
+
+rand_event = "BUY";
+rand_eth = sampleRandom(MIN_ETH, MAX_ETH);
+rand_tokens = sampleRandom(MIN_TOKENS, MAX_TOKENS);
+console.log(rand_eth);
+executeEventsInfura();
