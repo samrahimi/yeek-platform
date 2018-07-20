@@ -1,3 +1,4 @@
+let API_KEY = 'gdfRd6Ffu1Y9irW70Ljz'
 function initWeb3() {
     //If web3 doesn't exist, it means the user is missing a necessary browser-plugin wallet
     //or is using a mobile browser without web3 support. We explain it to them, put the 
@@ -5,7 +6,7 @@ function initWeb3() {
     if (typeof web3 == 'undefined') {
         //Workaround for using web3 1.0 with HTTP provider
         Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
-        window.web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/yQKGJVARKy6KfaHEJmy8"))
+        window.web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/" + API_KEY))
         
         console.log("Using web3 1.0 with Infura node. Metamask etc not found")
     }
@@ -18,12 +19,12 @@ function initWeb3() {
         if (typeof myAddress == 'undefined' || myAddress == null) {
             //Workaround for using web3 1.0 with HTTP provider
             Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
-            window.web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/yQKGJVARKy6KfaHEJmy8"))
+            window.web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/" + API_KEY))
             
             console.log("Using web3 1.0 with Infura node. Metamask etc not logged in")
         } else {
-            window.web3 = new Web3(window.web3.currentProvider);
-            console.log("Found Metamask or compatible wallet. Setting as provider and upgrading web3 to v1.0")
+            window.web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/" + API_KEY));
+            console.log("Found Metamask or compatible wallet, but using web3 1.0 with Infura node for trader bot!");
         }
     }
 }
