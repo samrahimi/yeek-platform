@@ -4,22 +4,48 @@ window.token_list = [
     {
         "airdropper_address": "0x0",
         "company_info": {
+            "city": "Belize City",
+            "country": "Belize",
+            "elevator_pitch": `We offer Consulting Services for Renewable Energy and Information Technology Industries including Site location and Acquisition. Through its expertise and relationships in the marketplace, KPG Global offers a range of solutions matching clients owning unused land assets to companies in the renewable and IT technology markets requiring sites for engineering structures. As an example of a KPG Global opportunity to leverage small urban empty lots we have embarked on a program to leverage valued assets belonging to municipalities in order to raise needed revenue to support current budget shortfalls.
+            <br /><br />
+            <a class="pt-1 btn btn-warning" href="assets/downloads/kpg_whitepaper.pdf">Whitepaper</a>
+            <a target="_blank" class="pt-1 btn btn-warning" href="http://www.kpgglobal.net">Website</a>`,
+            "links": {},
+            "name": "KPG Global"
+        },
+        "contract_address": "0x8411cb8646284fbbca0ab11d462c467af7518c20",
+        "exchanger_address": "0x0d71555233b7f913a5d9ae4ccd802145966d9bbf",
+        "logo_url": "http://www.kpgglobal.net/assets/i-core/logo_100px_web.jpg",
+        "network": "mainnet",
+        "status": "pending",
+        "symbol": "KPGGLOBAL",
+        "token_name": "KPG Global"
+
+    },
+    {
+        "airdropper_address": "0x0",
+        "company_info": {
             "city": "Georgia",
             "country": "US",
-            "elevator_pitch": `Founded in 2008, Municipal Network Exchange ("MUNEX") is a 
-            privately held company headquartered in Alpharetta GA.  MUNEX  operates as a 
+            "elevator_pitch": `Founded in 2008, Municipal Network Exchange ("Munex360") is a 
+            privately held company headquartered in Alpharetta GA.  Munex360  operates as a 
             “Software as a Service” (SaaS) Company that uses its proprietary portal platform to source, 
             validate and certify federally sponsored debt for review and sale through a web-based platform.
-             With plans to operate from Alpharetta Georgia, the Company represents the first comprehensive debt 
+             The Company represents the first comprehensive debt 
              exchange platform specific to "Service Providers" for the Department of Health and Human Services
             <br /><br />
-            With a 2018 budget of $1.2 trillion, HHS is responsible
-             for almost a quarter of all federal outlays and administers 
-             more grant dollars than all other federal agencies combined; 
-             MUNEX anticipates a 1-3% market penetration in the first year.
-            <br />
-
-            <a target="_blank" class="pt-1 btn-half btn btn-warning" href="/munex/munex_whitepaper_updated.pdf">Whitepaper</a> 
+            <b>The Munex360 Crypto Coin</b><br /><br />
+            Munex360 has issued a utility token on the Ethereum Blockchain (symbol: MUNEX) and is currently offering 1 million 
+            coins for sale to the public at a starting price of $11-$13 USD depending on current ETHUSD rates. These coins are accepted as currency on the Municipal Network Exchange for 
+            the purchase of short-term government debt (with projected returns in the 35%-40% range) and as such are backed by US Federal Government obligations. MUNEX   
+            is fully liquid on the Stealth Exchange and can be sold for Ethereum (which is easily converted to fiat currencies) 
+            at any time. The Munex360 platform will be fully operational within 60 days after the initial offering.
+            
+            <br /><br /> <i>Interested investors may purchase MUNEX right here using their Ethereum wallet, with immediate delivery of coins secured on the Blockchain. 
+            Traders holding other cryptocurrencies such as Bitcoin or who wish to pay with fiat currencies can obtain Ethereum at market price using 
+            the links at the bottom of this page.</i>
+            <br /><br />
+            <a target="_blank" class="pt-1 btn-half btn btn-warning" href="/munex/munex_whitepaper_updated_v2.pdf">Whitepaper</a> 
             <a target="_blank" class="pt-1 btn-half btn btn-warning" href="/munex/munex_prospectus.pdf">Prospectus</a> 
             <a target="_blank" class="pt-1 btn-half btn btn-warning" href="/munex/munex_valuation_analysis.pdf">Valuation</a> 
             <a target="_blank" class="pt-1 btn-half btn btn-warning" href="https://www.munex360.com">Website</a> `,
