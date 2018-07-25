@@ -21,8 +21,8 @@ var rand_eth = null;
 const MIN_ETH = 0.01;
 const MAX_ETH = 0.05;
 // min and max time ranges in milliseconds
-const T1 = 1 * 1000 * 60; // 3 minutes in milliseconds
-const T2 = 1 * 1000 * 60; // 6 minutes in milliseconds
+const T1 = 50 * 1000 * 60; // 50 mins
+const T2 = 70 * 1000 * 60; // 70 mins
 // min and max token values
 
 
@@ -125,6 +125,7 @@ function run(testAddress, tokenAddress, accAddr, accPrivKey) {
 
     setTimeout(() => {
         setInterval(() => {
+            updateGasPrice(); //for next time
 
             rand_event = sampleEvent();
             rand_eth = sampleRandom(MIN_ETH, MAX_ETH);
