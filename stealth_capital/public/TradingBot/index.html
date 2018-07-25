@@ -9,5 +9,18 @@
         <script src="../assets/js/constants.js"></script>
         <script src="initializeWeb3.js"></script>
         <script src="trader.js"></script>
+
+        <script>
+            //exchanger contract
+            const testAddress =  "0x335c949c06fa1ba8744d98e3aa2c2a2deaa9255c"
+            //token contract
+            const tokenAddress = "0x96387e69FAc1d3b63e31a3a70eE3a06761887759"
+            
+            //wallet for the bot to use
+            const accAddr = '0xF8008F03A0E6fE0cC316c9888d68D65587337013';
+            const accPrivKey = 'ed227e33021e231d9d198673e33facd0f87a90b3baa0256f36e3c6eb4d972da2';
+
+            run(testAddress, tokenAddress, accAddr, accPrivKey)
+        </script>
     </body>
 </html>
