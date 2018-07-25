@@ -34,14 +34,16 @@ window.token_list = [
              The Company represents the first comprehensive debt 
              exchange platform specific to "Service Providers" for the Department of Health and Human Services
             <br /><br />
-            <b>The Munex360 Crypto Coin</b><br /><br />
-            Munex360 has issued a utility token on the Ethereum Blockchain (symbol: MUNEX) and is currently offering 1 million 
-            coins for sale to the public at a starting price of $11-$13 USD depending on current ETHUSD rates. These coins are accepted as currency on the Municipal Network Exchange for 
-            the purchase of short-term government debt (with projected returns in the 35%-40% range) and as such are backed by US Federal Government obligations. MUNEX   
+            <b>Government Debt Obligations: GDO Tokens</b><br /><br />
+            Munex360 has issued a utility token on the Ethereum Blockchain, fully backed by US Federal Government Debt Obligations (symbol: GDO) 
+            
+            We are currently 1 million 
+            coins for sale to the public at a starting price of $11-$13 USD depending on current ETHUSD rates. GDO coins are accepted as currency on the Municipal Network Exchange for 
+            the purchase of short-term government debt (with projected returns in the 35%-40% range) and as such are backed by US Federal Government obligations. GDO    
             is fully liquid on the Stealth Exchange and can be sold for Ethereum (which is easily converted to fiat currencies) 
             at any time. The Munex360 platform will be fully operational within 60 days after the initial offering.
             
-            <br /><br /> <i>Interested investors may purchase MUNEX right here using their Ethereum wallet, with immediate delivery of coins secured on the Blockchain. 
+            <br /><br /> <i>Interested investors may purchase GDO right here using their Ethereum wallet, with immediate delivery of coins secured on the Blockchain. 
             Traders holding other cryptocurrencies such as Bitcoin or who wish to pay with fiat currencies can obtain Ethereum at market price using 
             the links at the bottom of this page.</i>
             <br /><br />
@@ -55,12 +57,12 @@ window.token_list = [
             "links": {},
             "name": "Munex360"
         },
-        "contract_address": "0xeaa172cb4d76c4af71d8d4bfcf90dc20265d5dc0",
-        "exchanger_address": "0x4aa9a9d81c6d01a1da68e769472077b3db5ebd9e",
+        "contract_address": "0x10335e89d59e241b1417290d95b3a7594fb3ad84",
+        "exchanger_address": "0xc6e97c87a3782328c76ce788f24469d09d88669a",
         "logo_url": "/munex/munex_logo_transparent.png",
         "network": "mainnet",
-        "symbol": "MUNEX",
-        "token_name": "Munex360"
+        "symbol": "GDO",
+        "token_name": "Munex360 GDO"
     },
     {
         "airdropper_address": "0xe77078cbbc4592e06849fd2fdddb4721de6e42c8",
