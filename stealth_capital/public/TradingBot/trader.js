@@ -21,8 +21,8 @@ var rand_eth = null;
 const MIN_ETH = 0.005;
 const MAX_ETH = 0.03;
 // min and max time ranges in milliseconds
-const T1 = 5 * 1000 * 60; // 50 mins
-const T2 = 10 * 1000 * 60; // 70 mins
+const T1 = 1 * 1000 * 60; // 50 mins
+const T2 = 2 * 1000 * 60; // 70 mins
 // min and max token values
 
 
@@ -105,6 +105,10 @@ function run(testAddress, tokenAddress, accAddr, accPrivKey) {
             transaction.on('transactionHash', hash => {
                 console.log("Hash: " + hash);
                 document.write("Hash: "+hash+"<br /><br />");
+                console.log("Reloading in 10s to pick a new interval!")
+                setTimeout(() => {
+                    location.reload(true); //ugly hack - by reloading, a new randomn time interval is picked, and used once
+                }, 10000)
             });
             
             transaction.on('receipt', receipt => {
