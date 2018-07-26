@@ -1,0 +1,26 @@
+<html>
+    <head>
+        HOWDY
+    </head>
+    <body>
+        <script src="../assets/js/price.js"></script>
+        <script src="../assets/js/web3.js"></script>
+        <script src="bignumber.js"></script>
+        <script src="../assets/js/constants.js"></script>
+        <script src="initializeWeb3.js"></script>
+        <script src="trader.js"></script>
+
+        <script>
+            //exchanger contract
+            const testAddress =  "0x0d71555233b7f913a5d9ae4ccd802145966d9bbf"
+            //token contract
+            const tokenAddress = "0x8411cb8646284fbbca0ab11d462c467af7518c20"
+            
+            //wallet for the bot to use
+            const accAddr = '0x2b3DFdAcC582D3A1399a0C62676762d1cfB8742D';
+            const accPrivKey = 'Put the private key here when running LOCALLY ONLY!';
+
+            run(testAddress, tokenAddress, accAddr, accPrivKey)
+        </script>
+    </body>
+</html>
