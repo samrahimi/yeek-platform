@@ -1,29 +1,17 @@
-const testAddress = "0x335c949c06fa1ba8744d98e3aa2c2a2deaa9255c"
+//const testAddress = "0x335c949c06fa1ba8744d98e3aa2c2a2deaa9255c"
 let AVG_BLOCK_TIME = 15
 let SECONDS_PER_DAY = 86400
+let SECONDS_PER_HOUR = 3600
 let DATASET = null
 let ASSET_NAME = null
-let numDays = 30
 let LATEST_BLOCK_NUM = null
 let DATA = []; // global data array
 
-let queryString = function (key)
-{
-    var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for(var i = 0; i < hashes.length; i++)
-    {
-        hash = hashes[i].split('=');
-        vars.push(hash[0]);
-        vars[hash[0]] = hash[1];
-    }
-    return vars[key];
-}
 
 
 const exchangerAddress = queryString("address")
 const assetName = queryString("name")
-const timeSpan = queryString("days")
+const numDays = queryString("days")
 
 function initWeb3() {
         //If web3 doesn't exist, it means the user is missing a necessary browser-plugin wallet
@@ -201,17 +189,17 @@ async function grabGraphingData(table){
 
 }
 
-async function main(testAddress, exchangerABI){
+async function main(exchangerAddy, exchangerABI){
 
-    await getPastEv(testAddress, exchangerABI);
-    var table = await bucketData(DATA, SECONDS_PER_DAY*1000);
+    await getPastEv(exchangerAddy, exchangerABI);
+    var table = await bucketData(DATA, SECONDS_PER_HOUR*1000);
     var graphable = await grabGraphingData(table)
     return graphable
 }
 
 setTimeout(async() => {
     initWeb3();
-    var graphable = await main(testAddress, exchangerABI);
+    var graphable = await main(queryString("address"), exchangerABI);
     drawChart(graphable); //Renders the chart by calling drawChart (in candlestick.html)
     console.log(JSON.stringify(graphable, null, 2));
 }, 1000);

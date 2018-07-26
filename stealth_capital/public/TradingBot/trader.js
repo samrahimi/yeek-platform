@@ -18,11 +18,11 @@ var execution_time = null;
 var rand_event= null;
 var rand_eth = null;
 // min and max eth ranges
-const MIN_ETH = 0.01;
-const MAX_ETH = 0.05;
+const MIN_ETH = 0.005;
+const MAX_ETH = 0.03;
 // min and max time ranges in milliseconds
-const T1 = 50 * 1000 * 60; // 50 mins
-const T2 = 70 * 1000 * 60; // 70 mins
+const T1 = 5 * 1000 * 60; // 50 mins
+const T2 = 10 * 1000 * 60; // 70 mins
 // min and max token values
 
 

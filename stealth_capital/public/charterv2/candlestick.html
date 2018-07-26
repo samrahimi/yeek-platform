@@ -23,7 +23,21 @@ html, body, #container {
 
 <div id="container"></div>
 
+
 <script>
+let queryString = function (key)
+{
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars[key];
+}
+
 function drawChart(data) {
 
     // set the data
@@ -42,9 +56,9 @@ function drawChart(data) {
 
     // set the series
     var series = chart.plot(0).candlestick(mapping);
-    series.name("MUNEX Price");
+    series.name(queryString("name")+ " Price");
 
-    chart.title('MUNEX, daily');
+    chart.title(queryString("name")+ ", 60m, past "+queryString("days")+"d");
     chart.container('container');
 
     chart.draw();
