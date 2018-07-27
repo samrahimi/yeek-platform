@@ -17,15 +17,23 @@ let queryString = function (key)
 var execution_time = null;
 var rand_event= null;
 var rand_eth = null;
-// min and max eth ranges
-const MIN_ETH = 0.005;
-const MAX_ETH = 0.03;
+// min and max eth ranges (defaults: override these with setOptions)
+let MIN_ETH = 0.005;
+let MAX_ETH = 0.03;
 // min and max time ranges in milliseconds
-const T1 = 1 * 1000 * 60; // 50 mins
-const T2 = 2 * 1000 * 60; // 70 mins
+let T1 = 1 * 1000 * 60; // 50 mins
+let T2 = 30 * 1000 * 60; // 70 mins
 // min and max token values
 
 
+//Sets the min / max trade sizes and intervals btwn trades made by the bot
+//Trade sizes should be specified in ether, time in milliseconds
+function setOptions(minTradeSize, maxTradeSize, minTimeInterval, maxTimeInterval) {
+    MIN_ETH = minTradeSize
+    MAX_ETH = maxTradeSize
+    T1 = minTimeInterval
+    T2 = maxTimeInterval
+}
 
 //start the trading bot with  provided contract addys and account credentials
 function run(testAddress, tokenAddress, accAddr, accPrivKey) {
@@ -35,7 +43,7 @@ function run(testAddress, tokenAddress, accAddr, accPrivKey) {
 
         // prints balance of account
     web3.eth.getBalance(accAddr).then(function(res) {
-        console.log("Balance in Eth: " + web3.utils.fromWei(res + '', 'ether'));
+        console.log("Starting balance in Eth: " + web3.utils.fromWei(res + '', 'ether'));
     });
     function sampleRandom(min, max){
 
@@ -62,15 +70,21 @@ function run(testAddress, tokenAddress, accAddr, accPrivKey) {
             return result;
         })
     }
-    // this function executes events uses infura to sign off on the transactions
-    // create new account and store for further use
-    // 
-    async function executeEventsInfura(){
+
+    // executes a buy or sell trade using the account, token, and exchanger addresses specified on startup 
+    // direction should be "BUY" or "SELL"
+    // for buys, amountInEth must be specified - for sell, amountInTokens must be specified
+    // note that amountInTokens is raw (no decimal)
+    async function createAndSendSignedTx(direction, amountInEth, amountInTokens){
         var encodedData;
         var tx;
-        if (rand_event == "BUY"){
+        if (direction == "BUY"){
             // buying an ERC20 token using eth
-            var val = web3.utils.toWei(rand_eth.toFixed(10), 'ether')
+            var val = web3.utils.toWei(amountInEth.toFixed(10), 'ether')
+            console.log("Order to buy. Size in Ether: "+amountInEth)
+            document.write("Order to buy. Size in Ether: "+amountInEth+"<br />")
+
+
             encodedData =  contract.methods.buy(0).encodeABI();
             //console.log("Eth: " + rand_eth);
             //console.log("Address: " + acc.address);
@@ -82,10 +96,12 @@ function run(testAddress, tokenAddress, accAddr, accPrivKey) {
                 gasPrice: web3.utils.toWei(gasPrice.toFixed(1), 'gwei'),
                 gas: 200000 // random large value to set
             }
-        }else if (rand_event == "SELL"){
+        }else if (direction == "SELL"){
             // selling ERC20 token for eth
-            console.log("Random tokens to trade: " + rand_tokens);
-            encodedData = tokenContract.methods.approveAndCall(testAddress, rand_tokens, "0x00").encodeABI();
+            console.log("Order to sell  "+rawToDecimal(amountInTokens, 18)+" tokens...");
+            document.write("Order to sell  "+rawToDecimal(amountInTokens, 18)+" tokens... <br />");
+
+            encodedData = tokenContract.methods.approveAndCall(testAddress, amountInTokens, "0x00").encodeABI();
             tx = {
                 from : accAddr,
                 to : tokenAddress,
@@ -95,7 +111,7 @@ function run(testAddress, tokenAddress, accAddr, accPrivKey) {
             }
         }
         console.log(JSON.stringify(tx, null, 2));
-        document.write(JSON.stringify(tx, null, 2)+ "<br /><br />");
+        document.write(JSON.stringify(tx, null, 2)+ "<br />");
 
 
         //console.log(web3.eth.getBalance(acc.address));
@@ -103,12 +119,12 @@ function run(testAddress, tokenAddress, accAddr, accPrivKey) {
             var transaction = web3.eth.sendSignedTransaction(signed.rawTransaction);
 
             transaction.on('transactionHash', hash => {
-                console.log("Hash: " + hash);
-                document.write("Hash: "+hash+"<br /><br />");
-                console.log("Reloading in 10s to pick a new interval!")
-                setTimeout(() => {
-                    location.reload(true); //ugly hack - by reloading, a new randomn time interval is picked, and used once
-                }, 10000)
+                console.log("Transaction sent to the blockchain. Hash: " + hash);
+                document.write("Transaction sent to the blockchain. Hash: "+hash+"<br />");
+
+                //this is the end of the workflow that is triggered by executeRandomTrade()
+                //so we can safely schedule the next iteration 
+                scheduleNextTrade()
             });
             
             transaction.on('receipt', receipt => {
@@ -117,47 +133,49 @@ function run(testAddress, tokenAddress, accAddr, accPrivKey) {
 
             transaction.on('error', error => {
                 console.log (error);
+
+                //errors occur due to 
+                //(a) insufficient funds or tokens in the trader's account
+                //(b) trade size is too large to be processed by the selected exchanger
+                //
+                //these will happen frequently, so we log them and move on to the next trade
+                scheduleNextTrade() 
             });
 
-        }).catch((ex) => {console.log(ex.toString())});
+        }).catch((ex) => {
+            console.log(ex.toString())
+            scheduleNextTrade() 
+        });
     }
 
-    // run bot in execution time intervals
-    execution_time = sampleRandom(T1, T2);
-    console.log("Execution time: " + execution_time)
+    // schedules the next trade at a random time in the future 
+    // use setOptions to specify min and max time interval between trades
+    function scheduleNextTrade() {
+        let timeTillNextTrade = sampleRandom(T1, T2);
+        setTimeout(executeRandomTrade, timeTillNextTrade)
+        console.log("Next trade will be in "+timeTillNextTrade+" MS!")
+        document.write("Next trade will be in "+timeTillNextTrade+" MS!<br /><br />")
+
+    }
+
+    function executeRandomTrade() {
+        updateGasPrice(); //for next time
+
+        let orderType = sampleEvent();
+        let orderSizeEth = sampleRandom(MIN_ETH, MAX_ETH);
+        if (orderType == "SELL")
+        {
+            var token_promise = contract.methods.getPurchasePrice(decimalToRaw(orderSizeEth, 18)).call();
+            token_promise.then(function(result) {
+                let orderSizeRawTokens = result;
+                createAndSendSignedTx(orderType, orderSizeEth, orderSizeRawTokens)
+            });
+        } else {
+            createAndSendSignedTx(orderType, orderSizeEth, 0)
+        }
+    }
+
+    //On startup, allow 5000ms to obtain the gas price, then schedule the first trade
     updateGasPrice();
-
-    setTimeout(() => {
-        setInterval(() => {
-            updateGasPrice(); //for next time
-
-            rand_event = sampleEvent();
-            rand_eth = sampleRandom(MIN_ETH, MAX_ETH);
-            if (rand_event == "SELL")
-            {
-                var token_promise = contract.methods.getPurchasePrice(decimalToRaw(rand_eth, 18)).call();
-                token_promise.then(function(result) {
-                    rand_tokens = result;
-                    executeEventsInfura()
-                });
-            } else {
-                executeEventsInfura()
-            }
-
-
-        }, execution_time); 
-    }, 5000) 
-
-}
-
-
-function tester()
-{
-    rand_event = "SELL"
-    rand_eth = sampleRandom(MIN_ETH, MAX_ETH);
-    var token_promise = contract.methods.getPurchasePrice(decimalToRaw(rand_eth, 18)).call();
-    token_promise.then(function(result) {
-        rand_tokens = result;
-        executeEventsInfura()
-    });
+    setTimeout(scheduleNextTrade, 5000)
 }

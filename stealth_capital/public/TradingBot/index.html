@@ -1,0 +1,77 @@
+<html>
+
+    <head>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <title>Stealth Admin - Trading Bots</title>
+        <style>
+            input {
+                width:500px
+            }
+            .btn {
+                width:150px !important;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../assets/js/price.js"></script>
+        <script src="../assets/js/web3.js"></script>
+        <script src="bignumber.js"></script>
+        <script src="../assets/js/constants.js"></script>
+        <script src="initializeWeb3.js"></script>
+        <script src="trader.js"></script>
+
+        <h1>Create New Trading Bot</h1>
+        Token To Trade:<br />
+        <input type="text" id="token" />
+        <br /><br />
+        Exchanger For That Token:<br />
+        <input type="text" id="exchanger" />
+        <br /><br />
+
+        Wallet Account:<br />
+        <input type="text" id="account" />
+        <br /><br />
+
+        Private Key:<br />
+        <input type="text" id="privateKey" />
+        <br /><br />
+
+        Min Trade Size (Eth):<br />
+        <input type="text" id="minTradeSize" value="0.01" />
+        <br /><br />
+
+        Max Trade Size (Eth):<br />
+        <input type="text" id="maxTradeSize" value="1.0" />
+        <br /><br />
+
+        Min Time Between Trades (MS):<br />
+        <input type="text" id="minTimeInterval" value="60000" />
+        <br /><br />
+
+        Max Time Between Trades (MS):<br />
+        <input type="text" id="maxTimeInterval" value="300000" />
+        <br /><br />
+
+        <input type="button" class="btn" id="btnStart" value="Start Trading Bot" />
+        <br />
+
+        <script>
+            $("#btnStart").on("click", () => {
+                setOptions(
+                    parseFloat($("#minTradeSize").val()),
+                    parseFloat($("#maxTradeSize").val()),
+                    parseInt($("#minTimeInterval").val()),
+                    parseInt($("#maxTimeInterval").val())
+                )
+                run(
+                    $("#exchanger").val(), 
+                    $("#token").val(), 
+                    $("#account").val(),
+                    $("#privateKey").val()
+                )
+
+                return false
+            })
+        </script>
+    </body>
+</html>
