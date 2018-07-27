@@ -1,0 +1,60 @@
+Wallet User Stories (not prioritized or sized yet)
+
+Goal: manage my portofolio, make trades, and transfer ether / tokens in and out of my wallet with only my ordinary browser. And remaining decentralized and secure.
+
+As a user I can...
+
+    view a list of my past transactions
+    create a new wallet
+    secure the wallet's private key with a password
+    automatically open my most recently used wallet after password is entered
+    restore any wallet and make my default by uploading the keystore and entering a password
+    restore any wallet using 12 word mnemonic phrase
+    download a JSON keystore for my current wallet that is encrypted with my password
+    view the mnemonic phrase associated with my current wallet
+    be presented with a warning after creating a new wallet that 
+    - explains the risks of storing keys online
+    - urges the user to download keystore and / or write down the mnemonic in case they lose access later
+    execute trades using the funds or tokens in my current wallet
+    create and sign a buy or sell order that will execute in future only if the  price is above or below the amount that I specify (limit order GTC)
+    create and sign a sell order that closes a position opened by my previous buy order in order to limit my losses
+    - the order executes only if the price drops below a certain amount
+    - the order must completely offset a previously executed buy order (if you bought 100 coins of X, the stop order will sell 100 coins of X)
+    - known as a stop order (GTC)
+    be sure that my orders will execute quickly because the wallet sets an appropriately high gas price on my behalf
+    view a list of all tokens that are in my wallet (assuming they are traded on the stealth exchange)
+    view my ether balance
+    view my total portfolio balance in USD / other local currency based on current share prices and Ether exchange rates
+    deposit ether or tokens to my stealth wallet
+    - by scanning a qr code with my mobile wallet app made by 3rd party
+    - by copying the address to the clipboard
+    - by purchasing from our partners using fiat or major cryptos and having the proceeds sent to my stealth wallet
+    send ether or tokens to any other address by specifying the target address and the amount to send
+    audit my stealth wallet account by clicking a link to view it on etherscan
+    track P & L of my open and closed positions
+    open my wallet from any other page on the exchange using an icon in the title bar
+    view my wallet as a modal dialog (which fills the screen on mobile)
+    close my wallet by hitting a button and remain on the same page I was when I opened it
+
+
+technical stories: as an engineer, i must:
+
+    -create a standalone react app with web3 1.0 and firebase-firestore
+    -use a build process that generates a single-page application (suitable for running inside of an iframe)
+        - all libraries, css, and media files should be copied into the project folder (there should be no references to external websites within the html, so that later we can bundle everything into a mobile app)
+    -never store unencrypted private keys in local storage
+    -require a password to decrypt the keystore each time a wallet is loaded from storage
+    -ensure that passwords and decrypted keys are removed from memory when no longer needed
+    -use responsive web design to create one set up markup that renders as a modal popup on desktop and a full screen modal on mobile
+    -ensure that the UI components obtain data by querying the DB whenever possible. getPastEvents is extremely slow and should never be used in a real time, interactive environment unless absolutely necessary. 
+    -update the transaction history DB immediately after any of the following transactions occur:
+        - sending of ether or tokens (all wallets, if sent via stealth UI)
+        - execute a buy order (all wallets, if sent via stealth UI)
+        - execute a sell order (all wallets, if sent via stealth UI)
+        - create and sign a stop or limit order that executes when a condition is met (stealth wallets only)
+        - cancel a stop or limit order that has not yet executed (stealth wallets only)
+    -create a service that periodically polls the blockchain for events and updates the DB with new data in the following cases:
+        - buy and sell transactions made in ways that bypass the stealth UI (e.g. a user-created bot that interacts directly with an exchanger contract and makes trades)
+        - outgoing transactions from any address linked to a stealth wallet but sent in ways that bypass the stealth UI (e.g. if the address if linked to multiple wallet apps) 
+        - incoming transactions received by any address linked to a stealth wallet
+    -create a services that checks status of pending stop or limit orders whenever the price changes, and executes any orders that meet criteria
