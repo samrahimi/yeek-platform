@@ -4,6 +4,29 @@ window.token_list = [
     {
         "airdropper_address": "0x0",
         "company_info": {
+            "city": "Geneva",
+            "country": "Switzerland",
+            "elevator_pitch": `SwissCoinTech AG invests in financial companies, with special focus
+            on buying, selling and running foreign exchange, money and binary
+            brokers, crypto brokers and crypto exchanges.
+            <br /><br />
+            <a class="pt-1 btn btn-warning" href="assets/downloads/swiss_whitepaper.pdf">Whitepaper</a>
+            <a target="_blank" class="pt-1 btn btn-warning" href="http://www.swisscointech.io">Website</a>`,
+            "links": {},
+            "name": "SwissCoinTech AG"
+        },
+        "contract_address": "0xcf1080870c47eb4ea17c908cd3f14dfebd9a9827",
+        "exchanger_address": "0x80dead1fe350367ff02f3831ff967d8000357500",
+        "logo_url": "assets/img/tokens/swiss_logo.png",
+        "network": "mainnet",
+        "status": "pending",
+        "symbol": "SWISS",
+        "token_name": "SwissCoinTech AG"
+
+    },
+    {
+        "airdropper_address": "0x0",
+        "company_info": {
             "city": "Belize City",
             "country": "Belize",
             "elevator_pitch": `We offer Consulting Services for Renewable Energy and Information Technology Industries including Site location and Acquisition. Through its expertise and relationships in the marketplace, KPG Global offers a range of solutions matching clients owning unused land assets to companies in the renewable and IT technology markets requiring sites for engineering structures. As an example of a KPG Global opportunity to leverage small urban empty lots we have embarked on a program to leverage valued assets belonging to municipalities in order to raise needed revenue to support current budget shortfalls.

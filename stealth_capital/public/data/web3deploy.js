@@ -1,6 +1,6 @@
 //var _token = "0xd703311c357db71c9003dfc6e680b1bf16606159"; //AXIO
 //var _token="0x639c560abc3a9f5c026910555591ecb859066dc3" //TIGER
-var _token = "0x10335e89d59e241b1417290d95b3a7594fb3ad84" //KPGGLOBAL
+var _token = "0xcf1080870c47eb4ea17c908cd3f14dfebd9a9827" //SWISS
 //var _token = "0x8ee958f5f77c70aa7ef39077459e30455625152a" //STEALTH
 var _weight = 10000;
 var _formulaContract = "0x3aE6aBEb18DFa61F85FAfF25aef28c8cd6dDbe6b";
