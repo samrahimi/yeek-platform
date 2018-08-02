@@ -345,7 +345,7 @@ let bindTokenData = () => {
             token.transfer(
                 $('#sendTo').val(),
                 decimalToRaw($('#sendAmount').val(), tokenstats.decimals),
-                {gasPrice: web3.utils.toWei(window.gasPrice.toString(), 'gwei')}
+                {gasPrice: web3.utils.toWei(window.gasPrice.toFixed(1), 'gwei')}
             )
                 .then(function (transferTxHash) {
                     $("#sendResponse").removeClass("text-info").addClass("text-success");
