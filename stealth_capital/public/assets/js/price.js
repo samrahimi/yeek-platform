@@ -1,20 +1,25 @@
 //3rd party API integrations: rates, partner exchanges, etc
 window.ETHUSD=0;
+window.ETHEUR=0
 //Nominal order size used for calculating the quote price
 window.baseOrderSizeInEth = 0.001
 window.gasPrice = 0
 
+//functon name is deprecated - it updates all of the fiat exchange rates at once
 function updateETHUSD() {
-    $.getJSON("https://api.coinmarketcap.com/v2/ticker/1027/", (result) => {
+    $.getJSON("https://api.coinmarketcap.com/v2/ticker/1027/?convert=EUR", (result) => {
         window.ETHUSD = result.data.quotes["USD"].price
-        console.log("got updated ETHUSD price: "+ window.ETHUSD)
+        window.ETHEUR = result.data.quotes["EUR"].price
+        console.log(`got updated prices. ETHUSD: ${window.ETHUSD}, ETHEUR: ${window.ETHEUR}`)
     })
 }
 
 function convertToUSD(amountInEth) {
     return amountInEth * window.ETHUSD;
 }
-
+function convertToEUR(amountInEth) {
+    return amountInEth * window.ETHEUR;
+}
 // Gets the latest quote price (in Ether) for any token
 // by requesting it from the associated exchanger.
 // Accepts: the address of the exchanger linked with the desired token
