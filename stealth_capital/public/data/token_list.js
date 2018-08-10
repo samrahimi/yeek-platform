@@ -10,7 +10,7 @@ window.token_list = [
             on buying, selling and running foreign exchange, money and binary
             brokers, crypto brokers and crypto exchanges.
             <br /><br />
-            <a class="pt-1 btn btn-warning" href="assets/downloads/swiss_whitepaper.pdf">Whitepaper</a>
+            <a class="pt-1 btn btn-warning" href="assets/downloads/swiss_whitepaper_v2.pdf">Whitepaper</a>
             <a target="_blank" class="pt-1 btn btn-warning" href="http://www.swisscointech.io">Website</a>`,
             "links": {},
             "name": "SwissCoinTech AG"
